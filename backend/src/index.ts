@@ -1,11 +1,26 @@
 import { startServer } from './server';
-import { mongoDatabase } from './details/database/mongo/MongoDatabase';
-import { createExpressServer } from './details/server/express/expressServer';
 import { appConfig } from './config/appConfig';
 
-// 1. Manually instantiate internal Dependencies (Data Providers, Services, Routers)
-const dependencies = {
-  // To be filled out in Task 6 and future tasks...
+// Entities & Implementations
+import { createMongoDatabase } from './details/database/mongo/MongoDatabase';
+import { createJwtAuthService } from './details/auth/jwtAuthService';
+import { createUserRepository } from './details/database/mongo/repositories/userRepository';
+import { createAuthRepository } from './details/database/mongo/repositories/authRepository';
+import { createPostRepository } from './details/database/mongo/repositories/postRepository';
+import { createCommentRepository } from './details/database/mongo/repositories/commentRepository';
+
+// Web Server Factory
+import { createExpressServer, ExpressDependencies } from './details/server/express/expressServer';
+
+// 1. Manually instantiate internal Dependencies
+const mongoDatabase = createMongoDatabase();
+
+const dependencies: ExpressDependencies = {
+  authService: createJwtAuthService(),
+  authRepository: createAuthRepository(),
+  userRepository: createUserRepository(),
+  postRepository: createPostRepository(),
+  commentRepository: createCommentRepository(),
 };
 
 // 2. Pass dependencies into the specific Web Server implementation

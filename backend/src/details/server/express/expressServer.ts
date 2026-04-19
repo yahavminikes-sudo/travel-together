@@ -3,12 +3,17 @@ import cors from 'cors';
 import { Server } from 'http';
 import { StatusCodes } from 'http-status-codes';
 import { IWebServer } from '../../../entities/IWebServer';
+import { IAuthService } from '../../../entities/IAuthService';
+import { IUserRepository, IPostRepository, ICommentRepository, IAuthRepository } from '../../../entities/IRepositories';
 
 // This interface will grow as we introduce Controllers/Routers and other dependencies
 export interface ExpressDependencies {
-  // Example: 
-  // authRouter?: express.Router;
-  // postRouter?: express.Router;
+  authService: IAuthService;
+  authRepository: IAuthRepository;
+  userRepository: IUserRepository;
+  postRepository: IPostRepository;
+  commentRepository: ICommentRepository;
+  // Routers will be injected here in later tasks
 }
 
 export const createExpressServer = (deps: ExpressDependencies): IWebServer => {

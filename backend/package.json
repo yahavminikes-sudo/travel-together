@@ -4,7 +4,7 @@
   "description": "Travel Together Backend",
   "main": "index.ts",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "node dist/backend/src/index.js",
     "dev": "nodemon",
     "build": "tsc",
     "test": "jest --runInBand",
