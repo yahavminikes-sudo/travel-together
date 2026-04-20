@@ -21,6 +21,7 @@ export interface ExpressDependencies {
   userRepository: IUserRepository;
   postRepository: IPostRepository;
   commentRepository: ICommentRepository;
+  authenticator: (token: string) => string | null;
 }
 
 export const createExpressServer = (deps: ExpressDependencies): IWebServer => {
@@ -31,7 +32,7 @@ export const createExpressServer = (deps: ExpressDependencies): IWebServer => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  const authenticate = createAuthenticateMiddleware(deps.authService);
+  const authenticate = createAuthenticateMiddleware(deps.authenticator);
   
   const authController = createAuthController({ authService: deps.authService, authRepository: deps.authRepository });
   const postController = createPostController({ postRepository: deps.postRepository });

@@ -10,12 +10,19 @@ import { startServer } from './server';
 
 const mongoDatabase = createMongoDatabase();
 
+const authService = createJwtAuthService();
+
 const dependencies: ExpressDependencies = {
-  authService: createJwtAuthService(),
+  authService,
   authRepository: createAuthRepository(),
   userRepository: createUserRepository(),
   postRepository: createPostRepository(),
   commentRepository: createCommentRepository(),
+  authenticator: (token: string) => {
+    // We isolate the external framework implementation from our service logic
+    const payload = authService.verifyToken(token);
+    return payload && payload._id ? payload._id : null;
+  }
 };
 
 const webServer = createExpressServer(dependencies);
