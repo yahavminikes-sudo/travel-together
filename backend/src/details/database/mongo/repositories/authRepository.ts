@@ -1,7 +1,6 @@
-import { IAuthRepository } from '../../../../entities/IRepositories';
 import { AuthRecord } from '../../../../entities/AuthRecord';
-import { UserModel, IUserDocument } from '../models/User.schema';
-import { User } from '@shared/user.types';
+import { IAuthRepository } from '../../../../entities/IRepositories';
+import { UserModel } from '../models/User.schema';
 import { mapToUser } from '../utils/mappers';
 
 export const createAuthRepository = (): IAuthRepository => ({
@@ -18,7 +17,6 @@ export const createAuthRepository = (): IAuthRepository => ({
   saveAuthRecord: async (record: AuthRecord): Promise<AuthRecord> => {
     const doc = await UserModel.findById(record._id).exec() || new UserModel();
     
-    // Set protected fields specifically
     doc.username = record.username;
     doc.email = record.email;
     doc.password = record.password;
