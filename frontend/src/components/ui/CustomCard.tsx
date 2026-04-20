@@ -7,7 +7,7 @@ export interface CustomCardProps extends Omit<CardProps, 'title' | 'subtitle'> {
   noBody?: boolean;
 }
 
-const CustomCard: React.FC<CustomCardProps> = ({ title, subtitle, noBody, children, className, ...props }) => {
+export const CustomCard: React.FC<CustomCardProps> = ({ title, subtitle, noBody, children, className, ...props }) => {
   return (
     <Card className={`shadow-sm mb-4 ${className || ''}`} {...props}>
       {noBody ? (
@@ -22,5 +22,3 @@ const CustomCard: React.FC<CustomCardProps> = ({ title, subtitle, noBody, childr
     </Card>
   );
 };
-
-export default CustomCard;
