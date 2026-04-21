@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { Post } from '../../../../shared/types';
+import type { Post } from '@shared/types';
 import { LikeButton } from '../ui/LikeButton';
 
 interface Props {
@@ -60,7 +60,7 @@ export const PostCard: React.FC<Props> = ({ post, currentUserId, onLikeToggle })
         
         <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mt-auto" style={{ zIndex: 2, position: 'relative' }}>
           <div className="d-flex flex-wrap gap-1">
-            {post.tags?.map(tag => (
+            {post.tags?.map((tag) => (
               <Badge key={tag} bg="light" text="secondary" className="border px-2 py-1 fw-normal">
                 #{tag}
               </Badge>
