@@ -5,7 +5,7 @@ export type CustomLabelProps = React.ComponentProps<typeof Form.Label> & {
   required?: boolean;
 };
 
-const CustomLabel: React.FC<CustomLabelProps> = ({ required, children, className, ...props }) => {
+export const CustomLabel: React.FC<CustomLabelProps> = ({ required, children, className, ...props }) => {
   return (
     <Form.Label className={`fw-semibold mb-1 ${className || ''}`} {...props}>
       {children}
@@ -13,5 +13,3 @@ const CustomLabel: React.FC<CustomLabelProps> = ({ required, children, className
     </Form.Label>
   );
 };
-
-export default CustomLabel;
