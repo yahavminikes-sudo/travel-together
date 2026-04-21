@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { IUserService } from '../../../../entities/IServices';
 import { AuthRequest } from '../middlewares/authenticate';
 
-export const createUserController = (deps: { userService: IUserService }) => {
+export const createUserController = ({ userService }: { userService: IUserService }) => {
   return {
     getProfile: async (req: AuthRequest, res: Response) => {
       try {
@@ -12,7 +12,7 @@ export const createUserController = (deps: { userService: IUserService }) => {
           return;
         }
         
-        const user = await deps.userService.getUserProfile(req.userId);
+        const user = await userService.getUserProfile(req.userId);
         if (!user) {
           res.status(StatusCodes.NOT_FOUND).json({ message: 'User not found' });
           return;
@@ -26,7 +26,7 @@ export const createUserController = (deps: { userService: IUserService }) => {
     getUserById: async (req: Request, res: Response) => {
       try {
         const { id } = req.params;
-        const user = await deps.userService.getUserById(id);
+        const user = await userService.getUserById(id);
         if (!user) {
           res.status(StatusCodes.NOT_FOUND).json({ message: 'User not found' });
           return;

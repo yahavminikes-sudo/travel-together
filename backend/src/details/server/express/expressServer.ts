@@ -22,7 +22,13 @@ export interface ExpressDependencies {
   userService: IUserService;
 }
 
-export const createExpressServer = (deps: ExpressDependencies): IWebServer => {
+export const createExpressServer = ({
+  authService,
+  authenticator,
+  postService,
+  commentService,
+  userService
+}: ExpressDependencies): IWebServer => {
   const app: Application = express();
   let serverInstance: Server | null = null;
 
@@ -30,12 +36,12 @@ export const createExpressServer = (deps: ExpressDependencies): IWebServer => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  const authenticate = createAuthenticateMiddleware(deps.authenticator);
+  const authenticate = createAuthenticateMiddleware(authenticator);
   
-  const authController = createAuthController({ authService: deps.authService });
-  const postController = createPostController({ postService: deps.postService });
-  const commentController = createCommentController({ commentService: deps.commentService });
-  const userController = createUserController({ userService: deps.userService });
+  const authController = createAuthController({ authService });
+  const postController = createPostController({ postService });
+  const commentController = createCommentController({ commentService });
+  const userController = createUserController({ userService });
 
   app.get('/health', (req, res) => {
     res.status(StatusCodes.OK).json({ status: 'ok', timestamp: new Date().toISOString() });

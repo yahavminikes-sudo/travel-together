@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { IAuthService } from '../../../../entities/IServices';
 
-export const createAuthController = (deps: { authService: IAuthService }) => {
+export const createAuthController = ({ authService }: { authService: IAuthService }) => {
   return {
     register: async (req: Request, res: Response) => {
       try {
@@ -12,7 +12,7 @@ export const createAuthController = (deps: { authService: IAuthService }) => {
           return;
         }
 
-        const result = await deps.authService.register(req.body);
+        const result = await authService.register(req.body);
         res.status(StatusCodes.CREATED).json(result);
       } catch (err: any) {
         if (err.message === 'Email already registered') {
@@ -32,7 +32,7 @@ export const createAuthController = (deps: { authService: IAuthService }) => {
           return;
         }
         
-        const result = await deps.authService.login(req.body);
+        const result = await authService.login(req.body);
         res.status(StatusCodes.OK).json(result);
       } catch (err: any) {
         if (err.message === 'Invalid credentials') {

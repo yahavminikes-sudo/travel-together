@@ -3,12 +3,12 @@ import { StatusCodes } from 'http-status-codes';
 import { ICommentService } from '../../../../entities/IServices';
 import { AuthRequest } from '../middlewares/authenticate';
 
-export const createCommentController = (deps: { commentService: ICommentService }) => {
+export const createCommentController = ({ commentService }: { commentService: ICommentService }) => {
   return {
     getCommentsByPost: async (req: Request, res: Response) => {
       try {
         const { postId } = req.params;
-        const comments = await deps.commentService.getCommentsByPost(postId);
+        const comments = await commentService.getCommentsByPost(postId);
         res.status(StatusCodes.OK).json(comments);
       } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
@@ -18,7 +18,7 @@ export const createCommentController = (deps: { commentService: ICommentService 
     getCommentById: async (req: Request, res: Response) => {
       try {
         const { id } = req.params;
-        const comment = await deps.commentService.getCommentById(id);
+        const comment = await commentService.getCommentById(id);
         if (!comment) {
           res.status(StatusCodes.NOT_FOUND).json({ message: 'Comment not found' });
           return;
@@ -36,7 +36,7 @@ export const createCommentController = (deps: { commentService: ICommentService 
           return;
         }
         const { postId } = req.params; // Or from body depending on route structure
-        const comment = await deps.commentService.createComment(postId, req.userId, req.body);
+        const comment = await commentService.createComment(postId, req.userId, req.body);
         res.status(StatusCodes.CREATED).json(comment);
       } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
@@ -51,7 +51,7 @@ export const createCommentController = (deps: { commentService: ICommentService 
         }
         
         const { id } = req.params;
-        const comment = await deps.commentService.updateComment(id, req.body);
+        const comment = await commentService.updateComment(id, req.body);
         if (!comment) {
           res.status(StatusCodes.NOT_FOUND).json({ message: 'Comment not found' });
           return;
@@ -70,7 +70,7 @@ export const createCommentController = (deps: { commentService: ICommentService 
         }
         
         const { id } = req.params;
-        const success = await deps.commentService.deleteComment(id);
+        const success = await commentService.deleteComment(id);
         if (!success) {
           res.status(StatusCodes.NOT_FOUND).json({ message: 'Comment not found' });
           return;
