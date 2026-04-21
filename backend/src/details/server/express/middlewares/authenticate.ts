@@ -1,12 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { IAuthService } from '../../../../entities/IAuthService';
 
 export interface AuthRequest extends Request {
   userId?: string;
 }
 
-export const createAuthenticateMiddleware = (authService: IAuthService) => {
+export const createAuthenticateMiddleware = (authenticator: (token: string) => string | null) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
     
@@ -16,14 +15,14 @@ export const createAuthenticateMiddleware = (authService: IAuthService) => {
     }
 
     const token = authHeader.split(' ')[1];
-    const payload = authService.verifyToken(token);
+    const userId = authenticator(token);
 
-    if (!payload || !payload._id) {
+    if (!userId) {
       res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Token is invalid or expired' });
       return;
     }
 
-    req.userId = payload._id;
+    req.userId = userId;
     next();
   };
 };

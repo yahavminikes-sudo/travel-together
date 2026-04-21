@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { IAuthService, TokenPair } from '../../entities/IAuthService';
+import { IAuthProvider, TokenPair } from '../../entities/IAuthProvider';
 import { appConfig } from '../../config/appConfig';
 
 const SALT_ROUNDS = 10;
 
-export const createJwtAuthService = (): IAuthService => ({
+export const createJwtAuthProvider = (): IAuthProvider => ({
   hashPassword: async (password: string): Promise<string> => {
     return bcrypt.hash(password, SALT_ROUNDS);
   },

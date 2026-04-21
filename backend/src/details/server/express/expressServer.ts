@@ -1,39 +1,57 @@
-import express, { Application } from 'express';
 import cors from 'cors';
+import express, { Application } from 'express';
 import { Server } from 'http';
 import { StatusCodes } from 'http-status-codes';
+import { IAuthService, ICommentService, IPostService, IUserService } from '../../../entities/IServices';
 import { IWebServer } from '../../../entities/IWebServer';
-import { IAuthService } from '../../../entities/IAuthService';
-import { IUserRepository, IPostRepository, ICommentRepository, IAuthRepository } from '../../../entities/IRepositories';
+import { createAuthController } from './controllers/authController';
+import { createCommentController } from './controllers/commentController';
+import { createPostController } from './controllers/postController';
+import { createUserController } from './controllers/userController';
+import { createAuthenticateMiddleware } from './middlewares/authenticate';
+import { createAuthRouter } from './routes/auth';
+import { createCommentRouter } from './routes/comments';
+import { createPostRouter } from './routes/posts';
+import { createUserRouter } from './routes/users';
 
-// This interface will grow as we introduce Controllers/Routers and other dependencies
 export interface ExpressDependencies {
   authService: IAuthService;
-  authRepository: IAuthRepository;
-  userRepository: IUserRepository;
-  postRepository: IPostRepository;
-  commentRepository: ICommentRepository;
-  // Routers will be injected here in later tasks
+  authenticator: (token: string) => string | null;
+  postService: IPostService;
+  commentService: ICommentService;
+  userService: IUserService;
 }
 
-export const createExpressServer = (deps: ExpressDependencies): IWebServer => {
+export const createExpressServer = ({
+  authService,
+  authenticator,
+  postService,
+  commentService,
+  userService
+}: ExpressDependencies): IWebServer => {
   const app: Application = express();
   let serverInstance: Server | null = null;
 
-  // Middlewares
   app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  // Base routes
+  const authenticate = createAuthenticateMiddleware(authenticator);
+  
+  const authController = createAuthController({ authService });
+  const postController = createPostController({ postService });
+  const commentController = createCommentController({ commentService });
+  const userController = createUserController({ userService });
+
   app.get('/health', (req, res) => {
     res.status(StatusCodes.OK).json({ status: 'ok', timestamp: new Date().toISOString() });
   });
 
-  // Future wiring of dependencies into routes:
-  // if (deps.authRouter) app.use('/api/auth', deps.authRouter);
+  app.use('/api/auth', createAuthRouter(authController));
+  app.use('/api/posts', createPostRouter(postController, authenticate));
+  app.use('/api/comments', createCommentRouter(commentController, authenticate));
+  app.use('/api/users', createUserRouter(userController, authenticate));
 
-  // Return exactly the interface contract without leaking the 'app' module
   return {
     start: async (port: number | string): Promise<void> => {
       return new Promise((resolve) => {

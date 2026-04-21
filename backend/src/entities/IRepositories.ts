@@ -8,7 +8,6 @@ export interface IAuthRepository {
   saveAuthRecord(record: AuthRecord): Promise<AuthRecord>;
 }
 
-
 export interface IUserRepository {
   findById(id: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
