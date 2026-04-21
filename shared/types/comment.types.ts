@@ -4,7 +4,7 @@ export interface Comment {
   _id: string;
   postId: string;
   authorId: string;
-  author?: User; // Populated author details
+  author?: User;
   content: string;
   createdAt: string;
   updatedAt: string;

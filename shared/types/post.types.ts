@@ -3,11 +3,11 @@ import { User } from './user.types';
 export interface Post {
   _id: string;
   authorId: string;
-  author?: User; // Populated author details
+  author?: User;
   title: string;
   content: string;
   imageUrl?: string;
-  likes: string[]; // Array of User IDs who liked the post
+  likes: string[];
   tags?: string[];
   createdAt: string;
   updatedAt: string;

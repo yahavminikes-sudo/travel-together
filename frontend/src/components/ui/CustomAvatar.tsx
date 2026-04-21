@@ -1,13 +1,22 @@
 import React from 'react';
 
-export interface CustomAvatarProps extends React.ImgHTMLAttributes<HTMLImageElement> {
-  size?: number;
+export const AvatarSize = {
+  SMALL: 32,
+  MEDIUM: 48,
+  LARGE: 64,
+  EXTRA_LARGE: 96,
+} as const;
+
+export type AvatarSize = typeof AvatarSize[keyof typeof AvatarSize];
+
+export interface CustomAvatarProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'size'> {
+  size?: AvatarSize;
   imageUrl?: string;
   altText?: string;
   fallback?: string;
 }
 
-const CustomAvatar: React.FC<CustomAvatarProps> = ({ size = 48, imageUrl, altText = 'Avatar', fallback, className, ...props }) => {
+export const CustomAvatar: React.FC<CustomAvatarProps> = ({ size = AvatarSize.MEDIUM, imageUrl, altText = 'Avatar', fallback, className, ...props }) => {
   return !imageUrl ? (
     <div 
       className={`d-inline-flex align-items-center justify-content-center bg-secondary text-white rounded-circle ${className || ''}`}
@@ -25,5 +34,3 @@ const CustomAvatar: React.FC<CustomAvatarProps> = ({ size = 48, imageUrl, altTex
     />
   );
 };
-
-export default CustomAvatar;

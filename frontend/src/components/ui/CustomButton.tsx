@@ -5,7 +5,7 @@ export interface CustomButtonProps extends ButtonProps {
   isLoading?: boolean;
 }
 
-const CustomButton: React.FC<CustomButtonProps> = ({ isLoading, children, disabled, ...props }) => {
+export const CustomButton: React.FC<CustomButtonProps> = ({ isLoading, children, disabled, ...props }) => {
   return (
     <Button disabled={isLoading || disabled} {...props}>
       {isLoading ? (
@@ -19,5 +19,3 @@ const CustomButton: React.FC<CustomButtonProps> = ({ isLoading, children, disabl
     </Button>
   );
 };
-
-export default CustomButton;
