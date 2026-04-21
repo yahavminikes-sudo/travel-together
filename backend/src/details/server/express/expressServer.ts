@@ -73,6 +73,7 @@ export const createExpressServer = ({
           resolve();
         }
       });
-    }
+    },
+    getApp: () => app
   };
 };

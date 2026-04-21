@@ -15,16 +15,17 @@ export const createAuthRepository = (): IAuthRepository => ({
   },
   
   saveAuthRecord: async (record: AuthRecord): Promise<AuthRecord> => {
-    const doc = await UserModel.findById(record._id).exec() || new UserModel();
+    const doc = record._id ? await UserModel.findById(record._id).exec() : null;
+    const finalDoc = doc || new UserModel();
     
-    doc.username = record.username;
-    doc.email = record.email;
-    doc.password = record.password;
-    doc.avatarUrl = record.avatarUrl || '';
-    doc.bio = record.bio || '';
-    doc.refreshTokens = record.refreshTokens || [];
+    finalDoc.username = record.username;
+    finalDoc.email = record.email;
+    finalDoc.password = record.password;
+    finalDoc.avatarUrl = record.avatarUrl || '';
+    finalDoc.bio = record.bio || '';
+    finalDoc.refreshTokens = record.refreshTokens || [];
     
-    const saved = await doc.save();
+    const saved = await finalDoc.save();
     return {
       ...mapToUser(saved),
       password: saved.password,
