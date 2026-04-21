@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { IUserRepository } from '../../../../entities/IRepositories';
+import { IUserService } from '../../../../entities/IServices';
 import { AuthRequest } from '../middlewares/authenticate';
 
-export const createUserController = (deps: { userRepository: IUserRepository }) => {
+export const createUserController = (deps: { userService: IUserService }) => {
   return {
     getProfile: async (req: AuthRequest, res: Response) => {
       try {
@@ -12,7 +12,7 @@ export const createUserController = (deps: { userRepository: IUserRepository }) 
           return;
         }
         
-        const user = await deps.userRepository.findById(req.userId);
+        const user = await deps.userService.getUserProfile(req.userId);
         if (!user) {
           res.status(StatusCodes.NOT_FOUND).json({ message: 'User not found' });
           return;
@@ -26,7 +26,7 @@ export const createUserController = (deps: { userRepository: IUserRepository }) 
     getUserById: async (req: Request, res: Response) => {
       try {
         const { id } = req.params;
-        const user = await deps.userRepository.findById(id);
+        const user = await deps.userService.getUserById(id);
         if (!user) {
           res.status(StatusCodes.NOT_FOUND).json({ message: 'User not found' });
           return;

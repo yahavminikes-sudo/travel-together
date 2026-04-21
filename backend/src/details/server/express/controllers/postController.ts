@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { IPostRepository } from '../../../../entities/IRepositories';
+import { IPostService } from '../../../../entities/IServices';
 import { AuthRequest } from '../middlewares/authenticate';
 
-export const createPostController = (deps: { postRepository: IPostRepository }) => {
+export const createPostController = (deps: { postService: IPostService }) => {
   return {
     getAllPosts: async (req: Request, res: Response) => {
       try {
-        const posts = await deps.postRepository.findAll();
+        const posts = await deps.postService.getAllPosts();
         res.status(StatusCodes.OK).json(posts);
       } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
@@ -17,7 +17,7 @@ export const createPostController = (deps: { postRepository: IPostRepository }) 
     getPostById: async (req: Request, res: Response) => {
       try {
         const { id } = req.params;
-        const post = await deps.postRepository.findById(id);
+        const post = await deps.postService.getPostById(id);
         if (!post) {
           res.status(StatusCodes.NOT_FOUND).json({ message: 'Post not found' });
           return;
@@ -34,7 +34,7 @@ export const createPostController = (deps: { postRepository: IPostRepository }) 
           res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Unauthorized' });
           return;
         }
-        const post = await deps.postRepository.create(req.userId, req.body);
+        const post = await deps.postService.createPost(req.userId, req.body);
         res.status(StatusCodes.CREATED).json(post);
       } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
@@ -49,7 +49,7 @@ export const createPostController = (deps: { postRepository: IPostRepository }) 
         }
         
         const { id } = req.params;
-        const post = await deps.postRepository.update(id, req.body);
+        const post = await deps.postService.updatePost(id, req.body);
         if (!post) {
           res.status(StatusCodes.NOT_FOUND).json({ message: 'Post not found' });
           return;
@@ -68,7 +68,7 @@ export const createPostController = (deps: { postRepository: IPostRepository }) 
         }
         
         const { id } = req.params;
-        const success = await deps.postRepository.delete(id);
+        const success = await deps.postService.deletePost(id);
         if (!success) {
           res.status(StatusCodes.NOT_FOUND).json({ message: 'Post not found' });
           return;

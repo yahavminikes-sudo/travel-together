@@ -2,8 +2,7 @@ import cors from 'cors';
 import express, { Application } from 'express';
 import { Server } from 'http';
 import { StatusCodes } from 'http-status-codes';
-import { IAuthService } from '../../../entities/IAuthService';
-import { IAuthRepository, ICommentRepository, IPostRepository, IUserRepository } from '../../../entities/IRepositories';
+import { IAuthService, ICommentService, IPostService, IUserService } from '../../../entities/IServices';
 import { IWebServer } from '../../../entities/IWebServer';
 import { createAuthController } from './controllers/authController';
 import { createCommentController } from './controllers/commentController';
@@ -17,11 +16,10 @@ import { createUserRouter } from './routes/users';
 
 export interface ExpressDependencies {
   authService: IAuthService;
-  authRepository: IAuthRepository;
-  userRepository: IUserRepository;
-  postRepository: IPostRepository;
-  commentRepository: ICommentRepository;
   authenticator: (token: string) => string | null;
+  postService: IPostService;
+  commentService: ICommentService;
+  userService: IUserService;
 }
 
 export const createExpressServer = (deps: ExpressDependencies): IWebServer => {
@@ -34,10 +32,10 @@ export const createExpressServer = (deps: ExpressDependencies): IWebServer => {
 
   const authenticate = createAuthenticateMiddleware(deps.authenticator);
   
-  const authController = createAuthController({ authService: deps.authService, authRepository: deps.authRepository });
-  const postController = createPostController({ postRepository: deps.postRepository });
-  const commentController = createCommentController({ commentRepository: deps.commentRepository });
-  const userController = createUserController({ userRepository: deps.userRepository });
+  const authController = createAuthController({ authService: deps.authService });
+  const postController = createPostController({ postService: deps.postService });
+  const commentController = createCommentController({ commentService: deps.commentService });
+  const userController = createUserController({ userService: deps.userService });
 
   app.get('/health', (req, res) => {
     res.status(StatusCodes.OK).json({ status: 'ok', timestamp: new Date().toISOString() });

@@ -3,7 +3,7 @@ export interface TokenPair {
   refreshToken: string;
 }
 
-export interface IAuthService {
+export interface IAuthProvider {
   hashPassword(password: string): Promise<string>;
   comparePassword(password: string, hash: string): Promise<boolean>;
   generateTokens(payload: object): TokenPair;
