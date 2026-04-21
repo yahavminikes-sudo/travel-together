@@ -2,6 +2,10 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { IAuthService } from '../../../../entities/IServices';
 
+const getErrorMessage = (error: unknown): string => {
+  return error instanceof Error ? error.message : 'Unknown error';
+};
+
 export const createAuthController = ({ authService }: { authService: IAuthService }) => {
   return {
     register: async (req: Request, res: Response) => {
@@ -14,12 +18,14 @@ export const createAuthController = ({ authService }: { authService: IAuthServic
 
         const result = await authService.register(req.body);
         res.status(StatusCodes.CREATED).json(result);
-      } catch (err: any) {
-        if (err.message === 'Email already registered') {
-          res.status(StatusCodes.CONFLICT).json({ message: err.message });
+      } catch (error: unknown) {
+        const message = getErrorMessage(error);
+
+        if (message === 'Email already registered') {
+          res.status(StatusCodes.CONFLICT).json({ message });
           return;
         }
-        console.error(err);
+        console.error(error);
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
       }
     },
@@ -34,12 +40,14 @@ export const createAuthController = ({ authService }: { authService: IAuthServic
         
         const result = await authService.login(req.body);
         res.status(StatusCodes.OK).json(result);
-      } catch (err: any) {
-        if (err.message === 'Invalid credentials') {
-          res.status(StatusCodes.UNAUTHORIZED).json({ message: err.message });
+      } catch (error: unknown) {
+        const message = getErrorMessage(error);
+
+        if (message === 'Invalid credentials') {
+          res.status(StatusCodes.UNAUTHORIZED).json({ message });
           return;
         }
-        console.error(err);
+        console.error(error);
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
       }
     }

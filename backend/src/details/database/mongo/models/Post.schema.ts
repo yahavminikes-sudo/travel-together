@@ -1,7 +1,12 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 import { Post } from '@shared/post.types';
 
-const postSchema = new Schema<Omit<Post, '_id' | 'author'>>({
+export interface IPostDocument extends Omit<Post, '_id' | 'author' | 'createdAt' | 'updatedAt'>, Document {
+  createdAt: string;
+  updatedAt: string;
+}
+
+const postSchema = new Schema<IPostDocument>({
   authorId: { type: String, required: true, ref: 'User' },
   title: { type: String, required: true },
   content: { type: String, required: true },
@@ -10,4 +15,4 @@ const postSchema = new Schema<Omit<Post, '_id' | 'author'>>({
   tags: [{ type: String }]
 }, { timestamps: true });
 
-export const PostModel = mongoose.model<Omit<Post, '_id' | 'author'>>('Post', postSchema);
+export const PostModel = mongoose.model<IPostDocument>('Post', postSchema);

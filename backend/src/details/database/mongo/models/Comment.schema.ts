@@ -1,10 +1,15 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 import { Comment } from '@shared/comment.types';
 
-const commentSchema = new Schema<Omit<Comment, '_id' | 'author'>>({
+export interface ICommentDocument extends Omit<Comment, '_id' | 'author' | 'createdAt' | 'updatedAt'>, Document {
+  createdAt: string;
+  updatedAt: string;
+}
+
+const commentSchema = new Schema<ICommentDocument>({
   postId: { type: String, required: true, ref: 'Post' },
   authorId: { type: String, required: true, ref: 'User' },
   content: { type: String, required: true },
 }, { timestamps: true });
 
-export const CommentModel = mongoose.model<Omit<Comment, '_id' | 'author'>>('Comment', commentSchema);
+export const CommentModel = mongoose.model<ICommentDocument>('Comment', commentSchema);
