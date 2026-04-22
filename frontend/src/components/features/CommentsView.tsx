@@ -3,10 +3,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm as useRHForm } from 'react-hook-form';
 import { Alert, Form, ListGroup } from 'react-bootstrap';
 import { Comment } from '@travel-together/shared/types/comment.types';
-import { CustomButton } from '@/components/ui/CustomButton';
+import { MessageCircle } from 'lucide-react';
 import { commentSchema, CommentFormData } from '@travel-together/shared/schemas/commentSchemas';
 
 interface CommentsViewProps {
+  canComment: boolean;
   comments: Comment[];
   isSubmitting: boolean;
   submitError?: string | null;
@@ -14,6 +15,7 @@ interface CommentsViewProps {
 }
 
 export const CommentsView: React.FC<CommentsViewProps> = ({
+  canComment,
   comments,
   isSubmitting,
   submitError,
@@ -34,38 +36,61 @@ export const CommentsView: React.FC<CommentsViewProps> = ({
   };
 
   return (
-    <div className="mt-5">
-      <h3 className="mb-4">Comments</h3>
+    <div className="travel-comments-wrap">
+      <div className="travel-comments-card mb-4">
+        <div className="d-flex align-items-center gap-2 mb-3">
+          <MessageCircle size={18} />
+          <h3 className="mb-0 fs-5">Join the conversation</h3>
+        </div>
 
-      {submitError ? <Alert variant="danger">{submitError}</Alert> : null}
+        {!canComment ? (
+          <Alert variant="light" className="mb-0 border">
+            Sign in to add a comment.
+          </Alert>
+        ) : (
+          <Form onSubmit={handleSubmit(handleFormSubmit)}>
+            {submitError ? <Alert variant="danger">{submitError}</Alert> : null}
 
-      <Form onSubmit={handleSubmit(handleFormSubmit)} className="mb-4">
-        <Form.Group className="mb-3">
-          <Form.Control
-            as="textarea"
-            rows={3}
-            placeholder="Add a comment..."
-            {...register('content')}
-            isInvalid={!!errors.content}
-          />
-          <Form.Control.Feedback type="invalid">{errors.content?.message}</Form.Control.Feedback>
-        </Form.Group>
-        <CustomButton type="submit" disabled={isSubmitting} variant="primary">
-          {isSubmitting ? 'Posting...' : 'Post Comment'}
-        </CustomButton>
-      </Form>
+            <Form.Group className="mb-3">
+              <Form.Control
+                as="textarea"
+                rows={3}
+                placeholder="Share your thoughts about this post..."
+                {...register('content')}
+                isInvalid={!!errors.content}
+              />
+              <Form.Control.Feedback type="invalid">{errors.content?.message}</Form.Control.Feedback>
+            </Form.Group>
+            <button type="submit" disabled={isSubmitting} className="btn btn-primary">
+              {isSubmitting ? 'Posting...' : 'Post Comment'}
+            </button>
+          </Form>
+        )}
+      </div>
 
       {comments.length === 0 ? (
-        <p className="text-muted">No comments yet. Be the first to comment!</p>
+        <div className="travel-comments-card">
+          <p className="text-muted mb-0">No comments yet. Be the first to comment!</p>
+        </div>
       ) : (
-        <ListGroup variant="flush">
+        <ListGroup variant="flush" className="travel-comments-list">
           {comments.map((comment) => (
-            <ListGroup.Item key={comment._id} className="bg-transparent px-0 py-3 border-bottom">
-              <div className="d-flex justify-content-between align-items-center mb-1">
-                <strong className="text-dark">{comment.author?.username || 'Unknown'}</strong>
-                <small className="text-muted">{new Date(comment.createdAt).toLocaleDateString()}</small>
+            <ListGroup.Item key={comment._id} className="travel-comments-item">
+              <div className="d-flex justify-content-between align-items-start gap-3 mb-2">
+                <div>
+                  <strong className="text-dark">{comment.author?.username || 'Unknown'}</strong>
+                  <div>
+                    <small className="text-muted">
+                      {new Date(comment.createdAt).toLocaleDateString(undefined, {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                    </small>
+                  </div>
+                </div>
               </div>
-              <p className="mb-0 text-secondary">{comment.content}</p>
+              <p className="mb-0 text-secondary" style={{ whiteSpace: 'pre-wrap' }}>{comment.content}</p>
             </ListGroup.Item>
           ))}
         </ListGroup>

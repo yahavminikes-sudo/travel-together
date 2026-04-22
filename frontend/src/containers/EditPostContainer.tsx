@@ -57,6 +57,7 @@ export const EditPostContainer: React.FC = () => {
   }
 
   const initialValues: EditPostFormData = {
+    destination: post.destination,
     title: post.title,
     content: post.content,
     imageUrl: post.imageUrl || '',

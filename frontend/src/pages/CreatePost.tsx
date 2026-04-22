@@ -50,6 +50,14 @@ export const CreatePost: React.FC = () => {
         
         <Form onSubmit={handleSubmit(onSubmit)}>
           <CustomInput
+            label="Destination"
+            type="text"
+            placeholder="Where did this story happen?"
+            error={errors.destination?.message}
+            {...register('destination')}
+          />
+
+          <CustomInput
             label="Title"
             type="text"
             placeholder="Give your adventure a catchy title"

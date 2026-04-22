@@ -19,6 +19,9 @@ export const mapToPost = (doc: any): Post => {
   return {
     _id: doc._id.toString(),
     authorId: doc.authorId.toString(),
+    author: doc.author ? mapToUser(doc.author) : undefined,
+    commentCount: doc.commentCount ?? 0,
+    destination: doc.destination,
     title: doc.title,
     content: doc.content,
     imageUrl: doc.imageUrl,
@@ -34,6 +37,7 @@ export const mapToComment = (doc: any): Comment => {
     _id: doc._id.toString(),
     postId: doc.postId.toString(),
     authorId: doc.authorId.toString(),
+    author: doc.author ? mapToUser(doc.author) : undefined,
     content: doc.content,
     createdAt: new Date(doc.createdAt).toISOString(),
     updatedAt: new Date(doc.updatedAt).toISOString()

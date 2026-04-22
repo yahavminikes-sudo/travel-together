@@ -1,6 +1,7 @@
 import React from 'react';
 import { Badge, Button, Container } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { MapPin, MessageCircle } from 'lucide-react';
 import { Post } from '@travel-together/shared/types/post.types';
 import { CommentsContainer } from '@/containers/CommentsContainer';
 import { LikeButton } from '@/components/ui/LikeButton';
@@ -36,6 +37,11 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
             <LikeButton isLiked={false} likeCount={post.likes.length} onClick={() => {}} />
           </div>
 
+          <div className="d-flex align-items-center gap-2 mb-3 text-accent-brand fw-medium">
+            <MapPin size={16} />
+            <span>{post.destination}</span>
+          </div>
+
           <div className="d-flex align-items-center mb-4 text-muted">
             <span className="fw-medium text-dark">{post.author?.username || 'Unknown'}</span>
             <span className="mx-2">&bull;</span>
@@ -64,7 +70,13 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
         </div>
       </CustomCard>
 
-      <CommentsContainer postId={post._id} />
+      <section id="comments">
+        <div className="d-flex align-items-center gap-2 mb-3">
+          <MessageCircle size={18} />
+          <h2 className="mb-0 fs-4">Comments ({post.commentCount ?? 0})</h2>
+        </div>
+        <CommentsContainer postId={post._id} />
+      </section>
     </Container>
   );
 };

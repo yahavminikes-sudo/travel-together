@@ -4,6 +4,8 @@ export interface Post {
   _id: string;
   authorId: string;
   author?: User;
+  commentCount: number;
+  destination: string;
   title: string;
   content: string;
   imageUrl?: string;
@@ -14,6 +16,7 @@ export interface Post {
 }
 
 export interface CreatePostDto {
+  destination: string;
   title: string;
   content: string;
   imageUrl?: string;
@@ -21,6 +24,7 @@ export interface CreatePostDto {
 }
 
 export interface UpdatePostDto {
+  destination?: string;
   title?: string;
   content?: string;
   imageUrl?: string;

@@ -2,6 +2,7 @@ import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react
 import { updatePost as updatePostRequest } from '@/api';
 
 export interface UpdatePostData {
+  destination: string;
   title: string;
   content: string;
   imageUrl?: string;

@@ -33,7 +33,13 @@ export const useMyPosts = () => {
 
   return useQuery({
     queryKey: ['myPosts', currentUser?._id],
-    queryFn: ({ signal }) => getMyPosts(currentUser!._id, signal),
+    queryFn: ({ signal }) => {
+      if (!currentUser?._id) {
+        return Promise.resolve([]);
+      }
+
+      return getMyPosts(currentUser._id, signal);
+    },
     enabled: isAuthenticated && !!currentUser?._id,
   });
 };
@@ -80,6 +86,30 @@ export const useCreateComment = (postId: string) => {
     onSuccess: (comment) => {
       queryClient.setQueryData<Comment[]>(['comments', postId], (current = []) => {
         return [comment, ...current];
+      });
+      queryClient.setQueryData<Post | undefined>(['post', postId], (current) => {
+        if (!current) {
+          return current;
+        }
+
+        return {
+          ...current,
+          commentCount: (current.commentCount ?? 0) + 1,
+        };
+      });
+      queryClient.setQueryData<Post[]>(['posts'], (current = []) => {
+        return current.map((post) =>
+          post._id === postId
+            ? { ...post, commentCount: (post.commentCount ?? 0) + 1 }
+            : post
+        );
+      });
+      queryClient.setQueryData<Post[]>(['myPosts'], (current = []) => {
+        return current.map((post) =>
+          post._id === postId
+            ? { ...post, commentCount: (post.commentCount ?? 0) + 1 }
+            : post
+        );
       });
     },
   });

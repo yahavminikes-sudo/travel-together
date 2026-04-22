@@ -1,11 +1,14 @@
 import React from 'react';
 import { Col, Container, Form, InputGroup, Row } from 'react-bootstrap';
 import { Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Post } from '@travel-together/shared/types/post.types';
 import { PostCard } from './PostCard';
 
 interface PostsGridViewProps {
   currentUserId?: string;
+  ctaLabel?: string;
+  ctaTo?: string;
   emptyActionLabel?: string;
   emptyActionTo?: string;
   emptyMessage: string;
@@ -17,6 +20,8 @@ interface PostsGridViewProps {
 
 export const PostsGridView: React.FC<PostsGridViewProps> = ({
   currentUserId,
+  ctaLabel,
+  ctaTo,
   emptyActionLabel,
   emptyActionTo,
   emptyMessage,
@@ -36,6 +41,7 @@ export const PostsGridView: React.FC<PostsGridViewProps> = ({
 
     return posts.filter((post) => {
       const haystack = [
+        post.destination,
         post.title,
         post.content,
         post.author?.username,
@@ -83,6 +89,14 @@ export const PostsGridView: React.FC<PostsGridViewProps> = ({
       </section>
 
       <Container as="main" className="py-4 py-md-5">
+        {ctaLabel && ctaTo ? (
+          <div className="d-flex justify-content-end mb-4">
+            <Link to={ctaTo} className="btn btn-primary">
+              {ctaLabel}
+            </Link>
+          </div>
+        ) : null}
+
         {filteredPosts.length === 0 ? (
           <div className="text-center py-5">
             <p className="text-muted fs-5 mb-4">{emptyMessage}</p>
