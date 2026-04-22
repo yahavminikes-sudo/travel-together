@@ -2,6 +2,7 @@ import { User } from '@shared/user.types';
 import { Post, CreatePostDto, UpdatePostDto } from '@shared/post.types';
 import { Comment, CreateCommentDto, UpdateCommentDto } from '@shared/comment.types';
 import { LoginCredentials, RegisterCredentials, AuthResponse } from '@shared/auth.types';
+import { ContentType, SearchResult } from '@shared/search.types';
 
 export interface IAuthService {
   register(dto: RegisterCredentials): Promise<AuthResponse>;
@@ -28,3 +29,10 @@ export interface ICommentService {
   updateComment(id: string, commentDto: UpdateCommentDto): Promise<Comment | null>;
   deleteComment(id: string): Promise<boolean>;
 }
+
+export interface IEmbeddingService {
+  indexContent(contentId: string, contentType: ContentType, text: string): Promise<void>;
+  search(query: string, topK?: number): Promise<SearchResult[]>;
+  removeContent(contentId: string, contentType: ContentType): Promise<void>;
+}
+
