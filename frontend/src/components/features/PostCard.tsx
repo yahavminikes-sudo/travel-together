@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Image } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Heart, MapPin, MessageCircle } from 'lucide-react';
 import { Post } from '@travel-together/shared/types/post.types';
 
@@ -11,6 +11,7 @@ interface Props {
 }
 
 export const PostCard: React.FC<Props> = ({ post, currentUserId, onLikeToggle }) => {
+  const location = useLocation();
   const isLiked = currentUserId ? post.likes.includes(currentUserId) : false;
   const authorName = post.author?.username || 'Unknown Author';
   const authorFallback = authorName.charAt(0).toUpperCase();
@@ -25,7 +26,7 @@ export const PostCard: React.FC<Props> = ({ post, currentUserId, onLikeToggle })
   return (
     <Card className="travel-post-card h-100 shadow-sm border-0 overflow-hidden">
       {post.imageUrl && (
-        <Link to={`/posts/${post._id}`} className="travel-post-image-wrap">
+        <Link to={`/posts/${post._id}`} state={{ from: location.pathname }} className="travel-post-image-wrap">
           <img
             src={post.imageUrl}
             alt={post.title}
@@ -41,7 +42,7 @@ export const PostCard: React.FC<Props> = ({ post, currentUserId, onLikeToggle })
           </div>
         ) : null}
 
-        <Link to={`/posts/${post._id}`} className="text-decoration-none text-body">
+        <Link to={`/posts/${post._id}`} state={{ from: location.pathname }} className="text-decoration-none text-body">
           <h3 className="travel-post-title mb-2">{post.title}</h3>
         </Link>
 
@@ -78,7 +79,7 @@ export const PostCard: React.FC<Props> = ({ post, currentUserId, onLikeToggle })
               <span>{post.likes.length}</span>
             </button>
 
-            <Link to={`/posts/${post._id}#comments`} className="travel-post-comments">
+            <Link to={`/posts/${post._id}#comments`} state={{ from: location.pathname }} className="travel-post-comments">
               <MessageCircle size={16} />
               <span>{post.commentCount ?? 0}</span>
             </Link>

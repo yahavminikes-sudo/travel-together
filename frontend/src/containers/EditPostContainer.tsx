@@ -75,7 +75,7 @@ export const EditPostContainer: React.FC = () => {
             { id, data },
             {
               onSuccess: () => {
-                navigate(`/posts/${id}`);
+                navigate(-1);
               },
             }
           )

@@ -4,6 +4,7 @@ import type { Post } from '@travel-together/shared/types/post.types';
 import {
   createComment,
   createPost,
+  deletePost,
   getCommentsByPost,
   getMyPosts,
   getPostById,
@@ -66,6 +67,19 @@ export const useUpdatePost = () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['myPosts'] });
       queryClient.setQueryData<Post>(['post', post._id], post);
+    },
+  });
+};
+
+export const useDeletePost = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (postId: string) => deletePost(postId),
+    onSuccess: (_, postId) => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['myPosts'] });
+      queryClient.removeQueries({ queryKey: ['post', postId] });
     },
   });
 };
