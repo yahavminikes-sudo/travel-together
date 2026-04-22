@@ -8,6 +8,7 @@ export const createUserRouter = (
   const router = Router();
   
   router.get('/profile', authenticate, userController.getProfile);
+  router.put('/profile', authenticate, userController.updateProfile);
   router.get('/:id', userController.getUserById);
   
   return router;

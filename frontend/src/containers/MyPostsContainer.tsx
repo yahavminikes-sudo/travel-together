@@ -25,8 +25,6 @@ export const MyPostsContainer: React.FC = () => {
   return (
     <PostsGridView
       currentUserId={currentUser._id}
-      ctaLabel="Create New Post"
-      ctaTo="/posts/create"
       emptyActionLabel="Share your first post"
       emptyActionTo="/posts/create"
       emptyMessage="You haven't shared any adventures yet."

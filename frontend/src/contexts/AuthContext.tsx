@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import type { LoginCredentials, RegisterCredentials } from '@travel-together/shared/types/auth.types';
-import type { User } from '@travel-together/shared/types/user.types';
+import type { UpdateProfileDto, User } from '@travel-together/shared/types/user.types';
 import {
   clearStoredAuthToken,
   getProfile,
@@ -8,6 +8,7 @@ import {
   login as loginRequest,
   register as registerRequest,
   setStoredAuthToken,
+  updateProfile as updateProfileRequest,
 } from '@/api';
 
 interface AuthContextValue {
@@ -19,6 +20,7 @@ interface AuthContextValue {
   refreshProfile: () => Promise<User | null>;
   register: (credentials: RegisterCredentials) => Promise<User>;
   token: string | null;
+  updateProfile: (updates: UpdateProfileDto) => Promise<User>;
 }
 
 export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -72,6 +74,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return response.user;
   };
 
+  const updateProfile = async (updates: UpdateProfileDto) => {
+    const updatedUser = await updateProfileRequest(updates);
+    setCurrentUser(updatedUser);
+    return updatedUser;
+  };
+
   const logout = () => {
     clearAuth();
   };
@@ -120,6 +128,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         refreshProfile,
         register,
         token,
+        updateProfile,
       }}
     >
       {children}
