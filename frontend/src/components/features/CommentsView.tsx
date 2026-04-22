@@ -2,9 +2,9 @@ import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm as useRHForm } from 'react-hook-form';
 import { Alert, Form, ListGroup } from 'react-bootstrap';
-import { Comment } from '@shared/types/comment.types';
+import { Comment } from '@travel-together/shared/types/comment.types';
 import { CustomButton } from '@/components/ui/CustomButton';
-import { commentSchema, CommentFormData } from '@shared/schemas/commentSchemas';
+import { commentSchema, CommentFormData } from '@travel-together/shared/schemas/commentSchemas';
 
 interface CommentsViewProps {
   comments: Comment[];

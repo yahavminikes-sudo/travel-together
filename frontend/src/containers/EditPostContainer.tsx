@@ -1,22 +1,19 @@
 import React from 'react';
 import { Container } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
-import { usePostQuery } from '@/api/queries/usePostQuery';
-import { useUpdatePostMutation } from '@/api/mutations/useUpdatePostMutation';
 import { EditPostForm } from '@/components/features/EditPostForm';
 import { PageError } from '@/components/ui/PageError';
 import { PageLoader } from '@/components/ui/PageLoader';
-import { EditPostFormData } from '../../../shared/schemas/postSchemas';
+import { useAuth } from '@/hooks/useAuth';
+import { usePost, useUpdatePost } from '@/hooks/usePosts';
+import { EditPostFormData } from '@travel-together/shared/schemas/postSchemas';
 
 export const EditPostContainer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: post, error: queryError, isLoading } = usePostQuery(id as string);
-  const mutation = useUpdatePostMutation({
-    onSuccess: () => {
-      navigate(`/posts/${id}`);
-    },
-  });
+  const { currentUser, isAuthenticated, isInitializing } = useAuth();
+  const { data: post, error: queryError, isLoading } = usePost(id);
+  const mutation = useUpdatePost();
 
   const error = queryError instanceof Error ? queryError.message : null;
   const submitError = mutation.isError ? mutation.error.message : null;
@@ -31,8 +28,12 @@ export const EditPostContainer: React.FC = () => {
     );
   }
 
-  if (isLoading) {
+  if (isInitializing || isLoading) {
     return <PageLoader />;
+  }
+
+  if (!isAuthenticated || !currentUser) {
+    return <PageError message="You need to sign in to edit a post." actionLabel="Go to Login" onAction={() => navigate('/login')} />;
   }
 
   if (error || !post) {
@@ -41,6 +42,16 @@ export const EditPostContainer: React.FC = () => {
         message={error || 'Failed to load post'}
         actionLabel="Go Back"
         onAction={() => navigate(-1)}
+      />
+    );
+  }
+
+  if (post.authorId !== currentUser._id) {
+    return (
+      <PageError
+        message="You can only edit your own posts."
+        actionLabel="View Post"
+        onAction={() => navigate(`/posts/${id}`)}
       />
     );
   }
@@ -58,7 +69,16 @@ export const EditPostContainer: React.FC = () => {
         initialValues={initialValues}
         isSubmitting={mutation.isPending}
         onCancel={() => navigate(-1)}
-        onSubmit={(data) => mutation.mutate({ id, data })}
+        onSubmit={(data) =>
+          mutation.mutate(
+            { id, data },
+            {
+              onSuccess: () => {
+                navigate(`/posts/${id}`);
+              },
+            }
+          )
+        }
         submitError={submitError}
       />
     </Container>

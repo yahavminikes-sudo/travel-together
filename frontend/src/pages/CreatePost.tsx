@@ -3,33 +3,43 @@ import { Container, Form, Alert } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
-import { useCreatePostMutation } from '../api/mutations/useCreatePostMutation';
+import { useAuth } from '@/hooks/useAuth';
+import { useCreatePost } from '@/hooks/usePosts';
 import { CustomCard } from '../components/ui/CustomCard';
 import { CustomInput } from '../components/ui/CustomInput';
 import { CustomButton } from '@/components/ui/CustomButton';
-import { createPostSchema, CreatePostFormData } from '../../../shared/schemas/postSchemas';
-
-
+import { createPostSchema, CreatePostFormData } from '@travel-together/shared/schemas/postSchemas';
 
 export const CreatePost: React.FC = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const { register, handleSubmit, formState: { errors } } = useForm<CreatePostFormData>({
     resolver: zodResolver(createPostSchema)
   });
 
-  const mutation = useCreatePostMutation({
-    onSuccess: (data) => {
-      navigate(`/posts/${data._id}`);
-    }
-  });
+  const mutation = useCreatePost();
 
   const onSubmit = (data: CreatePostFormData) => {
-    mutation.mutate(data);
+    mutation.mutate(data, {
+      onSuccess: (post) => {
+        navigate(`/posts/${post._id}`);
+      },
+    });
   };
 
   const isSubmitting = mutation.isPending;
   const error = mutation.isError ? mutation.error.message : null;
+
+  if (!isAuthenticated) {
+    return (
+      <Container className="py-5" style={{ maxWidth: '800px' }}>
+        <Alert variant="warning" className="mb-0">
+          You need to sign in before creating a post.
+        </Alert>
+      </Container>
+    );
+  }
 
   return (
     <Container className="py-5" style={{ maxWidth: '800px' }}>

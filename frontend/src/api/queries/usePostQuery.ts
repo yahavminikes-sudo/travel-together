@@ -1,10 +1,9 @@
-import axios from 'axios';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { Post } from '@shared/types/post.types';
+import { Post } from '@travel-together/shared/types/post.types';
+import { getPostById } from '@/api';
 
 export const fetchPost = async (id: string): Promise<Post> => {
-  const response = await axios.get<Post>(`/api/posts/${id}`);
-  return response.data;
+  return getPostById(id);
 };
 
 export const usePostQuery = (id: string, options?: Omit<UseQueryOptions<Post, Error>, 'queryKey' | 'queryFn'>) => {

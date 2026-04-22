@@ -1,6 +1,6 @@
 import { ICommentService } from '../entities/IServices';
 import { ICommentRepository } from '../entities/IRepositories';
-import { CreateCommentDto, UpdateCommentDto } from '@shared/comment.types';
+import { CreateCommentDto, UpdateCommentDto } from '@travel-together/shared/types';
 
 export const createCommentService = ({ commentRepository }: { commentRepository: ICommentRepository }): ICommentService => {
   return {

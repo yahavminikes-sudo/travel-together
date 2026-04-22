@@ -1,14 +1,16 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { usePostQuery } from '@/api/queries/usePostQuery';
 import { PostDetailView } from '@/components/features/PostDetailView';
 import { PageError } from '@/components/ui/PageError';
 import { PageLoader } from '@/components/ui/PageLoader';
+import { useAuth } from '@/hooks/useAuth';
+import { usePost } from '@/hooks/usePosts';
 
 export const PostDetailContainer: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { data: post, error: queryError, isLoading } = usePostQuery(id as string);
+  const { currentUser } = useAuth();
+  const { data: post, error: queryError, isLoading } = usePost(id);
   const error = queryError instanceof Error ? queryError.message : null;
 
   if (isLoading) {
@@ -25,5 +27,5 @@ export const PostDetailContainer: React.FC = () => {
     );
   }
 
-  return <PostDetailView post={post} onBack={() => navigate(-1)} />;
+  return <PostDetailView currentUserId={currentUser?._id} post={post} onBack={() => navigate(-1)} />;
 };

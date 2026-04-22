@@ -2,7 +2,7 @@ import React from 'react';
 import { Container } from 'react-bootstrap';
 import { AvatarSize, CustomAvatar } from '@/components/ui/CustomAvatar';
 import { CustomCard } from '@/components/ui/CustomCard';
-import { User } from '@shared/types/user.types';
+import { User } from '@travel-together/shared/types/user.types';
 
 interface ProfileViewProps {
   user: User;

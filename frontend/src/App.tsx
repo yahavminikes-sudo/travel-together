@@ -1,65 +1,60 @@
-import { useState, useEffect } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Navbar } from "./components/features/Navbar";
-import { Login } from "./pages/Login";
-import { Register } from "./pages/Register";
-import { CreatePost } from "./pages/CreatePost";
-import { NotFound } from "./pages/NotFound";
-import { PostsFeedContainer } from "./containers/PostsFeedContainer";
-import { PostDetailContainer } from "./containers/PostDetailContainer";
-import { ProfileContainer } from "./containers/ProfileContainer";
-import { EditPostContainer } from "./containers/EditPostContainer";
-import { MyPostsContainer } from "./containers/MyPostsContainer";
-
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
+import { EditPostContainer } from './containers/EditPostContainer';
+import { MyPostsContainer } from './containers/MyPostsContainer';
+import { PostDetailContainer } from './containers/PostDetailContainer';
+import { PostsFeedContainer } from './containers/PostsFeedContainer';
+import { ProfileContainer } from './containers/ProfileContainer';
+import { Navbar } from './components/features/Navbar';
+import { PageLoader } from './components/ui/PageLoader';
+import { CreatePost } from './pages/CreatePost';
+import { Login } from './pages/Login';
+import { NotFound } from './pages/NotFound';
+import { Register } from './pages/Register';
 
 const queryClient = new QueryClient();
 
-const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState('');
+const AppShell = () => {
+  const { currentUser, isAuthenticated, isInitializing, logout } = useAuth();
 
-  // Simple mock check for task 4 (proper auth is task 11)
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      setIsAuthenticated(true);
-      setUsername('TestUser'); // Mock username
-    } else {
-      setIsAuthenticated(false);
-    }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setIsAuthenticated(false);
-    setUsername('');
-  };
+  if (isInitializing) {
+    return <PageLoader />;
+  }
 
   return (
+    <BrowserRouter>
+      <div className="d-flex flex-column min-vh-100 bg-light">
+        <Navbar
+          isAuthenticated={isAuthenticated}
+          onLogout={logout}
+          username={currentUser?.username}
+        />
+        <main className="flex-grow-1">
+          <Routes>
+            <Route path="/" element={<PostsFeedContainer />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<ProfileContainer />} />
+            <Route path="/my-posts" element={<MyPostsContainer />} />
+            <Route path="/posts/create" element={<CreatePost />} />
+            <Route path="/posts/:id" element={<PostDetailContainer />} />
+            <Route path="/posts/:id/edit" element={<EditPostContainer />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+      </div>
+    </BrowserRouter>
+  );
+};
+
+const App = () => {
+  return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <div className="d-flex flex-column min-vh-100 bg-light">
-          <Navbar 
-            isAuthenticated={isAuthenticated} 
-            username={username} 
-            onLogout={handleLogout} 
-          />
-          <main className="flex-grow-1">
-            <Routes>
-              <Route path="/" element={<PostsFeedContainer />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/profile" element={<ProfileContainer />} />
-              <Route path="/my-posts" element={<MyPostsContainer />} />
-              <Route path="/posts/create" element={<CreatePost />} />
-              <Route path="/posts/:id" element={<PostDetailContainer />} />
-              <Route path="/posts/:id/edit" element={<EditPostContainer />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </main>
-        </div>
-      </BrowserRouter>
+      <AuthProvider>
+        <AppShell />
+      </AuthProvider>
     </QueryClientProvider>
   );
 };

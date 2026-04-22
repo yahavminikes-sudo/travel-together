@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { Post } from '@shared/types/post.types';
+import { Post } from '@travel-together/shared/types/post.types';
 import { LikeButton } from '../ui/LikeButton';
 
 interface Props {

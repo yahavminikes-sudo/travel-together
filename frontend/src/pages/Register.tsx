@@ -1,36 +1,42 @@
 import React from 'react';
+import { useState } from 'react';
 import { Container, Form, Alert } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate, Link } from 'react-router-dom';
-import { useRegisterMutation } from '../api/mutations/useRegisterMutation';
+import { useAuth } from '@/hooks/useAuth';
 import { CustomCard } from '../components/ui/CustomCard';
 import { CustomInput } from '../components/ui/CustomInput';
 import { CustomButton } from '../components/ui/CustomButton';
-import { registerSchema, RegisterFormData } from '../../../shared/schemas/authSchemas';
-
-
+import { registerSchema, RegisterFormData } from '@travel-together/shared/schemas/authSchemas';
 
 export const Register: React.FC = () => {
   const navigate = useNavigate();
+  const { register: registerUser } = useAuth();
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema)
   });
 
-  const mutation = useRegisterMutation({
-    onSuccess: (data) => {
-      localStorage.setItem('token', data.accessToken);
+  const onSubmit = async (data: RegisterFormData) => {
+    setAuthError(null);
+    setIsSubmitting(true);
+
+    try {
+      await registerUser({
+        email: data.email,
+        password: data.password,
+        username: data.username,
+      });
       navigate('/');
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : 'Failed to create your account.');
+    } finally {
+      setIsSubmitting(false);
     }
-  });
-
-  const onSubmit = (data: RegisterFormData) => {
-    mutation.mutate(data);
   };
-
-  const isSubmitting = mutation.isPending;
-  const authError = mutation.isError ? mutation.error.message : null;
 
   return (
     <Container className="d-flex align-items-center justify-content-center py-5" style={{ minHeight: '80vh' }}>

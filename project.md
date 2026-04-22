@@ -151,13 +151,13 @@ tasks:
     owner: Dev A
     files:
       - travel-together/frontend/src/services/api.ts
-      - travel-together/frontend/src/services/http.ts
+      - travel-together/frontend/src/services/apiClient.ts
       - travel-together/frontend/src/hooks/usePosts.ts
       - travel-together/frontend/src/hooks/useAuth.ts
       - travel-together/frontend/src/hooks/useSearch.ts
       - travel-together/frontend/src/contexts/AuthContext.tsx
     description: |
-      Connect frontend to backend API using Axios HttpService. Implement custom hooks for data fetching with AbortController.
+      Connect frontend to backend API using a shared Axios apiClient service. Implement custom hooks for data fetching with AbortController.
       Add search integration with vector search backend.
 
 parallelization:

@@ -1,10 +1,9 @@
-import axios from 'axios';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { Comment } from '@shared/types/comment.types';
+import { Comment } from '@travel-together/shared/types/comment.types';
+import { getCommentsByPost } from '@/api';
 
 export const fetchComments = async (postId: string): Promise<Comment[]> => {
-  const response = await axios.get<Comment[]>(`/api/posts/${postId}/comments`);
-  return response.data;
+  return getCommentsByPost(postId);
 };
 
 export const useCommentsQuery = (postId: string, options?: Omit<UseQueryOptions<Comment[], Error>, 'queryKey' | 'queryFn'>) => {

@@ -1,7 +1,7 @@
 import { IAuthService } from '../entities/IServices';
 import { IAuthRepository } from '../entities/IRepositories';
 import { IAuthProvider } from '../entities/IAuthProvider';
-import { AuthResponse, LoginCredentials, RegisterCredentials } from '@shared/auth.types';
+import { AuthResponse, LoginCredentials, RegisterCredentials } from '@travel-together/shared/types/auth.types';
 
 export const createAuthService = ({ authRepository, authProvider }: { authRepository: IAuthRepository, authProvider: IAuthProvider }): IAuthService => {
   return {
@@ -15,7 +15,6 @@ export const createAuthService = ({ authRepository, authProvider }: { authReposi
       
       const hashedPassword = await authProvider.hashPassword(dto.password);
       const newRecord = await authRepository.saveAuthRecord({
-        _id: '',
         username: dto.username,
         email: dto.email,
         password: hashedPassword,

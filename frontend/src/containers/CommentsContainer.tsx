@@ -1,23 +1,22 @@
 import React from 'react';
 import { Spinner } from 'react-bootstrap';
-import { useCommentsQuery } from '@/api/queries/useCommentsQuery';
-import { useCreateCommentMutation } from '@/api/mutations/useCreateCommentMutation';
 import { CommentsView } from '@/components/features/CommentsView';
 import { PageError } from '@/components/ui/PageError';
-import { CommentFormData } from '../../../shared/schemas/commentSchemas';
+import { useCreateComment, useComments } from '@/hooks/usePosts';
+import { CommentFormData } from '@travel-together/shared/schemas/commentSchemas';
 
 interface CommentsContainerProps {
   postId: string;
 }
 
 export const CommentsContainer: React.FC<CommentsContainerProps> = ({ postId }) => {
-  const { data: comments = [], error: queryError, isLoading } = useCommentsQuery(postId);
-  const mutation = useCreateCommentMutation();
+  const { data: comments = [], error: queryError, isLoading } = useComments(postId);
+  const mutation = useCreateComment(postId);
   const error = queryError instanceof Error ? queryError.message : null;
   const submitError = mutation.isError ? mutation.error.message : null;
 
   const handleSubmit = async (data: CommentFormData) => {
-    await mutation.mutateAsync({ postId, data });
+    await mutation.mutateAsync(data);
   };
 
   if (isLoading) {

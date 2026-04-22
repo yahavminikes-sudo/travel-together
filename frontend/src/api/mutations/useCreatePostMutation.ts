@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
+import { createPost as createPostRequest } from '@/api';
 
 export interface CreatePostData {
   title: string;
@@ -9,19 +9,7 @@ export interface CreatePostData {
 }
 
 export const createPost = async (data: CreatePostData) => {
-  const tagsArray = data.tags 
-    ? data.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
-    : [];
-
-  const postData = {
-    title: data.title,
-    content: data.content,
-    imageUrl: data.imageUrl || undefined,
-    tags: tagsArray
-  };
-
-  const response = await axios.post('/api/posts', postData);
-  return response.data;
+  return createPostRequest(data);
 };
 
 export const useCreatePostMutation = <TOnMutateResult = unknown>(
