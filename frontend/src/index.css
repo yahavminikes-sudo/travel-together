@@ -289,3 +289,29 @@ h1, h2, h3, h4 {
   padding-left: 1.25rem;
   padding-right: 1.25rem;
 }
+.create-post-upload {
+  width: 100%;
+  min-height: 140px;
+  border: 2px dashed hsl(var(--border));
+  border-radius: 0.75rem;
+  background-color: hsl(var(--card));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+}
+.create-post-upload-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: hsl(var(--muted-foreground));
+}
+.create-post-upload-preview {
+  width: 100%;
+  min-height: 140px;
+  max-height: 240px;
+  object-fit: cover;
+}
