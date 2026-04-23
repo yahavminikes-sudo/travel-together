@@ -1,10 +1,11 @@
-import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm as useRHForm } from 'react-hook-form';
-import { Alert, Form, ListGroup } from 'react-bootstrap';
+import { CommentFormData, commentSchema } from '@travel-together/shared/schemas/commentSchemas';
 import { Comment } from '@travel-together/shared/types/comment.types';
 import { MessageCircle } from 'lucide-react';
-import { commentSchema, CommentFormData } from '@travel-together/shared/schemas/commentSchemas';
+import React from 'react';
+import { Alert, Form, ListGroup } from 'react-bootstrap';
+import { useForm as useRHForm } from 'react-hook-form';
+import styles from './CommentsView.module.css';
 
 interface CommentsViewProps {
   canComment: boolean;
@@ -36,8 +37,8 @@ export const CommentsView: React.FC<CommentsViewProps> = ({
   };
 
   return (
-    <div className="travel-comments-wrap">
-      <div className="travel-comments-card mb-4">
+    <div className={styles.wrap}>
+      <div className={`${styles.card} mb-4`}>
         <div className="d-flex align-items-center gap-2 mb-3">
           <MessageCircle size={18} />
           <h3 className="mb-0 fs-5">Join the conversation</h3>
@@ -69,13 +70,13 @@ export const CommentsView: React.FC<CommentsViewProps> = ({
       </div>
 
       {comments.length === 0 ? (
-        <div className="travel-comments-card">
+        <div className={styles.card}>
           <p className="text-muted mb-0">No comments yet. Be the first to comment!</p>
         </div>
       ) : (
-        <ListGroup variant="flush" className="travel-comments-list">
+        <ListGroup variant="flush" className={styles.list}>
           {comments.map((comment) => (
-            <ListGroup.Item key={comment._id} className="travel-comments-item">
+            <ListGroup.Item key={comment._id} className={styles.item}>
               <div className="d-flex justify-content-between align-items-start gap-3 mb-2">
                 <div>
                   <strong className="text-dark">{comment.author?.username || 'Unknown'}</strong>

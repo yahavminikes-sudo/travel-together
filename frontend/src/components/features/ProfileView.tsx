@@ -1,11 +1,12 @@
-import React from 'react';
-import { Alert, Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
-import { MapPin, Pencil, X } from 'lucide-react';
 import { AvatarSize, CustomAvatar } from '@/components/ui/CustomAvatar';
+import { useAuth } from '@/hooks/useAuth';
 import { Post } from '@travel-together/shared/types/post.types';
 import { User } from '@travel-together/shared/types/user.types';
-import { useAuth } from '@/hooks/useAuth';
+import { MapPin, Pencil, X } from 'lucide-react';
+import React from 'react';
+import { Alert, Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
 import { PostCard } from './PostCard';
+import styles from './ProfileView.module.css';
 
 interface ProfileViewProps {
   postCount: number;
@@ -83,18 +84,18 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ postCount, posts, user
 
   return (
     <>
-      <section className="bg-hero py-5 profile-hero">
+      <section className={`bg-hero py-5 ${styles.hero}`}>
         <Container className="d-flex flex-column align-items-center text-center gap-3">
           <CustomAvatar
             imageUrl={user.avatarUrl}
             altText={user.username}
             size={AvatarSize.EXTRA_LARGE}
             fallback={user.username}
-            className="profile-hero-avatar"
+            className={styles.heroAvatar}
           />
 
           <div>
-            <h1 className="profile-hero-title mb-1">{user.username}</h1>
+            <h1 className={`${styles.heroTitle} mb-1`}>{user.username}</h1>
             <p className="small text-muted-fg mb-1">{user.bio || user.email}</p>
             <div className="d-flex align-items-center justify-content-center gap-1 small text-muted-fg">
               <MapPin size={12} />
@@ -139,7 +140,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ postCount, posts, user
         show={isEditOpen}
         onHide={() => setIsEditOpen(false)}
         centered
-        dialogClassName="profile-edit-modal"
+        dialogClassName={styles.editModal}
       >
         <Modal.Header className="border-bottom-0 pb-0">
           <Modal.Title className="fs-1 fw-semibold" style={{ fontSize: '1.2rem' }}>
@@ -163,7 +164,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ postCount, posts, user
               altText={username || user.username}
               size={AvatarSize.LARGE}
               fallback={username || user.username}
-              className="profile-modal-avatar"
+              className={styles.modalAvatar}
             />
           </div>
 

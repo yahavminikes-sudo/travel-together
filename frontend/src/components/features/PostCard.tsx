@@ -1,8 +1,9 @@
+import { Post } from '@travel-together/shared/types/post.types';
+import { Heart, MapPin, MessageCircle } from 'lucide-react';
 import React from 'react';
 import { Card, Image } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
-import { Heart, MapPin, MessageCircle } from 'lucide-react';
-import { Post } from '@travel-together/shared/types/post.types';
+import styles from './PostCard.module.css';
 
 interface Props {
   post: Post;
@@ -24,13 +25,13 @@ export const PostCard: React.FC<Props> = ({ post, currentUserId, onLikeToggle })
   };
 
   return (
-    <Card className="travel-post-card h-100 shadow-sm border-0 overflow-hidden">
+    <Card className={`${styles.card} h-100 shadow-sm border-0 overflow-hidden`}>
       {post.imageUrl && (
-        <Link to={`/posts/${post._id}`} state={{ from: location.pathname }} className="travel-post-image-wrap">
+        <Link to={`/posts/${post._id}`} state={{ from: location.pathname }} className={styles.imageWrap}>
           <img
             src={post.imageUrl}
             alt={post.title}
-            className="travel-post-image"
+            className={styles.image}
           />
         </Link>
       )}
@@ -43,10 +44,10 @@ export const PostCard: React.FC<Props> = ({ post, currentUserId, onLikeToggle })
         ) : null}
 
         <Link to={`/posts/${post._id}`} state={{ from: location.pathname }} className="text-decoration-none text-body">
-          <h3 className="travel-post-title mb-2">{post.title}</h3>
+          <h3 className={`${styles.title} mb-2`}>{post.title}</h3>
         </Link>
 
-        <Card.Text className="travel-post-excerpt mb-3">
+        <Card.Text className={`${styles.excerpt} mb-3`}>
           {post.content}
         </Card.Text>
 
@@ -62,15 +63,15 @@ export const PostCard: React.FC<Props> = ({ post, currentUserId, onLikeToggle })
                 style={{ objectFit: 'cover' }}
               />
             ) : (
-              <span className="travel-post-avatar-fallback">{authorFallback}</span>
+              <span className={styles.avatarFallback}>{authorFallback}</span>
             )}
-            <span className="travel-post-author text-truncate">{authorName}</span>
+            <span className={`${styles.author} text-truncate`}>{authorName}</span>
           </div>
 
           <div className="d-flex align-items-center gap-3">
             <button
               type="button"
-              className={`travel-post-like ${isLiked ? 'is-liked' : ''}`}
+              className={`${styles.like} ${isLiked ? styles.isLiked : ''}`}
               onClick={handleLikeClick}
               disabled={!currentUserId}
               title={currentUserId ? (isLiked ? 'Unlike' : 'Like') : 'Log in to like posts'}
@@ -79,7 +80,7 @@ export const PostCard: React.FC<Props> = ({ post, currentUserId, onLikeToggle })
               <span>{post.likes.length}</span>
             </button>
 
-            <Link to={`/posts/${post._id}#comments`} state={{ from: location.pathname }} className="travel-post-comments">
+            <Link to={`/posts/${post._id}#comments`} state={{ from: location.pathname }} className={styles.comments}>
               <MessageCircle size={16} />
               <span>{post.commentCount ?? 0}</span>
             </Link>

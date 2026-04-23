@@ -1,13 +1,14 @@
+import { uploadImage } from '@/api';
+import styles from '@/components/features/PostEditor.module.css';
+import { useAuth } from '@/hooks/useAuth';
+import { useCreatePost } from '@/hooks/usePosts';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CreatePostFormData, createPostSchema } from '@travel-together/shared/schemas/postSchemas';
+import { ArrowLeft, ImagePlus } from 'lucide-react';
 import React from 'react';
 import { Alert, Container, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ImagePlus } from 'lucide-react';
-import { uploadImage } from '@/api';
-import { useAuth } from '@/hooks/useAuth';
-import { useCreatePost } from '@/hooks/usePosts';
-import { createPostSchema, CreatePostFormData } from '@travel-together/shared/schemas/postSchemas';
 
 export const CreatePost: React.FC = () => {
   const navigate = useNavigate();
@@ -168,11 +169,11 @@ export const CreatePost: React.FC = () => {
 
           <Form.Group className="mb-4">
             <Form.Label>Cover Photo</Form.Label>
-            <label className="create-post-upload" htmlFor="cover-photo-input">
+            <label className={styles.upload} htmlFor="cover-photo-input">
               {imagePreviewUrl ? (
-                <img src={imagePreviewUrl} alt="Cover preview" className="create-post-upload-preview" />
+                <img src={imagePreviewUrl} alt="Cover preview" className={styles.uploadPreview} />
               ) : (
-                <div className="create-post-upload-empty">
+                <div className={styles.uploadEmpty}>
                   <ImagePlus size={36} />
                   <span>Click to upload a photo</span>
                 </div>
