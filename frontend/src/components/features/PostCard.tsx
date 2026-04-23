@@ -51,21 +51,42 @@ export const PostCard: React.FC<Props> = ({ post, currentUserId, onLikeToggle })
         </Card.Text>
 
         <div className="d-flex align-items-center justify-content-between mt-auto gap-3">
-          <div className="d-flex align-items-center gap-2 min-w-0">
-            {post.author?.avatarUrl ? (
-              <Image
-                src={post.author.avatarUrl}
-                alt={authorName}
-                roundedCircle
-                width={28}
-                height={28}
-                style={{ objectFit: 'cover' }}
-              />
-            ) : (
-              <span className="travel-post-avatar-fallback">{authorFallback}</span>
-            )}
-            <span className="travel-post-author text-truncate">{authorName}</span>
-          </div>
+          {post.author?._id ? (
+            <Link
+              to={`/profile/${post.author._id}`}
+              className="d-flex align-items-center gap-2 min-w-0 text-decoration-none text-body"
+            >
+              {post.author?.avatarUrl ? (
+                <Image
+                  src={post.author.avatarUrl}
+                  alt={authorName}
+                  roundedCircle
+                  width={28}
+                  height={28}
+                  style={{ objectFit: 'cover' }}
+                />
+              ) : (
+                <span className="travel-post-avatar-fallback">{authorFallback}</span>
+              )}
+              <span className="travel-post-author text-truncate">{authorName}</span>
+            </Link>
+          ) : (
+            <div className="d-flex align-items-center gap-2 min-w-0">
+              {post.author?.avatarUrl ? (
+                <Image
+                  src={post.author.avatarUrl}
+                  alt={authorName}
+                  roundedCircle
+                  width={28}
+                  height={28}
+                  style={{ objectFit: 'cover' }}
+                />
+              ) : (
+                <span className="travel-post-avatar-fallback">{authorFallback}</span>
+              )}
+              <span className="travel-post-author text-truncate">{authorName}</span>
+            </div>
+          )}
 
           <div className="d-flex align-items-center gap-3">
             <button

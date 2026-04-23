@@ -63,26 +63,49 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
         </h1>
 
         <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-          <Link to={`/profile/${post.author?._id}`} className="d-flex align-items-center gap-2 text-decoration-none text-body">
-            {post.author?.avatarUrl ? (
-              <Image
-                src={post.author.avatarUrl}
-                alt={authorName}
-                roundedCircle
-                width={36}
-                height={36}
-                style={{ objectFit: 'cover' }}
-              />
-            ) : (
-              <span className="travel-post-avatar-fallback" style={{ width: 36, height: 36, fontSize: '1rem' }}>
-                {authorName.charAt(0).toUpperCase()}
-              </span>
-            )}
-            <div>
-              <p className="small fw-medium mb-0">{authorName}</p>
-              <p className="small text-muted-fg mb-0">{postDate}</p>
+          {post.author?._id ? (
+            <Link to={`/profile/${post.author._id}`} className="d-flex align-items-center gap-2 text-decoration-none text-body">
+              {post.author?.avatarUrl ? (
+                <Image
+                  src={post.author.avatarUrl}
+                  alt={authorName}
+                  roundedCircle
+                  width={36}
+                  height={36}
+                  style={{ objectFit: 'cover' }}
+                />
+              ) : (
+                <span className="travel-post-avatar-fallback" style={{ width: 36, height: 36, fontSize: '1rem' }}>
+                  {authorName.charAt(0).toUpperCase()}
+                </span>
+              )}
+              <div>
+                <p className="small fw-medium mb-0">{authorName}</p>
+                <p className="small text-muted-fg mb-0">{postDate}</p>
+              </div>
+            </Link>
+          ) : (
+            <div className="d-flex align-items-center gap-2 text-body">
+              {post.author?.avatarUrl ? (
+                <Image
+                  src={post.author.avatarUrl}
+                  alt={authorName}
+                  roundedCircle
+                  width={36}
+                  height={36}
+                  style={{ objectFit: 'cover' }}
+                />
+              ) : (
+                <span className="travel-post-avatar-fallback" style={{ width: 36, height: 36, fontSize: '1rem' }}>
+                  {authorName.charAt(0).toUpperCase()}
+                </span>
+              )}
+              <div>
+                <p className="small fw-medium mb-0">{authorName}</p>
+                <p className="small text-muted-fg mb-0">{postDate}</p>
+              </div>
             </div>
-          </Link>
+          )}
 
           <div className="d-flex align-items-center gap-3">
             <LikeButton isLiked={isLiked} likeCount={post.likes.length} onClick={handleLikeClick} disabled={!currentUserId} />

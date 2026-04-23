@@ -23,6 +23,7 @@ export const ProfileContainer: React.FC = () => {
   return (
     <ProfileView
       currentUserId={currentUser._id}
+      isEditable
       onLikeToggle={(postId) => {
         void toggleLikeMutation.mutateAsync(postId);
       }}

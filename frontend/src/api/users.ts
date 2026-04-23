@@ -6,6 +6,11 @@ export const getProfile = async (signal?: AbortSignal) => {
   return response.data;
 };
 
+export const getUserById = async (userId: string, signal?: AbortSignal) => {
+  const response = await apiClient.get<User>(`/api/users/${userId}`, { signal });
+  return response.data;
+};
+
 export const updateProfile = async (data: UpdateProfileDto) => {
   const response = await apiClient.put<User>('/api/users/profile', data);
   return response.data;
