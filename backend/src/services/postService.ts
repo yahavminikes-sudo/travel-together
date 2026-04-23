@@ -17,6 +17,9 @@ export const createPostService = ({ postRepository }: { postRepository: IPostRep
     updatePost: async (id: string, postDto: UpdatePostDto) => {
       return postRepository.update(id, postDto);
     },
+    toggleLike: async (postId: string, userId: string) => {
+      return postRepository.toggleLike(postId, userId);
+    },
     deletePost: async (id: string) => {
       // Future: Delete associated comments, remove from embeddings index, etc.
       return postRepository.delete(id);

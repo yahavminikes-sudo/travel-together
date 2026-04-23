@@ -8,12 +8,14 @@ import { useAuth } from '@/hooks/useAuth';
 import { PostCard } from './PostCard';
 
 interface ProfileViewProps {
+  currentUserId?: string;
+  onLikeToggle?: (postId: string) => void;
   postCount: number;
   posts: Post[];
   user: User;
 }
 
-export const ProfileView: React.FC<ProfileViewProps> = ({ postCount, posts, user }) => {
+export const ProfileView: React.FC<ProfileViewProps> = ({ currentUserId, onLikeToggle, postCount, posts, user }) => {
   const maxProfilePhotoSizeBytes = 2 * 1024 * 1024;
   const { updateProfile } = useAuth();
   const [isEditOpen, setIsEditOpen] = React.useState(false);
@@ -128,7 +130,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ postCount, posts, user
           <Row xs={1} md={2} lg={3} className="g-4">
             {posts.map((post) => (
               <Col key={post._id}>
-                <PostCard post={post} currentUserId={user._id} />
+                <PostCard post={post} currentUserId={currentUserId} onLikeToggle={onLikeToggle} />
               </Col>
             ))}
           </Row>

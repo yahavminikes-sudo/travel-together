@@ -12,10 +12,12 @@ interface PostDetailViewProps {
   post: Post;
   onDelete?: (postId: string) => void;
   onEdit?: (postId: string) => void;
+  onLikeToggle?: (postId: string) => void;
 }
 
-export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, onBack, post, onDelete, onEdit }) => {
+export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, onBack, post, onDelete, onEdit, onLikeToggle }) => {
   const isOwner = currentUserId === post.authorId;
+  const isLiked = currentUserId ? post.likes.includes(currentUserId) : false;
   const authorName = post.author?.username || 'Unknown';
   const postDate = new Date(post.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 
@@ -27,6 +29,11 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
 
   const handleEdit = () => {
     onEdit?.(post._id);
+  };
+
+  const handleLikeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onLikeToggle?.(post._id);
   };
 
   return (
@@ -78,7 +85,7 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
           </Link>
 
           <div className="d-flex align-items-center gap-3">
-            <LikeButton isLiked={false} likeCount={post.likes.length} onClick={() => {}} disabled={!currentUserId} />
+            <LikeButton isLiked={isLiked} likeCount={post.likes.length} onClick={handleLikeClick} disabled={!currentUserId} />
             <Link to={`/posts/${post._id}#comments`} className="d-flex align-items-center gap-1 small text-muted-fg text-decoration-none">
               <MessageCircle size={16} /> {post.commentCount ?? 0} comments
             </Link>
@@ -107,10 +114,9 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
         </div>
       </div>
 
-      <section id="comments" className="mt-5">
-        <div className="d-flex align-items-center gap-2 mb-3">
-          <MessageCircle size={18} />
-          <h2 className="mb-0 fs-4">Comments ({post.commentCount ?? 0})</h2>
+      <section id="comments" className="travel-comments-section mt-5">
+        <div className="travel-comments-section-header">
+          <h2 className="travel-comments-section-title mb-0">Comments ({post.commentCount ?? 0})</h2>
         </div>
         <CommentsContainer postId={post._id} />
       </section>

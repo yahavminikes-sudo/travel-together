@@ -39,6 +39,25 @@ export const createPostRepository = (): IPostRepository => ({
     return doc ? enrichPost(doc) : null;
   },
 
+  toggleLike: async (postId: string, userId: string): Promise<Post | null> => {
+    const existingPost = await PostModel.findById(postId).exec();
+
+    if (!existingPost) {
+      return null;
+    }
+
+    const hasLiked = existingPost.likes.includes(userId);
+    const doc = await PostModel.findByIdAndUpdate(
+      postId,
+      hasLiked
+        ? { $pull: { likes: userId } }
+        : { $addToSet: { likes: userId } },
+      { new: true }
+    ).exec();
+
+    return doc ? enrichPost(doc) : null;
+  },
+
   delete: async (id: string): Promise<boolean> => {
     const result = await PostModel.findByIdAndDelete(id).exec();
     return result !== null;

@@ -7,6 +7,7 @@ import { PostCard } from './PostCard';
 
 interface PostsGridViewProps {
   currentUserId?: string;
+  onLikeToggle?: (postId: string) => void;
   ctaLabel?: string;
   ctaTo?: string;
   emptyActionLabel?: string;
@@ -20,6 +21,7 @@ interface PostsGridViewProps {
 
 export const PostsGridView: React.FC<PostsGridViewProps> = ({
   currentUserId,
+  onLikeToggle,
   ctaLabel,
   ctaTo,
   emptyActionLabel,
@@ -110,7 +112,7 @@ export const PostsGridView: React.FC<PostsGridViewProps> = ({
           <Row xs={1} md={2} lg={3} className="g-4">
             {filteredPosts.map((post) => (
               <Col key={post._id}>
-                <PostCard post={post} currentUserId={currentUserId} />
+                <PostCard post={post} currentUserId={currentUserId} onLikeToggle={onLikeToggle} />
               </Col>
             ))}
           </Row>

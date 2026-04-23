@@ -10,6 +10,7 @@ import {
   getPostById,
   getPosts,
   type PostEditorInput,
+  togglePostLike,
   updatePost,
 } from '@/api';
 import { useAuth } from '@/hooks/useAuth';
@@ -80,6 +81,23 @@ export const useDeletePost = () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['myPosts'] });
       queryClient.removeQueries({ queryKey: ['post', postId] });
+    },
+  });
+};
+
+export const useTogglePostLike = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (postId: string) => togglePostLike(postId),
+    onSuccess: (updatedPost) => {
+      queryClient.setQueryData<Post[]>(['posts'], (current = []) => {
+        return current.map((post) => (post._id === updatedPost._id ? updatedPost : post));
+      });
+      queryClient.setQueryData<Post | undefined>(['post', updatedPost._id], updatedPost);
+      queryClient.setQueriesData<Post[]>({ queryKey: ['myPosts'] }, (current = []) => {
+        return current.map((post) => (post._id === updatedPost._id ? updatedPost : post));
+      });
     },
   });
 };

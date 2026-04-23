@@ -245,22 +245,151 @@ h1, h2, h3, h4 {
 .travel-comments-wrap {
   margin-top: 1rem;
 }
+.travel-comments-section {
+  border-top: 1px solid hsl(var(--border));
+  padding-top: 2rem;
+}
+.travel-comments-section-header {
+  margin-bottom: 1.5rem;
+}
+.travel-comments-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.55rem, 2vw, 1.9rem);
+  font-weight: 700;
+}
 .travel-comments-card,
 .travel-comments-item {
   background-color: hsl(var(--card));
   border: 1px solid hsl(var(--border));
-  border-radius: 0.85rem;
-  box-shadow: 0 10px 26px hsl(var(--foreground) / 0.04);
+  border-radius: 0.95rem;
+  box-shadow: 0 12px 28px hsl(var(--foreground) / 0.05);
 }
 .travel-comments-card {
+  padding: 1rem;
+}
+.travel-comments-composer {
   padding: 1.25rem;
+}
+.travel-comments-composer-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 0.9rem;
+}
+.travel-comments-form {
+  display: flex;
+  flex-direction: column;
+}
+.travel-comments-textarea.form-control {
+  min-height: 5.4rem;
+  resize: vertical;
+  border-radius: 0.75rem;
+  border-color: hsl(var(--border));
+  background-color: hsl(var(--background));
+  padding: 0.9rem 0.95rem;
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: hsl(var(--foreground));
+  box-shadow: inset 0 1px 0 hsl(var(--card) / 0.5);
+}
+.travel-comments-textarea.form-control::placeholder {
+  color: hsl(var(--muted-foreground));
+}
+.travel-comments-textarea.form-control:focus {
+  border-color: hsl(var(--ring));
+  box-shadow: 0 0 0 0.2rem hsl(var(--ring) / 0.18);
+}
+.travel-comments-form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+.travel-comments-submit {
+  border-radius: 0.65rem;
+  padding: 0.7rem 1.15rem;
+  font-weight: 500;
+}
+.travel-comments-notice {
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.8rem;
+  background: linear-gradient(180deg, hsl(var(--background)), hsl(var(--card)));
+  padding: 1rem;
+}
+.travel-comments-notice-title,
+.travel-comments-empty-title {
+  color: hsl(var(--foreground));
+  font-weight: 600;
+}
+.travel-comments-notice-copy,
+.travel-comments-empty-copy {
+  color: hsl(var(--muted-foreground));
+  line-height: 1.6;
+}
+.travel-comments-empty {
+  padding: 1.15rem 1.25rem;
 }
 .travel-comments-list {
   display: grid;
   gap: 1rem;
 }
 .travel-comments-item {
-  padding: 1rem 1.25rem;
+  padding: 1.15rem 1.2rem;
+}
+.travel-comments-item-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.95rem;
+}
+.travel-comments-avatar {
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px hsl(var(--foreground) / 0.08);
+}
+.travel-comments-meta {
+  min-width: 0;
+  flex: 1;
+}
+.travel-comments-meta-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.35rem;
+}
+.travel-comments-author {
+  color: hsl(var(--foreground));
+  font-size: 1rem;
+}
+.travel-comments-date {
+  color: hsl(var(--muted-foreground));
+  font-size: 0.95rem;
+}
+.travel-comments-content {
+  color: hsl(var(--foreground));
+  line-height: 1.7;
+}
+@media (max-width: 575.98px) {
+  .travel-comments-section {
+    padding-top: 1.5rem;
+  }
+
+  .travel-comments-card,
+  .travel-comments-composer,
+  .travel-comments-item,
+  .travel-comments-empty {
+    padding: 1rem;
+  }
+
+  .travel-comments-meta-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+  }
+
+  .travel-comments-form-actions {
+    justify-content: stretch;
+  }
+
+  .travel-comments-submit {
+    width: 100%;
+  }
 }
 .profile-hero {
   min-height: 360px;
