@@ -1,6 +1,6 @@
 import { IPostRepository } from '../../../../entities/IRepositories';
 import { PostModel } from '../models/Post.schema';
-import { Post, CreatePostDto, UpdatePostDto } from '@shared/post.types';
+import { Post, CreatePostDto, UpdatePostDto } from '@travel-together/shared/types/post.types';
 import { mapToPost } from '../utils/mappers';
 
 export const createPostRepository = (): IPostRepository => ({

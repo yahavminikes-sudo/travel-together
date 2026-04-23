@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { Post } from '@shared/post.types';
+import { Post } from '@travel-together/shared/types/post.types';
 
 const postSchema = new Schema<Omit<Post, '_id' | 'author'>>({
   authorId: { type: String, required: true, ref: 'User' },

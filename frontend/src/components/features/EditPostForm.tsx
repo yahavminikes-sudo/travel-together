@@ -5,7 +5,7 @@ import { Alert, Form } from 'react-bootstrap';
 import { CustomButton } from '@/components/ui/CustomButton';
 import { CustomCard } from '@/components/ui/CustomCard';
 import { CustomInput } from '@/components/ui/CustomInput';
-import { editPostSchema, EditPostFormData } from '@shared/schemas/postSchemas';
+import { editPostSchema, EditPostFormData } from '@travel-together/shared/schemas/postSchemas';
 
 interface EditPostFormProps {
   initialValues: EditPostFormData;

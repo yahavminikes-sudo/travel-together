@@ -1,19 +1,13 @@
-import axios from 'axios';
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
+import { register } from '@/api';
+import { AuthResponse, RegisterCredentials } from '@travel-together/shared/types/auth.types';
 
-export interface RegisterData {
-  username: string;
-  email: string;
-  password: string;
-}
-
-export const registerMutationFn = async (data: RegisterData) => {
-  const response = await axios.post('/api/auth/register', data);
-  return response.data;
+export const registerMutationFn = async (data: RegisterCredentials) => {
+  return register(data);
 };
 
 export const useRegisterMutation = <TOnMutateResult = unknown>(
-  options?: UseMutationOptions<{ accessToken: string }, Error, RegisterData, TOnMutateResult>
+  options?: UseMutationOptions<AuthResponse, Error, RegisterCredentials, TOnMutateResult>
 ) => {
   return useMutation({
     mutationFn: registerMutationFn,

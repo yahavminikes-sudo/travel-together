@@ -1,20 +1,19 @@
 import React from 'react';
-import { useProfileQuery } from '@/api/queries/useProfileQuery';
 import { ProfileView } from '@/components/features/ProfileView';
 import { PageError } from '@/components/ui/PageError';
 import { PageLoader } from '@/components/ui/PageLoader';
+import { useAuth } from '@/hooks/useAuth';
 
 export const ProfileContainer: React.FC = () => {
-  const { data: user, error: queryError, isLoading } = useProfileQuery();
-  const error = queryError instanceof Error ? queryError.message : null;
+  const { currentUser, isAuthenticated, isInitializing } = useAuth();
 
-  if (isLoading) {
+  if (isInitializing) {
     return <PageLoader />;
   }
 
-  if (error || !user) {
-    return <PageError message={error || 'Failed to load profile'} />;
+  if (!isAuthenticated || !currentUser) {
+    return <PageError message="You need to sign in to view your profile." />;
   }
 
-  return <ProfileView user={user} />;
+  return <ProfileView user={currentUser} />;
 };

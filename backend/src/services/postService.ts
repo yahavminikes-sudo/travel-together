@@ -1,6 +1,6 @@
 import { IPostService } from '../entities/IServices';
 import { IPostRepository } from '../entities/IRepositories';
-import { CreatePostDto, UpdatePostDto } from '@shared/post.types';
+import { CreatePostDto, UpdatePostDto } from '@travel-together/shared/types/post.types';
 
 export const createPostService = ({ postRepository }: { postRepository: IPostRepository }): IPostService => {
   return {

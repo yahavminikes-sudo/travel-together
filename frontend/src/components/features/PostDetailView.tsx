@@ -1,16 +1,20 @@
 import React from 'react';
 import { Badge, Button, Container } from 'react-bootstrap';
-import { Post } from '@shared/types/post.types';
+import { Link } from 'react-router-dom';
+import { Post } from '@travel-together/shared/types/post.types';
 import { CommentsContainer } from '@/containers/CommentsContainer';
 import { LikeButton } from '@/components/ui/LikeButton';
 import { CustomCard } from '@/components/ui/CustomCard';
 
 interface PostDetailViewProps {
+  currentUserId?: string;
   onBack: () => void;
   post: Post;
 }
 
-export const PostDetailView: React.FC<PostDetailViewProps> = ({ onBack, post }) => {
+export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, onBack, post }) => {
+  const canEdit = currentUserId === post.authorId;
+
   return (
     <Container className="my-5">
       <Button variant="link" className="text-decoration-none mb-3 px-0" onClick={onBack}>
@@ -37,6 +41,14 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ onBack, post }) 
             <span className="mx-2">&bull;</span>
             <span>{new Date(post.createdAt).toLocaleDateString()}</span>
           </div>
+
+          {canEdit ? (
+            <div className="mb-4">
+              <Link to={`/posts/${post._id}/edit`} className="btn btn-outline-primary">
+                Edit Post
+              </Link>
+            </div>
+          ) : null}
 
           <p className="fs-5" style={{ whiteSpace: 'pre-wrap' }}>
             {post.content}

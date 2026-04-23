@@ -1,7 +1,7 @@
 import React from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { Post } from '@shared/types/post.types';
+import { Post } from '@travel-together/shared/types/post.types';
 import { PostCard } from './PostCard';
 
 interface PostsGridViewProps {

@@ -1,18 +1,13 @@
-import axios from 'axios';
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
+import { login } from '@/api';
+import { AuthResponse, LoginCredentials } from '@travel-together/shared/types/auth.types';
 
-export interface LoginData {
-  email: string;
-  password: string;
-}
-
-export const loginMutationFn = async (data: LoginData) => {
-  const response = await axios.post('/api/auth/login', data);
-  return response.data;
+export const loginMutationFn = async (data: LoginCredentials) => {
+  return login(data);
 };
 
 export const useLoginMutation = <TOnMutateResult = unknown>(
-  options?: UseMutationOptions<{ accessToken: string }, Error, LoginData, TOnMutateResult>
+  options?: UseMutationOptions<AuthResponse, Error, LoginCredentials, TOnMutateResult>
 ) => {
   return useMutation({
     mutationFn: loginMutationFn,

@@ -1,14 +1,9 @@
-import axios from 'axios';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { User } from '@shared/types/user.types';
+import { User } from '@travel-together/shared/types/user.types';
+import { getProfile } from '@/api';
 
 export const fetchProfile = async (): Promise<User> => {
-  const response = await axios.get<User>('/api/users/me', {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('token')}`
-    }
-  });
-  return response.data;
+  return getProfile();
 };
 
 export const useProfileQuery = (options?: Omit<UseQueryOptions<User, Error>, 'queryKey' | 'queryFn'>) => {

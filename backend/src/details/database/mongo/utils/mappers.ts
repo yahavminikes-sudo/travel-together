@@ -1,6 +1,6 @@
-import { User } from '@shared/user.types';
-import { Post } from '@shared/post.types';
-import { Comment } from '@shared/comment.types';
+import { User } from '@travel-together/shared/types/user.types';
+import { Post } from '@travel-together/shared/types/post.types';
+import { Comment } from '@travel-together/shared/types/comment.types';
 import { IUserDocument } from '../models/User.schema';
 
 export const mapToUser = (doc: IUserDocument): User => {

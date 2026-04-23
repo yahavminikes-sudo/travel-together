@@ -1,15 +1,21 @@
 import React from 'react';
-import { useMyPostsQuery } from '@/api/queries/useMyPostsQuery';
 import { PostsGridView } from '@/components/features/PostsGridView';
 import { PageError } from '@/components/ui/PageError';
 import { PageLoader } from '@/components/ui/PageLoader';
+import { useAuth } from '@/hooks/useAuth';
+import { useMyPosts } from '@/hooks/usePosts';
 
 export const MyPostsContainer: React.FC = () => {
-  const { data: posts = [], error: queryError, isLoading } = useMyPostsQuery();
+  const { currentUser, isAuthenticated, isInitializing } = useAuth();
+  const { data: posts = [], error: queryError, isLoading } = useMyPosts();
   const error = queryError instanceof Error ? queryError.message : null;
 
-  if (isLoading) {
+  if (isInitializing || isLoading) {
     return <PageLoader />;
+  }
+
+  if (!isAuthenticated || !currentUser) {
+    return <PageError message="You need to sign in to view your posts." />;
   }
 
   if (error) {
@@ -18,7 +24,7 @@ export const MyPostsContainer: React.FC = () => {
 
   return (
     <PostsGridView
-      currentUserId="me"
+      currentUserId={currentUser._id}
       ctaLabel="Create New Post"
       ctaTo="/posts/create"
       emptyActionLabel="Share your first post"

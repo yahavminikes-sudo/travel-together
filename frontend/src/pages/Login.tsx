@@ -1,39 +1,41 @@
 import React from 'react';
+import { useState } from 'react';
 import { Container, Form, Alert } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { useLoginMutation } from '../api/mutations/useLoginMutation';
+import { useAuth } from '@/hooks/useAuth';
 import { CustomCard } from '../components/ui/CustomCard';
 import { CustomInput } from '../components/ui/CustomInput';
 import { CustomButton } from '../components/ui/CustomButton';
-import { loginSchema, LoginFormData } from '../../../shared/schemas/authSchemas';
-
-
+import { loginSchema, LoginFormData } from '@travel-together/shared/schemas/authSchemas';
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { login } = useAuth();
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema)
   });
 
-  const mutation = useLoginMutation({
-    onSuccess: (data) => {
-      localStorage.setItem('token', data.accessToken);
+  const onSubmit = async (data: LoginFormData) => {
+    setAuthError(null);
+    setIsSubmitting(true);
+
+    try {
+      await login(data);
       const state = location.state as { from?: { pathname: string } } | null;
       const from = state?.from?.pathname || '/';
       navigate(from, { replace: true });
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : 'Failed to sign in.');
+    } finally {
+      setIsSubmitting(false);
     }
-  });
-
-  const onSubmit = (data: LoginFormData) => {
-    mutation.mutate(data);
   };
-
-  const isSubmitting = mutation.isPending;
-  const authError = mutation.isError ? mutation.error.message : null;
 
   return (
     <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '80vh' }}>

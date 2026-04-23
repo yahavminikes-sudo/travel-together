@@ -1,6 +1,6 @@
 import { ICommentRepository } from '../../../../entities/IRepositories';
 import { CommentModel } from '../models/Comment.schema';
-import { Comment, CreateCommentDto, UpdateCommentDto } from '@shared/comment.types';
+import { Comment, CreateCommentDto, UpdateCommentDto } from '@travel-together/shared/types/comment.types';
 import { mapToComment } from '../utils/mappers';
 
 export const createCommentRepository = (): ICommentRepository => ({

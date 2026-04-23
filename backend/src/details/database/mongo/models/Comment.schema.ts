@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { Comment } from '@shared/comment.types';
+import { Comment } from '@travel-together/shared/types/comment.types';
 
 const commentSchema = new Schema<Omit<Comment, '_id' | 'author'>>({
   postId: { type: String, required: true, ref: 'Post' },
