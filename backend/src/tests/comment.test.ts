@@ -8,11 +8,11 @@ describe('Comment API Endpoints', () => {
   let authToken = '';
   let authUserId = '';
   let targetPostId = '';
-  
+
   const validUser = {
     username: 'commenttester',
     email: 'commenttester@example.com',
-    password: 'Password123!',
+    password: 'Password123!'
   };
 
   const authenticateUser = async () => {
@@ -26,14 +26,11 @@ describe('Comment API Endpoints', () => {
   };
 
   const createTargetPost = async () => {
-    const postRes = await request(app)
-      .post('/api/posts')
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({
-        destination: 'Test City',
-        title: 'Post to Comment on',
-        content: 'This post exists solely to test comments.',
-      });
+    const postRes = await request(app).post('/api/posts').set('Authorization', `Bearer ${authToken}`).send({
+      destination: 'Test City',
+      title: 'Post to Comment on',
+      content: 'This post exists solely to test comments.'
+    });
     targetPostId = postRes.body._id;
     return postRes;
   };

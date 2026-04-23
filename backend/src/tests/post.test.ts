@@ -7,11 +7,11 @@ const app = getTestApp();
 describe('Post API Endpoints', () => {
   let authToken = '';
   let authUserId = '';
-  
+
   const validUser = {
     username: 'posttester',
     email: 'posttester@example.com',
-    password: 'Password123!',
+    password: 'Password123!'
   };
 
   const authenticateUser = async () => {
@@ -25,14 +25,11 @@ describe('Post API Endpoints', () => {
   };
 
   const createPost = async () => {
-    return request(app)
-      .post('/api/posts')
-      .set('Authorization', `Bearer ${authToken}`)
-      .send({
-        destination: 'Japan',
-        title: 'My Journey to Japan',
-        content: 'It was an amazing experience exploring Tokyo.',
-      });
+    return request(app).post('/api/posts').set('Authorization', `Bearer ${authToken}`).send({
+      destination: 'Japan',
+      title: 'My Journey to Japan',
+      content: 'It was an amazing experience exploring Tokyo.'
+    });
   };
 
   beforeEach(async () => {
@@ -50,9 +47,7 @@ describe('Post API Endpoints', () => {
     });
 
     it('should return 401 when missing auth token', async () => {
-      const response = await request(app)
-        .post('/api/posts')
-        .send({ title: 'Test', content: 'Test' });
+      const response = await request(app).post('/api/posts').send({ title: 'Test', content: 'Test' });
 
       expect(response.status).toBe(StatusCodes.UNAUTHORIZED);
     });
@@ -64,9 +59,7 @@ describe('Post API Endpoints', () => {
 
       expect(createdPost.status).toBe(StatusCodes.CREATED);
 
-      const response = await request(app)
-        .get('/api/posts')
-        .set('Authorization', `Bearer ${authToken}`);
+      const response = await request(app).get('/api/posts').set('Authorization', `Bearer ${authToken}`);
 
       expect(response.status).toBe(StatusCodes.OK);
       expect(Array.isArray(response.body)).toBeTruthy();

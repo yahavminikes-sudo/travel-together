@@ -14,7 +14,7 @@ export const createUserService = ({ userRepository }: { userRepository: IUserRep
     updateUserProfile: async (userId: string, updates: UpdateProfileDto) => {
       return userRepository.update(userId, {
         avatarUrl: updates.avatarUrl,
-        username: updates.username,
+        username: updates.username
       });
     }
   };

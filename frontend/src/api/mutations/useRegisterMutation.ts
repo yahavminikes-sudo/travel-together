@@ -11,6 +11,6 @@ export const useRegisterMutation = <TOnMutateResult = unknown>(
 ) => {
   return useMutation({
     mutationFn: registerMutationFn,
-    ...options,
+    ...options
   });
 };

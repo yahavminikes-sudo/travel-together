@@ -11,16 +11,16 @@ interface Props {
 
 export const LikeButton: React.FC<Props> = ({ isLiked, likeCount, onClick, disabled }) => {
   return (
-    <Button 
-      variant={isLiked ? "danger" : "outline-danger"} 
-      onClick={onClick} 
+    <Button
+      variant={isLiked ? 'danger' : 'outline-danger'}
+      onClick={onClick}
       disabled={disabled}
       className="d-inline-flex align-items-center gap-2 rounded-pill px-3 transition-all"
       size="sm"
       style={{ fontWeight: 500 }}
-      title={disabled ? "Log in to like posts" : isLiked ? "Unlike" : "Like"}
+      title={disabled ? 'Log in to like posts' : isLiked ? 'Unlike' : 'Like'}
     >
-      <Heart size={16} fill={isLiked ? "currentColor" : "none"} strokeWidth={isLiked ? 0 : 2} />
+      <Heart size={16} fill={isLiked ? 'currentColor' : 'none'} strokeWidth={isLiked ? 0 : 2} />
       <span>{likeCount}</span>
     </Button>
   );

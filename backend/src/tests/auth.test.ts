@@ -8,15 +8,13 @@ describe('Auth API Endpoints', () => {
   const validUser = {
     username: 'testuser',
     email: 'test@example.com',
-    password: 'Password123!',
+    password: 'Password123!'
   };
 
   describe('POST /api/auth/register', () => {
     it('should register a new user successfully', async () => {
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(validUser);
-      
+      const response = await request(app).post('/api/auth/register').send(validUser);
+
       if (response.status !== StatusCodes.CREATED) {
         console.error('Registration failed:', response.body);
       }
@@ -32,21 +30,17 @@ describe('Auth API Endpoints', () => {
     it('should return 409 if email is already registered', async () => {
       // Register first time
       await request(app).post('/api/auth/register').send(validUser);
-      
+
       // Register second time
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(validUser);
-        
+      const response = await request(app).post('/api/auth/register').send(validUser);
+
       expect(response.status).toBe(StatusCodes.CONFLICT);
       expect(response.body).toHaveProperty('message', 'Email already registered');
     });
 
     it('should return 400 if required fields are missing', async () => {
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send({ email: 'test@example.com' }); // missing password and username
-        
+      const response = await request(app).post('/api/auth/register').send({ email: 'test@example.com' }); // missing password and username
+
       expect(response.status).toBe(StatusCodes.BAD_REQUEST);
     });
   });
@@ -61,7 +55,7 @@ describe('Auth API Endpoints', () => {
       const response = await request(app)
         .post('/api/auth/login')
         .send({ email: validUser.email, password: validUser.password });
-        
+
       expect(response.status).toBe(StatusCodes.OK);
       expect(response.body).toHaveProperty('user');
       expect(response.body).toHaveProperty('token');
@@ -72,7 +66,7 @@ describe('Auth API Endpoints', () => {
       const response = await request(app)
         .post('/api/auth/login')
         .send({ email: validUser.email, password: 'WrongPassword' });
-        
+
       expect(response.status).toBe(StatusCodes.UNAUTHORIZED);
       expect(response.body).toHaveProperty('message', 'Invalid credentials');
     });
@@ -81,7 +75,7 @@ describe('Auth API Endpoints', () => {
       const response = await request(app)
         .post('/api/auth/login')
         .send({ email: 'nobody@example.com', password: 'Password123!' });
-        
+
       expect(response.status).toBe(StatusCodes.UNAUTHORIZED);
     });
   });

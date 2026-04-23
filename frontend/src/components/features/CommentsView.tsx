@@ -20,15 +20,15 @@ export const CommentsView: React.FC<CommentsViewProps> = ({
   comments,
   isSubmitting,
   submitError,
-  onSubmit,
+  onSubmit
 }) => {
   const {
     formState: { errors },
     handleSubmit,
     register,
-    reset,
+    reset
   } = useRHForm<CommentFormData>({
-    resolver: zodResolver(commentSchema),
+    resolver: zodResolver(commentSchema)
   });
 
   const handleFormSubmit = async (data: CommentFormData) => {
@@ -85,13 +85,15 @@ export const CommentsView: React.FC<CommentsViewProps> = ({
                       {new Date(comment.createdAt).toLocaleDateString(undefined, {
                         year: 'numeric',
                         month: 'short',
-                        day: 'numeric',
+                        day: 'numeric'
                       })}
                     </small>
                   </div>
                 </div>
               </div>
-              <p className="mb-0 text-secondary" style={{ whiteSpace: 'pre-wrap' }}>{comment.content}</p>
+              <p className="mb-0 text-secondary" style={{ whiteSpace: 'pre-wrap' }}>
+                {comment.content}
+              </p>
             </ListGroup.Item>
           ))}
         </ListGroup>

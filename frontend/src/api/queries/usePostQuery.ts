@@ -11,6 +11,6 @@ export const usePostQuery = (id: string, options?: Omit<UseQueryOptions<Post, Er
     queryKey: ['post', id],
     queryFn: () => fetchPost(id),
     enabled: !!id,
-    ...options,
+    ...options
   });
 };

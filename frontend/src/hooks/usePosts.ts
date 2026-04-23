@@ -10,14 +10,14 @@ import {
   getMyPosts,
   getPostById,
   getPosts,
-  updatePost,
+  updatePost
 } from '@/api';
 import { useAuth } from '@/hooks/useAuth';
 
 export const usePosts = () => {
   return useQuery({
     queryKey: ['posts'],
-    queryFn: ({ signal }) => getPosts(signal),
+    queryFn: ({ signal }) => getPosts(signal)
   });
 };
 
@@ -25,7 +25,7 @@ export const usePost = (postId?: string) => {
   return useQuery({
     queryKey: ['post', postId],
     queryFn: ({ signal }) => getPostById(postId as string, signal),
-    enabled: !!postId,
+    enabled: !!postId
   });
 };
 
@@ -41,7 +41,7 @@ export const useMyPosts = () => {
 
       return getMyPosts(currentUser._id, signal);
     },
-    enabled: isAuthenticated && !!currentUser?._id,
+    enabled: isAuthenticated && !!currentUser?._id
   });
 };
 
@@ -54,7 +54,7 @@ export const useCreatePost = () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['myPosts'] });
       queryClient.setQueryData<Post>(['post', post._id], post);
-    },
+    }
   });
 };
 
@@ -67,7 +67,7 @@ export const useUpdatePost = () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['myPosts'] });
       queryClient.setQueryData<Post>(['post', post._id], post);
-    },
+    }
   });
 };
 
@@ -80,7 +80,7 @@ export const useDeletePost = () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['myPosts'] });
       queryClient.removeQueries({ queryKey: ['post', postId] });
-    },
+    }
   });
 };
 
@@ -88,7 +88,7 @@ export const useComments = (postId?: string) => {
   return useQuery({
     queryKey: ['comments', postId],
     queryFn: ({ signal }) => getCommentsByPost(postId as string, signal),
-    enabled: !!postId,
+    enabled: !!postId
   });
 };
 
@@ -108,23 +108,19 @@ export const useCreateComment = (postId: string) => {
 
         return {
           ...current,
-          commentCount: (current.commentCount ?? 0) + 1,
+          commentCount: (current.commentCount ?? 0) + 1
         };
       });
       queryClient.setQueryData<Post[]>(['posts'], (current = []) => {
         return current.map((post) =>
-          post._id === postId
-            ? { ...post, commentCount: (post.commentCount ?? 0) + 1 }
-            : post
+          post._id === postId ? { ...post, commentCount: (post.commentCount ?? 0) + 1 } : post
         );
       });
       queryClient.setQueryData<Post[]>(['myPosts'], (current = []) => {
         return current.map((post) =>
-          post._id === postId
-            ? { ...post, commentCount: (post.commentCount ?? 0) + 1 }
-            : post
+          post._id === postId ? { ...post, commentCount: (post.commentCount ?? 0) + 1 } : post
         );
       });
-    },
+    }
   });
 };

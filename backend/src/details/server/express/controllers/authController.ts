@@ -29,7 +29,7 @@ export const createAuthController = ({ authService }: { authService: IAuthServic
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
       }
     },
-    
+
     login: async (req: Request, res: Response) => {
       try {
         const { email, password } = req.body;
@@ -37,7 +37,7 @@ export const createAuthController = ({ authService }: { authService: IAuthServic
           res.status(StatusCodes.BAD_REQUEST).json({ message: 'Missing credentials' });
           return;
         }
-        
+
         const result = await authService.login(req.body);
         res.status(StatusCodes.OK).json(result);
       } catch (error: unknown) {

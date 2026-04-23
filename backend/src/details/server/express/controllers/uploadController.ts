@@ -13,7 +13,7 @@ const mimeToExtension: Record<string, string> = {
   'image/jpeg': 'jpg',
   'image/jpg': 'jpg',
   'image/png': 'png',
-  'image/webp': 'webp',
+  'image/webp': 'webp'
 };
 
 export const createUploadController = () => {
@@ -44,7 +44,9 @@ export const createUploadController = () => {
         const buffer = Buffer.from(encoded, 'base64');
 
         if (buffer.byteLength > maxUploadSizeBytes) {
-          res.status(StatusCodes.BAD_REQUEST).json({ message: 'Image is too large. Please upload a file smaller than 5 MB.' });
+          res
+            .status(StatusCodes.BAD_REQUEST)
+            .json({ message: 'Image is too large. Please upload a file smaller than 5 MB.' });
           return;
         }
 
@@ -56,11 +58,11 @@ export const createUploadController = () => {
 
         const baseUrl = `${req.protocol}://${req.get('host')}`;
         res.status(StatusCodes.CREATED).json({
-          url: `${baseUrl}/uploads/${fileName}`,
+          url: `${baseUrl}/uploads/${fileName}`
         });
       } catch {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Failed to upload image.' });
       }
-    },
+    }
   };
 };

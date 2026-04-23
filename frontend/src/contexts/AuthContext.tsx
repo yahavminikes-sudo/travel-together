@@ -8,7 +8,7 @@ import {
   login as loginRequest,
   register as registerRequest,
   setStoredAuthToken,
-  updateProfile as updateProfileRequest,
+  updateProfile as updateProfileRequest
 } from '@/api';
 
 interface AuthContextValue {
@@ -128,7 +128,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         refreshProfile,
         register,
         token,
-        updateProfile,
+        updateProfile
       }}
     >
       {children}

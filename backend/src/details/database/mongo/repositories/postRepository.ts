@@ -3,17 +3,20 @@ import { IPostDocument, PostModel } from '../models/Post.schema';
 import { Post, CreatePostDto, UpdatePostDto } from '@travel-together/shared/types/post.types';
 import { mapToPost } from '../utils/mappers';
 
-export const createPostRepository = (userRepository: IUserRepository, commentRepository: ICommentRepository): IPostRepository => {
+export const createPostRepository = (
+  userRepository: IUserRepository,
+  commentRepository: ICommentRepository
+): IPostRepository => {
   const enrichPost = async (doc: IPostDocument): Promise<Post> => {
     const [author, commentCount] = await Promise.all([
       userRepository.findById(doc.authorId),
-      commentRepository.countByPost(doc._id.toString()),
+      commentRepository.countByPost(doc._id.toString())
     ]);
 
     return mapToPost({
       ...doc.toObject(),
       author: author || undefined,
-      commentCount,
+      commentCount
     });
   };
 

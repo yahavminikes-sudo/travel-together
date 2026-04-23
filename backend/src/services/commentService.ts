@@ -7,7 +7,10 @@ interface CommentServiceDependencies {
   embeddingService: IEmbeddingService;
 }
 
-export const createCommentService = ({ commentRepository, embeddingService }: CommentServiceDependencies): ICommentService => {
+export const createCommentService = ({
+  commentRepository,
+  embeddingService
+}: CommentServiceDependencies): ICommentService => {
   return {
     getCommentsByPost: async (postId: string) => {
       return commentRepository.findByPost(postId);

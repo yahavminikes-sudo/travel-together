@@ -28,4 +28,3 @@ export const createSearchController = ({ embeddingService }: { embeddingService:
     }
   };
 };
-

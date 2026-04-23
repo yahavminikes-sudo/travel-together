@@ -21,7 +21,7 @@ export const uploadImage = async (file: File) => {
   const dataUrl = await fileToDataUrl(file);
   const response = await apiClient.post<{ url: string }>('/api/uploads/image', {
     dataUrl,
-    filename: file.name,
+    filename: file.name
   });
 
   return response.data.url;

@@ -10,11 +10,5 @@ module.exports = {
     '^@shared/(.*)$': '<rootDir>/../shared/$1'
   },
   coverageDirectory: 'coverage',
-  collectCoverageFrom: [
-    'src/**/*.{ts,js}',
-    '!src/**/*.d.ts',
-    '!src/index.ts',
-    '!src/server.ts',
-    '!src/tests/**'
-  ]
+  collectCoverageFrom: ['src/**/*.{ts,js}', '!src/**/*.d.ts', '!src/index.ts', '!src/server.ts', '!src/tests/**']
 };

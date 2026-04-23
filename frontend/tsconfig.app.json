@@ -26,13 +26,8 @@
     "noFallthroughCasesInSwitch": true,
 
     "paths": {
-      "zod": [
-        "./node_modules/zod"
-      ],
-      "@/*": [
-        "./src/*"
-      ]
+      "zod": ["./node_modules/zod"],
+      "@/*": ["./src/*"]
     }
   }
 }
-

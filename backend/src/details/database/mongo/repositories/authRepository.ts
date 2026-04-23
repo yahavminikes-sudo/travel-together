@@ -13,18 +13,18 @@ export const createAuthRepository = (): IAuthRepository => ({
       refreshTokens: doc.refreshTokens
     };
   },
-  
+
   saveAuthRecord: async (record: AuthRecord): Promise<AuthRecord> => {
     const doc = record._id ? await UserModel.findById(record._id).exec() : null;
     const finalDoc = doc || new UserModel();
-    
+
     finalDoc.username = record.username;
     finalDoc.email = record.email;
     finalDoc.password = record.password;
     finalDoc.avatarUrl = record.avatarUrl || '';
     finalDoc.bio = record.bio || '';
     finalDoc.refreshTokens = record.refreshTokens || [];
-    
+
     const saved = await finalDoc.save();
     return {
       ...mapToUser(saved),

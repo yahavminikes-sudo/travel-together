@@ -19,7 +19,11 @@ export const CreatePost: React.FC = () => {
   const [isUploadingImage, setIsUploadingImage] = React.useState(false);
   const maxUploadSizeBytes = 5 * 1024 * 1024;
 
-  const { register, handleSubmit, formState: { errors } } = useForm<CreatePostFormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<CreatePostFormData>({
     resolver: zodResolver(createPostSchema)
   });
 
@@ -78,12 +82,12 @@ export const CreatePost: React.FC = () => {
       mutation.mutate(
         {
           ...data,
-          imageUrl,
+          imageUrl
         },
         {
           onSuccess: (post) => {
             navigate(`/posts/${post._id}`);
-          },
+          }
         }
       );
     } catch (error) {
@@ -134,9 +138,7 @@ export const CreatePost: React.FC = () => {
               isInvalid={!!errors.title}
               {...register('title')}
             />
-            <Form.Control.Feedback type="invalid">
-              {errors.title?.message}
-            </Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">{errors.title?.message}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -147,9 +149,7 @@ export const CreatePost: React.FC = () => {
               isInvalid={!!errors.destination}
               {...register('destination')}
             />
-            <Form.Control.Feedback type="invalid">
-              {errors.destination?.message}
-            </Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">{errors.destination?.message}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-4">
@@ -162,9 +162,7 @@ export const CreatePost: React.FC = () => {
               {...register('content')}
               style={{ borderRadius: '0.5rem', resize: 'vertical', minHeight: 220 }}
             />
-            <Form.Control.Feedback type="invalid">
-              {errors.content?.message}
-            </Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">{errors.content?.message}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-4">
@@ -191,11 +189,7 @@ export const CreatePost: React.FC = () => {
             ) : null}
           </Form.Group>
 
-          <button
-            type="submit"
-            className="btn btn-accent w-100 py-2 fs-5"
-            disabled={isSubmitting}
-          >
+          <button type="submit" className="btn btn-accent w-100 py-2 fs-5" disabled={isSubmitting}>
             {isSubmitting ? 'Publishing...' : 'Publish Post'}
           </button>
         </Form>

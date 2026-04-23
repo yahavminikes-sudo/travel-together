@@ -56,4 +56,3 @@ export const getTestApp = () => {
   const webServer = createExpressServer(dependencies);
   return webServer.getApp();
 };
-

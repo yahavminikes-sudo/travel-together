@@ -29,7 +29,7 @@ export const PostsGridView: React.FC<PostsGridViewProps> = ({
   posts,
   searchPlaceholder = 'Search destinations, stories...',
   title,
-  subtitle,
+  subtitle
 }) => {
   const [searchValue, setSearchValue] = React.useState('');
   const [debouncedSearchValue, setDebouncedSearchValue] = React.useState('');
@@ -104,9 +104,7 @@ export const PostsGridView: React.FC<PostsGridViewProps> = ({
 
         {displayPosts.length === 0 ? (
           <div className="text-center py-5">
-            <p className="text-muted fs-5 mb-4">
-              {isSearchLoading ? 'Searching...' : emptyMessage}
-            </p>
+            <p className="text-muted fs-5 mb-4">{isSearchLoading ? 'Searching...' : emptyMessage}</p>
             {!isSearchLoading && emptyActionLabel && emptyActionTo ? (
               <Link to={emptyActionTo} className="btn btn-outline-primary">
                 {emptyActionLabel}

@@ -34,13 +34,7 @@ export const PostDetailContainer: React.FC = () => {
   }
 
   if (error || !post || !id) {
-    return (
-      <PageError
-        message={error || 'Post not found'}
-        actionLabel="Go Back"
-        onAction={() => navigate(fromPath)}
-      />
-    );
+    return <PageError message={error || 'Post not found'} actionLabel="Go Back" onAction={() => navigate(fromPath)} />;
   }
 
   return (

@@ -72,7 +72,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ postCount, posts, user
       setError(null);
       await updateProfile({
         avatarUrl: avatarPreview || undefined,
-        username: trimmedUsername,
+        username: trimmedUsername
       });
       setIsEditOpen(false);
     } catch (saveError) {
@@ -136,12 +136,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ postCount, posts, user
         )}
       </Container>
 
-      <Modal
-        show={isEditOpen}
-        onHide={() => setIsEditOpen(false)}
-        centered
-        dialogClassName={styles.editModal}
-      >
+      <Modal show={isEditOpen} onHide={() => setIsEditOpen(false)} centered dialogClassName={styles.editModal}>
         <Modal.Header className="border-bottom-0 pb-0">
           <Modal.Title className="fs-1 fw-semibold" style={{ fontSize: '1.2rem' }}>
             Edit Profile

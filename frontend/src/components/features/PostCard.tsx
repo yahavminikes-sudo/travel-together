@@ -28,11 +28,7 @@ export const PostCard: React.FC<Props> = ({ post, currentUserId, onLikeToggle })
     <Card className={`${styles.card} h-100 shadow-sm border-0 overflow-hidden`}>
       {post.imageUrl && (
         <Link to={`/posts/${post._id}`} state={{ from: location.pathname }} className={styles.imageWrap}>
-          <img
-            src={post.imageUrl}
-            alt={post.title}
-            className={styles.image}
-          />
+          <img src={post.imageUrl} alt={post.title} className={styles.image} />
         </Link>
       )}
       <Card.Body className="d-flex flex-column p-3 p-md-4">
@@ -47,9 +43,7 @@ export const PostCard: React.FC<Props> = ({ post, currentUserId, onLikeToggle })
           <h3 className={`${styles.title} mb-2`}>{post.title}</h3>
         </Link>
 
-        <Card.Text className={`${styles.excerpt} mb-3`}>
-          {post.content}
-        </Card.Text>
+        <Card.Text className={`${styles.excerpt} mb-3`}>{post.content}</Card.Text>
 
         <div className="d-flex align-items-center justify-content-between mt-auto gap-3">
           <div className="d-flex align-items-center gap-2 min-w-0">

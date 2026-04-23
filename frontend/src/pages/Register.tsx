@@ -14,8 +14,14 @@ export const Register: React.FC = () => {
   const [authError, setAuthError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    setValue
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema)
   });
 
   const passwordValue = watch('password', '');
@@ -32,7 +38,7 @@ export const Register: React.FC = () => {
       await registerUser({
         email: data.email,
         password: data.password,
-        username: data.username,
+        username: data.username
       });
       navigate('/');
     } catch (error) {
@@ -47,12 +53,7 @@ export const Register: React.FC = () => {
       <Card className="w-100 shadow-sm" style={{ maxWidth: 440 }}>
         <Card.Body className="p-4">
           <div className="text-center mb-3">
-            <img
-              src={logo}
-              alt="Travel Together"
-              style={{ height: 64 }}
-              className="mb-2 mx-auto d-block"
-            />
+            <img src={logo} alt="Travel Together" style={{ height: 64 }} className="mb-2 mx-auto d-block" />
             <h2 className="fw-bold mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
               Join the Journey
             </h2>
@@ -70,9 +71,7 @@ export const Register: React.FC = () => {
                 isInvalid={!!errors.username?.message}
                 {...register('username')}
               />
-              <Form.Control.Feedback type="invalid">
-                {errors.username?.message}
-              </Form.Control.Feedback>
+              <Form.Control.Feedback type="invalid">{errors.username?.message}</Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -83,9 +82,7 @@ export const Register: React.FC = () => {
                 isInvalid={!!errors.email?.message}
                 {...register('email')}
               />
-              <Form.Control.Feedback type="invalid">
-                {errors.email?.message}
-              </Form.Control.Feedback>
+              <Form.Control.Feedback type="invalid">{errors.email?.message}</Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -96,9 +93,7 @@ export const Register: React.FC = () => {
                 isInvalid={!!errors.password?.message}
                 {...register('password')}
               />
-              <Form.Control.Feedback type="invalid">
-                {errors.password?.message}
-              </Form.Control.Feedback>
+              <Form.Control.Feedback type="invalid">{errors.password?.message}</Form.Control.Feedback>
             </Form.Group>
 
             <input type="hidden" {...register('confirmPassword')} />

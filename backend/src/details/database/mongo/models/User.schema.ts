@@ -8,13 +8,16 @@ export interface IUserDocument extends Omit<User, '_id' | 'createdAt' | 'updated
   updatedAt: string;
 }
 
-const userSchema = new Schema<IUserDocument>({
-  username: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: false }, // Optional if we plan OAuth in future
-  avatarUrl: { type: String, default: '' },
-  bio: { type: String, default: '' },
-  refreshTokens: [{ type: String, default: [] }]
-}, { timestamps: true });
+const userSchema = new Schema<IUserDocument>(
+  {
+    username: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: false }, // Optional if we plan OAuth in future
+    avatarUrl: { type: String, default: '' },
+    bio: { type: String, default: '' },
+    refreshTokens: [{ type: String, default: [] }]
+  },
+  { timestamps: true }
+);
 
 export const UserModel = mongoose.model<IUserDocument>('User', userSchema);

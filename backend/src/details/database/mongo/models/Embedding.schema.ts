@@ -10,12 +10,15 @@ export interface IEmbeddingDocument extends Document {
   updatedAt: string;
 }
 
-const embeddingSchema = new Schema<IEmbeddingDocument>({
-  contentId: { type: String, required: true, index: true },
-  contentType: { type: String, required: true, enum: ['Post', 'Comment'] },
-  textChunk: { type: String, required: true },
-  embedding: { type: [Number], required: true }
-}, { timestamps: true });
+const embeddingSchema = new Schema<IEmbeddingDocument>(
+  {
+    contentId: { type: String, required: true, index: true },
+    contentType: { type: String, required: true, enum: ['Post', 'Comment'] },
+    textChunk: { type: String, required: true },
+    embedding: { type: [Number], required: true }
+  },
+  { timestamps: true }
+);
 
 embeddingSchema.index({ contentId: 1, contentType: 1 });
 

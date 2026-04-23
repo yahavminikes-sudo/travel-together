@@ -11,7 +11,7 @@ export const createUserController = ({ userService }: { userService: IUserServic
           res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Unauthorized' });
           return;
         }
-        
+
         const user = await userService.getUserProfile(req.userId);
         if (!user) {
           res.status(StatusCodes.NOT_FOUND).json({ message: 'User not found' });
@@ -48,7 +48,7 @@ export const createUserController = ({ userService }: { userService: IUserServic
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
       }
     },
-    
+
     getUserById: async (req: Request, res: Response) => {
       try {
         const { id } = req.params;

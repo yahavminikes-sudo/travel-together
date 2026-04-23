@@ -12,5 +12,5 @@ export const appConfig = {
   MONGO_URI: process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/travel-together',
   JWT_SECRET: process.env.JWT_SECRET || 'secret',
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || 'refresh_secret',
-  GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY || ''
 };

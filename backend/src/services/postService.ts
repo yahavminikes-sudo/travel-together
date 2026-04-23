@@ -19,7 +19,9 @@ export const createPostService = ({ postRepository, embeddingService }: PostServ
     createPost: async (authorId: string, postDto: CreatePostDto) => {
       const post = await postRepository.create(authorId, postDto);
       try {
-        const contentToIndex = [post.destination, post.title, post.content, ...(post.tags ?? [])].filter(Boolean).join(' ');
+        const contentToIndex = [post.destination, post.title, post.content, ...(post.tags ?? [])]
+          .filter(Boolean)
+          .join(' ');
         await embeddingService.indexContent(post._id, ContentType.Post, contentToIndex);
       } catch (err) {
         console.error('Embedding indexing failed for post', post._id, err);
@@ -30,7 +32,9 @@ export const createPostService = ({ postRepository, embeddingService }: PostServ
       const post = await postRepository.update(id, postDto);
       if (post) {
         try {
-          const contentToIndex = [post.destination, post.title, post.content, ...(post.tags ?? [])].filter(Boolean).join(' ');
+          const contentToIndex = [post.destination, post.title, post.content, ...(post.tags ?? [])]
+            .filter(Boolean)
+            .join(' ');
           await embeddingService.indexContent(post._id, ContentType.Post, contentToIndex);
         } catch (err) {
           console.error('Embedding indexing failed for post', post._id, err);

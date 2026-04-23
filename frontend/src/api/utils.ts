@@ -33,7 +33,7 @@ export const buildSearchFallback = (posts: Post[], query: string, limit = 10): S
         contentId: post._id,
         contentType: ContentType.Post,
         textChunk: post.content.substring(0, 200),
-        score: occurrences > 0 ? occurrences : haystack.includes(normalizedQuery) ? 0.5 : 0,
+        score: occurrences > 0 ? occurrences : haystack.includes(normalizedQuery) ? 0.5 : 0
       };
     })
     .filter((result) => result.score > 0)

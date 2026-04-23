@@ -9,7 +9,7 @@ export const createCommentRepository = (userRepository: IUserRepository): IComme
 
     return mapToComment({
       ...doc.toObject(),
-      author: author || undefined,
+      author: author || undefined
     });
   };
 

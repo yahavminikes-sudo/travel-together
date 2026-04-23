@@ -3,7 +3,7 @@ export const ContentType = {
   Comment: 'Comment'
 } as const;
 
-export type ContentType = typeof ContentType[keyof typeof ContentType];
+export type ContentType = (typeof ContentType)[keyof typeof ContentType];
 
 export interface SearchQuery {
   query: string;

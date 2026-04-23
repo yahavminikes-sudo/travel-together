@@ -23,10 +23,10 @@ export const useCreateCommentMutation = <TOnMutateResult = unknown>(
       queryClient.setQueryData<Comment[]>(['comments', variables.postId], (old) => {
         return old ? [data, ...old] : [data];
       });
-      
+
       if (options?.onSuccess) {
         options.onSuccess(data, variables, onMutateResult, context);
       }
-    },
+    }
   });
 };

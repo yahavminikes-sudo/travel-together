@@ -36,4 +36,3 @@ export interface IEmbeddingService {
   search(query: string, topK?: number): Promise<SearchResult[]>;
   removeContent(contentId: string, contentType: ContentType): Promise<void>;
 }
-

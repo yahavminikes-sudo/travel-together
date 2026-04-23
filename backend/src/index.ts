@@ -47,4 +47,3 @@ const dependencies: ExpressDependencies = {
 const webServer = createExpressServer(dependencies);
 
 startServer(mongoDatabase, webServer, appConfig.PORT);
-
