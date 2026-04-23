@@ -2,6 +2,7 @@ import { User } from '@shared/user.types';
 import { Post, CreatePostDto, UpdatePostDto } from '@shared/post.types';
 import { Comment, CreateCommentDto, UpdateCommentDto } from '@shared/comment.types';
 import { AuthRecord } from './AuthRecord';
+import { ContentType } from '@shared/search.types';
 
 export interface IAuthRepository {
   findAuthRecordByEmail(email: string): Promise<AuthRecord | null>;
@@ -30,4 +31,18 @@ export interface ICommentRepository {
   create(postId: string, authorId: string, commentDto: CreateCommentDto): Promise<Comment>;
   update(id: string, commentDto: UpdateCommentDto): Promise<Comment | null>;
   delete(id: string): Promise<boolean>;
+}
+
+export interface EmbeddingRecord {
+  _id: string;
+  contentId: string;
+  contentType: ContentType;
+  textChunk: string;
+  embedding: number[];
+}
+
+export interface IEmbeddingRepository {
+  save(record: Omit<EmbeddingRecord, '_id'>): Promise<EmbeddingRecord>;
+  findAll(): Promise<EmbeddingRecord[]>;
+  deleteByContent(contentId: string, contentType: ContentType): Promise<boolean>;
 }

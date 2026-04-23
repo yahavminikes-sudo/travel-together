@@ -1,8 +1,14 @@
-import { ICommentService } from '../entities/IServices';
-import { ICommentRepository } from '../entities/IRepositories';
 import { CreateCommentDto, UpdateCommentDto } from '@shared/comment.types';
+import { ContentType } from '@shared/search.types';
+import { ICommentRepository } from '../entities/IRepositories';
+import { ICommentService, IEmbeddingService } from '../entities/IServices';
 
-export const createCommentService = ({ commentRepository }: { commentRepository: ICommentRepository }): ICommentService => {
+interface CommentServiceDependencies {
+  commentRepository: ICommentRepository;
+  embeddingService: IEmbeddingService;
+}
+
+export const createCommentService = ({ commentRepository, embeddingService }: CommentServiceDependencies): ICommentService => {
   return {
     getCommentsByPost: async (postId: string) => {
       return commentRepository.findByPost(postId);
@@ -11,14 +17,23 @@ export const createCommentService = ({ commentRepository }: { commentRepository:
       return commentRepository.findById(id);
     },
     createComment: async (postId: string, authorId: string, commentDto: CreateCommentDto) => {
-      // Future: Notification trigger to Post Owner
-      return commentRepository.create(postId, authorId, commentDto);
+      const comment = await commentRepository.create(postId, authorId, commentDto);
+      await embeddingService.indexContent(comment._id, ContentType.Comment, comment.content);
+      return comment;
     },
     updateComment: async (id: string, commentDto: UpdateCommentDto) => {
-      return commentRepository.update(id, commentDto);
+      const comment = await commentRepository.update(id, commentDto);
+      if (comment) {
+        await embeddingService.indexContent(comment._id, ContentType.Comment, comment.content);
+      }
+      return comment;
     },
     deleteComment: async (id: string) => {
-      return commentRepository.delete(id);
+      const success = await commentRepository.delete(id);
+      if (success) {
+        await embeddingService.removeContent(id, ContentType.Comment);
+      }
+      return success;
     }
   };
 };
