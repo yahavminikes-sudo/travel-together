@@ -4,6 +4,7 @@ import type { Post } from '@travel-together/shared/types/post.types';
 import {
   createComment,
   createPost,
+  deletePost,
   getCommentsByPost,
   getMyPosts,
   getPostById,
@@ -33,7 +34,13 @@ export const useMyPosts = () => {
 
   return useQuery({
     queryKey: ['myPosts', currentUser?._id],
-    queryFn: ({ signal }) => getMyPosts(currentUser!._id, signal),
+    queryFn: ({ signal }) => {
+      if (!currentUser?._id) {
+        return Promise.resolve([]);
+      }
+
+      return getMyPosts(currentUser._id, signal);
+    },
     enabled: isAuthenticated && !!currentUser?._id,
   });
 };
@@ -64,6 +71,19 @@ export const useUpdatePost = () => {
   });
 };
 
+export const useDeletePost = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (postId: string) => deletePost(postId),
+    onSuccess: (_, postId) => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['myPosts'] });
+      queryClient.removeQueries({ queryKey: ['post', postId] });
+    },
+  });
+};
+
 export const useComments = (postId?: string) => {
   return useQuery({
     queryKey: ['comments', postId],
@@ -80,6 +100,30 @@ export const useCreateComment = (postId: string) => {
     onSuccess: (comment) => {
       queryClient.setQueryData<Comment[]>(['comments', postId], (current = []) => {
         return [comment, ...current];
+      });
+      queryClient.setQueryData<Post | undefined>(['post', postId], (current) => {
+        if (!current) {
+          return current;
+        }
+
+        return {
+          ...current,
+          commentCount: (current.commentCount ?? 0) + 1,
+        };
+      });
+      queryClient.setQueryData<Post[]>(['posts'], (current = []) => {
+        return current.map((post) =>
+          post._id === postId
+            ? { ...post, commentCount: (post.commentCount ?? 0) + 1 }
+            : post
+        );
+      });
+      queryClient.setQueryData<Post[]>(['myPosts'], (current = []) => {
+        return current.map((post) =>
+          post._id === postId
+            ? { ...post, commentCount: (post.commentCount ?? 0) + 1 }
+            : post
+        );
       });
     },
   });

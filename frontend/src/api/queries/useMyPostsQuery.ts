@@ -10,6 +10,10 @@ export const fetchMyPosts = async (): Promise<Post[]> => {
   }
 
   const profile = await getProfile();
+  if (!profile._id) {
+    return [];
+  }
+
   return getMyPosts(profile._id);
 };
 

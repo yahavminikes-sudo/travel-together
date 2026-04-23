@@ -1,70 +1,119 @@
 import React from 'react';
-import { Badge, Button, Container } from 'react-bootstrap';
+import { Button, Container, Image } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { MapPin, MessageCircle, ArrowLeft, Pencil, Trash2 } from 'lucide-react';
 import { Post } from '@travel-together/shared/types/post.types';
 import { CommentsContainer } from '@/containers/CommentsContainer';
 import { LikeButton } from '@/components/ui/LikeButton';
-import { CustomCard } from '@/components/ui/CustomCard';
 
 interface PostDetailViewProps {
   currentUserId?: string;
   onBack: () => void;
   post: Post;
+  onDelete?: (postId: string) => void;
+  onEdit?: (postId: string) => void;
 }
 
-export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, onBack, post }) => {
-  const canEdit = currentUserId === post.authorId;
+export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, onBack, post, onDelete, onEdit }) => {
+  const isOwner = currentUserId === post.authorId;
+  const authorName = post.author?.username || 'Unknown';
+  const postDate = new Date(post.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+  const handleDelete = () => {
+    if (window.confirm('Are you sure you want to delete this post?')) {
+      onDelete?.(post._id);
+    }
+  };
+
+  const handleEdit = () => {
+    onEdit?.(post._id);
+  };
 
   return (
-    <Container className="my-5">
-      <Button variant="link" className="text-decoration-none mb-3 px-0" onClick={onBack}>
-        &larr; Back to posts
+    <Container className="py-4" style={{ maxWidth: 800 }}>
+      <Button variant="link" className="text-decoration-none text-body mb-3 p-0 d-flex align-items-center gap-1" onClick={onBack}>
+        <ArrowLeft size={16} /> Back
       </Button>
 
-      <CustomCard className="border-0 shadow-sm mb-4">
+      <div className="rounded overflow-hidden mb-4">
         {post.imageUrl ? (
           <img
             src={post.imageUrl}
             alt={post.title}
-            className="card-img-top"
-            style={{ maxHeight: '400px', objectFit: 'cover' }}
+            style={{ width: '100%', maxHeight: 450, objectFit: 'cover' }}
           />
         ) : null}
-        <div className="p-4 p-md-5">
-          <div className="d-flex justify-content-between align-items-start mb-4">
-            <h1 className="fw-bold mb-0">{post.title}</h1>
-            <LikeButton isLiked={false} likeCount={post.likes.length} onClick={() => {}} />
-          </div>
+      </div>
 
-          <div className="d-flex align-items-center mb-4 text-muted">
-            <span className="fw-medium text-dark">{post.author?.username || 'Unknown'}</span>
-            <span className="mx-2">&bull;</span>
-            <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-          </div>
+      <div>
+        <div className="d-flex align-items-center gap-1 small fw-medium text-accent-brand mb-2">
+          <MapPin size={14} />
+          {post.destination}
+        </div>
 
-          {canEdit ? (
-            <div className="mb-4">
-              <Link to={`/posts/${post._id}/edit`} className="btn btn-outline-primary">
-                Edit Post
-              </Link>
+        <h1 className="fw-bold mb-3" style={{ fontFamily: "'Playfair Display', serif", fontSize: '2rem' }}>
+          {post.title}
+        </h1>
+
+        <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+          <Link to={`/profile/${post.author?._id}`} className="d-flex align-items-center gap-2 text-decoration-none text-body">
+            {post.author?.avatarUrl ? (
+              <Image
+                src={post.author.avatarUrl}
+                alt={authorName}
+                roundedCircle
+                width={36}
+                height={36}
+                style={{ objectFit: 'cover' }}
+              />
+            ) : (
+              <span className="travel-post-avatar-fallback" style={{ width: 36, height: 36, fontSize: '1rem' }}>
+                {authorName.charAt(0).toUpperCase()}
+              </span>
+            )}
+            <div>
+              <p className="small fw-medium mb-0">{authorName}</p>
+              <p className="small text-muted-fg mb-0">{postDate}</p>
             </div>
-          ) : null}
+          </Link>
 
-          <p className="fs-5" style={{ whiteSpace: 'pre-wrap' }}>
-            {post.content}
-          </p>
-
-          <div className="d-flex flex-wrap gap-2 mt-4">
-            {post.tags?.map((tag) => (
-              <Badge key={tag} bg="light" text="secondary" className="border px-3 py-2 fs-6 fw-normal">
-                #{tag}
-              </Badge>
-            ))}
+          <div className="d-flex align-items-center gap-3">
+            <LikeButton isLiked={false} likeCount={post.likes.length} onClick={() => {}} disabled={!currentUserId} />
+            <Link to={`/posts/${post._id}#comments`} className="d-flex align-items-center gap-1 small text-muted-fg text-decoration-none">
+              <MessageCircle size={16} /> {post.commentCount ?? 0} comments
+            </Link>
           </div>
         </div>
-      </CustomCard>
 
-      <CommentsContainer postId={post._id} />
+        {isOwner && (onEdit || onDelete) && (
+          <div className="d-flex gap-2 mb-3">
+            {onEdit && (
+              <Button variant="outline-secondary" size="sm" onClick={handleEdit} className="d-flex align-items-center gap-1">
+                <Pencil size={12} /> Edit
+              </Button>
+            )}
+            {onDelete && (
+              <Button variant="outline-danger" size="sm" onClick={handleDelete} className="d-flex align-items-center gap-1">
+                <Trash2 size={12} /> Delete
+              </Button>
+            )}
+          </div>
+        )}
+
+        <div className="mt-4">
+          <p className="fs-6" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7, fontWeight: 300 }}>
+            {post.content}
+          </p>
+        </div>
+      </div>
+
+      <section id="comments" className="mt-5">
+        <div className="d-flex align-items-center gap-2 mb-3">
+          <MessageCircle size={18} />
+          <h2 className="mb-0 fs-4">Comments ({post.commentCount ?? 0})</h2>
+        </div>
+        <CommentsContainer postId={post._id} />
+      </section>
     </Container>
   );
 };

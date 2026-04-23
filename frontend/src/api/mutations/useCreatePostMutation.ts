@@ -2,6 +2,7 @@ import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react
 import { createPost as createPostRequest } from '@/api';
 
 export interface CreatePostData {
+  destination: string;
   title: string;
   content: string;
   imageUrl?: string;

@@ -29,7 +29,7 @@ const AppShell = () => {
         <Navbar
           isAuthenticated={isAuthenticated}
           onLogout={logout}
-          username={currentUser?.username}
+          currentUser={currentUser}
         />
         <main className="flex-grow-1">
           <Routes>

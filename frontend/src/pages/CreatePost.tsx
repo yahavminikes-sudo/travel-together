@@ -1,18 +1,22 @@
 import React from 'react';
-import { Container, Form, Alert } from 'react-bootstrap';
+import { Alert, Container, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, ImagePlus } from 'lucide-react';
+import { uploadImage } from '@/api';
 import { useAuth } from '@/hooks/useAuth';
 import { useCreatePost } from '@/hooks/usePosts';
-import { CustomCard } from '../components/ui/CustomCard';
-import { CustomInput } from '../components/ui/CustomInput';
-import { CustomButton } from '@/components/ui/CustomButton';
 import { createPostSchema, CreatePostFormData } from '@travel-together/shared/schemas/postSchemas';
 
 export const CreatePost: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = React.useState<string>('');
+  const [uploadError, setUploadError] = React.useState<string | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = React.useState(false);
+  const maxUploadSizeBytes = 5 * 1024 * 1024;
 
   const { register, handleSubmit, formState: { errors } } = useForm<CreatePostFormData>({
     resolver: zodResolver(createPostSchema)
@@ -20,15 +24,75 @@ export const CreatePost: React.FC = () => {
 
   const mutation = useCreatePost();
 
-  const onSubmit = (data: CreatePostFormData) => {
-    mutation.mutate(data, {
-      onSuccess: (post) => {
-        navigate(`/posts/${post._id}`);
-      },
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] ?? null;
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Please choose an image file.');
+      event.target.value = '';
+      return;
+    }
+
+    if (file.size > maxUploadSizeBytes) {
+      setUploadError('Cover photo is too large. Please choose an image smaller than 5 MB.');
+      event.target.value = '';
+      return;
+    }
+
+    setSelectedImage(file);
+    setUploadError(null);
+
+    const previewUrl = URL.createObjectURL(file);
+    setImagePreviewUrl((currentUrl) => {
+      if (currentUrl) {
+        URL.revokeObjectURL(currentUrl);
+      }
+
+      return previewUrl;
     });
   };
 
-  const isSubmitting = mutation.isPending;
+  React.useEffect(() => {
+    return () => {
+      if (imagePreviewUrl) {
+        URL.revokeObjectURL(imagePreviewUrl);
+      }
+    };
+  }, [imagePreviewUrl]);
+
+  const onSubmit = async (data: CreatePostFormData) => {
+    try {
+      setUploadError(null);
+
+      let imageUrl = data.imageUrl;
+      if (selectedImage) {
+        setIsUploadingImage(true);
+        imageUrl = await uploadImage(selectedImage);
+      }
+
+      mutation.mutate(
+        {
+          ...data,
+          imageUrl,
+        },
+        {
+          onSuccess: (post) => {
+            navigate(`/posts/${post._id}`);
+          },
+        }
+      );
+    } catch (error) {
+      setUploadError(error instanceof Error ? error.message : 'Failed to upload cover photo.');
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  const isSubmitting = mutation.isPending || isUploadingImage;
   const error = mutation.isError ? mutation.error.message : null;
 
   if (!isAuthenticated) {
@@ -43,71 +107,98 @@ export const CreatePost: React.FC = () => {
 
   return (
     <Container className="py-5" style={{ maxWidth: '800px' }}>
-      <CustomCard className="shadow-sm border-0 p-4 p-md-5">
-        <h2 className="mb-4 fw-bold">Create New Post</h2>
-        
+      <button
+        type="button"
+        className="btn btn-link text-decoration-none text-dark px-0 mb-3 d-inline-flex align-items-center gap-2"
+        onClick={() => navigate(-1)}
+      >
+        <ArrowLeft size={18} />
+        Back
+      </button>
+
+      <div className="bg-white border rounded-4 shadow-sm p-4 p-md-4">
+        <h2 className="mb-4 fw-bold" style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.7rem' }}>
+          Share Your Adventure
+        </h2>
+
         {error && <Alert variant="danger">{error}</Alert>}
-        
+        {uploadError && <Alert variant="danger">{uploadError}</Alert>}
+
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <CustomInput
-            label="Title"
-            type="text"
-            placeholder="Give your adventure a catchy title"
-            error={errors.title?.message}
-            {...register('title')}
-          />
-          
           <Form.Group className="mb-3">
-            <Form.Label className="fw-medium text-dark">Content</Form.Label>
+            <Form.Label>Title</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="My Amazing Trip to..."
+              isInvalid={!!errors.title}
+              {...register('title')}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.title?.message}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Destination</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Paris, France"
+              isInvalid={!!errors.destination}
+              {...register('destination')}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.destination?.message}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className="mb-4">
+            <Form.Label>Your Story</Form.Label>
             <Form.Control
               as="textarea"
-              rows={6}
-              placeholder="Tell us about your travel experience..."
+              rows={8}
+              placeholder="Tell us about your experience..."
               isInvalid={!!errors.content}
               {...register('content')}
-              style={{ borderRadius: '0.5rem', resize: 'vertical' }}
+              style={{ borderRadius: '0.5rem', resize: 'vertical', minHeight: 220 }}
             />
             <Form.Control.Feedback type="invalid">
               {errors.content?.message}
             </Form.Control.Feedback>
           </Form.Group>
-          
-          <CustomInput
-            label="Image URL (Optional)"
-            type="url"
-            placeholder="https://example.com/image.jpg"
-            error={errors.imageUrl?.message}
-            {...register('imageUrl')}
-          />
 
-          <CustomInput
-            label="Tags (Optional)"
-            type="text"
-            placeholder="Comma separated tags (e.g. paris, food, hiking)"
-            error={errors.tags?.message}
-            {...register('tags')}
-            hint="Separate multiple tags with commas"
-          />
-          
-          <div className="d-flex justify-content-end gap-3 mt-4">
-            <CustomButton 
-              type="button" 
-              variant="outline-secondary"
-              onClick={() => navigate(-1)}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </CustomButton>
-            <CustomButton 
-              type="submit" 
-              variant="primary"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Publishing...' : 'Publish Post'}
-            </CustomButton>
-          </div>
+          <Form.Group className="mb-4">
+            <Form.Label>Cover Photo</Form.Label>
+            <label className="create-post-upload" htmlFor="cover-photo-input">
+              {imagePreviewUrl ? (
+                <img src={imagePreviewUrl} alt="Cover preview" className="create-post-upload-preview" />
+              ) : (
+                <div className="create-post-upload-empty">
+                  <ImagePlus size={36} />
+                  <span>Click to upload a photo</span>
+                </div>
+              )}
+            </label>
+            <Form.Control
+              id="cover-photo-input"
+              type="file"
+              accept="image/*"
+              className="d-none"
+              onChange={handleImageSelect}
+            />
+            {errors.imageUrl?.message ? (
+              <div className="invalid-feedback d-block">{errors.imageUrl.message}</div>
+            ) : null}
+          </Form.Group>
+
+          <button
+            type="submit"
+            className="btn btn-accent w-100 py-2 fs-5"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Publishing...' : 'Publish Post'}
+          </button>
         </Form>
-      </CustomCard>
+      </div>
     </Container>
   );
 };

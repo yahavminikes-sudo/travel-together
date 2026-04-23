@@ -31,6 +31,10 @@ export const updatePost = async (postId: string, data: UpdatePostDto | PostEdito
   return response.data;
 };
 
+export const deletePost = async (postId: string) => {
+  await apiClient.delete(`/api/posts/${postId}`);
+};
+
 export const getMyPosts = async (userId: string, signal?: AbortSignal) => {
   const posts = await getPosts(signal);
   return posts.filter((post) => post.authorId === userId);
