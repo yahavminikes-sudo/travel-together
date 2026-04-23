@@ -4,7 +4,7 @@ import { IEmbeddingProvider } from '../../entities/IEmbeddingProvider';
 
 export const createGeminiEmbeddingProvider = (): IEmbeddingProvider => {
   const genAI = new GoogleGenerativeAI(appConfig.GEMINI_API_KEY);
-  const model = genAI.getGenerativeModel({ model: 'text-embedding-004' });
+  const model = genAI.getGenerativeModel({ model: 'models/gemini-embedding-001' });
 
   return {
     generateEmbedding: async (text: string): Promise<number[]> => {

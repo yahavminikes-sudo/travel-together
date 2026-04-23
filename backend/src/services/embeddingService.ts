@@ -30,20 +30,36 @@ export const createEmbeddingService = ({
     }
   },
 
-  search: async (query: string, topK = 5): Promise<SearchResult[]> => {
+  search: async (query: string, topK = 20): Promise<SearchResult[]> => {
     const queryEmbedding = await embeddingProvider.generateEmbedding(query);
     const allEmbeddings = await embeddingRepository.findAll();
 
-    const scored = allEmbeddings.map((record) => ({
-      contentId: record.contentId,
-      contentType: record.contentType,
-      textChunk: record.textChunk,
-      score: cosineSimilarity(queryEmbedding, record.embedding)
-    }));
+    const threshold = 0.55;
 
-    scored.sort((a, b) => b.score - a.score);
+    const scored = allEmbeddings
+      .map((record) => ({
+        contentId: record.contentId,
+        contentType: record.contentType,
+        textChunk: record.textChunk,
+        score: cosineSimilarity(queryEmbedding, record.embedding)
+      }))
+      .filter((result) => result.score >= threshold);
 
-    return scored.slice(0, topK);
+    // Deduplicate by contentId, keeping the highest score
+    const uniqueResults = scored.reduce((acc, current) => {
+      const existing = acc.find((r) => r.contentId === current.contentId);
+      if (!existing) {
+        acc.push(current);
+      } else if (current.score > existing.score) {
+        // Keep the best matching chunk
+        Object.assign(existing, current);
+      }
+      return acc;
+    }, [] as SearchResult[]);
+
+    uniqueResults.sort((a, b) => b.score - a.score);
+
+    return uniqueResults.slice(0, topK);
   },
 
   removeContent: async (contentId: string, contentType: ContentType): Promise<void> => {
