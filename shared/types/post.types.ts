@@ -3,17 +3,20 @@ import { User } from './user.types';
 export interface Post {
   _id: string;
   authorId: string;
-  author?: User; // Populated author details
+  author?: User;
+  commentCount: number;
+  destination: string;
   title: string;
   content: string;
   imageUrl?: string;
-  likes: string[]; // Array of User IDs who liked the post
+  likes: string[];
   tags?: string[];
   createdAt: string;
   updatedAt: string;
 }
 
 export interface CreatePostDto {
+  destination: string;
   title: string;
   content: string;
   imageUrl?: string;
@@ -21,6 +24,7 @@ export interface CreatePostDto {
 }
 
 export interface UpdatePostDto {
+  destination?: string;
   title?: string;
   content?: string;
   imageUrl?: string;

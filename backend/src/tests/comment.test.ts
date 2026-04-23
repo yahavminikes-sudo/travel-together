@@ -30,6 +30,7 @@ describe('Comment API Endpoints', () => {
       .post('/api/posts')
       .set('Authorization', `Bearer ${authToken}`)
       .send({
+        destination: 'Test City',
         title: 'Post to Comment on',
         content: 'This post exists solely to test comments.',
       });

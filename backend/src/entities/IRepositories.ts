@@ -1,12 +1,12 @@
-import { User } from '@shared/user.types';
-import { Post, CreatePostDto, UpdatePostDto } from '@shared/post.types';
-import { Comment, CreateCommentDto, UpdateCommentDto } from '@shared/comment.types';
+import { User } from '@travel-together/shared/types/user.types';
+import { Post, CreatePostDto, UpdatePostDto } from '@travel-together/shared/types/post.types';
+import { Comment, CreateCommentDto, UpdateCommentDto } from '@travel-together/shared/types/comment.types';
 import { AuthRecord } from './AuthRecord';
-import { ContentType } from '@shared/search.types';
+import { ContentType } from '@travel-together/shared/types/search.types';
 
 export interface IAuthRepository {
   findAuthRecordByEmail(email: string): Promise<AuthRecord | null>;
-  saveAuthRecord(record: AuthRecord): Promise<AuthRecord>;
+  saveAuthRecord(record: Omit<AuthRecord, '_id'> & Partial<Pick<AuthRecord, '_id'>>): Promise<AuthRecord>;
 }
 
 export interface IUserRepository {

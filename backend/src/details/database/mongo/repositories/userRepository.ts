@@ -1,6 +1,6 @@
 import { IUserRepository } from '../../../../entities/IRepositories';
 import { UserModel, IUserDocument } from '../models/User.schema';
-import { User } from '@shared/user.types';
+import { User } from '@travel-together/shared/types/user.types';
 import { mapToUser } from '../utils/mappers';
 
 export const createUserRepository = (): IUserRepository => ({

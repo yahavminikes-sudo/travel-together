@@ -1,6 +1,6 @@
-import { User } from '@shared/user.types';
-import { Post } from '@shared/post.types';
-import { Comment } from '@shared/comment.types';
+import { Comment } from '@travel-together/shared/types/comment.types';
+import { Post } from '@travel-together/shared/types/post.types';
+import { User } from '@travel-together/shared/types/user.types';
 import { ICommentDocument } from '../models/Comment.schema';
 import { IPostDocument } from '../models/Post.schema';
 import { IUserDocument } from '../models/User.schema';
@@ -21,6 +21,9 @@ export const mapToPost = (doc: IPostDocument): Post => {
   return {
     _id: doc._id.toString(),
     authorId: doc.authorId.toString(),
+    author: doc.author ? mapToUser(doc.author) : undefined,
+    commentCount: doc.commentCount ?? 0,
+    destination: doc.destination,
     title: doc.title,
     content: doc.content,
     imageUrl: doc.imageUrl ?? '',
@@ -36,6 +39,7 @@ export const mapToComment = (doc: ICommentDocument): Comment => {
     _id: doc._id.toString(),
     postId: doc.postId.toString(),
     authorId: doc.authorId.toString(),
+    author: doc.author ? mapToUser(doc.author) : undefined,
     content: doc.content,
     createdAt: new Date(doc.createdAt).toISOString(),
     updatedAt: new Date(doc.updatedAt).toISOString()

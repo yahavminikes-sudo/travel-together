@@ -10,11 +10,11 @@ interface Props extends RouterNavLinkProps {
 export const NavLink: React.FC<Props> = ({ className, children, ...props }) => {
   return (
     <RouterNavLink 
-      className={(navProps) => {
-        const isActive = navProps.isActive;
-        const customClass = typeof className === 'function' ? className(navProps) : className;
-        return clsx('nav-link', { active: isActive }, customClass);
-      }}
+      className={(navProps) => clsx(
+        'nav-link', 
+        { active: navProps.isActive }, 
+        typeof className === 'function' ? className(navProps) : className
+      )}
       {...props}
     >
       {children}

@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { ContentType } from '@shared/search.types';
+import { ContentType } from '@travel-together/shared/types/search.types';
 
 export interface IEmbeddingDocument extends Document {
   contentId: string;

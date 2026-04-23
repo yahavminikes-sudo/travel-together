@@ -1,7 +1,6 @@
-import { CreateCommentDto, UpdateCommentDto } from '@shared/comment.types';
-import { ContentType } from '@shared/search.types';
-import { ICommentRepository } from '../entities/IRepositories';
 import { ICommentService, IEmbeddingService } from '../entities/IServices';
+import { ICommentRepository } from '../entities/IRepositories';
+import { ContentType, CreateCommentDto, UpdateCommentDto } from '@travel-together/shared/types';
 
 interface CommentServiceDependencies {
   commentRepository: ICommentRepository;
@@ -18,20 +17,32 @@ export const createCommentService = ({ commentRepository, embeddingService }: Co
     },
     createComment: async (postId: string, authorId: string, commentDto: CreateCommentDto) => {
       const comment = await commentRepository.create(postId, authorId, commentDto);
-      await embeddingService.indexContent(comment._id, ContentType.Comment, comment.content);
+      try {
+        await embeddingService.indexContent(comment._id, ContentType.Comment, comment.content);
+      } catch (err) {
+        console.error('Embedding indexing failed for comment', comment._id, err);
+      }
       return comment;
     },
     updateComment: async (id: string, commentDto: UpdateCommentDto) => {
       const comment = await commentRepository.update(id, commentDto);
       if (comment) {
-        await embeddingService.indexContent(comment._id, ContentType.Comment, comment.content);
+        try {
+          await embeddingService.indexContent(comment._id, ContentType.Comment, comment.content);
+        } catch (err) {
+          console.error('Embedding indexing failed for comment', comment._id, err);
+        }
       }
       return comment;
     },
     deleteComment: async (id: string) => {
       const success = await commentRepository.delete(id);
       if (success) {
-        await embeddingService.removeContent(id, ContentType.Comment);
+        try {
+          await embeddingService.removeContent(id, ContentType.Comment);
+        } catch (err) {
+          console.error('Embedding removal failed for comment', id, err);
+        }
       }
       return success;
     }

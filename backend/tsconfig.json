@@ -2,12 +2,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "CommonJS",
-    "moduleResolution": "node",
-    "baseUrl": ".",
-    "paths": {
-      "@shared/*": ["../shared/*"]
-    },
-    "rootDir": "..",
+    "rootDir": "./src",
     "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -17,6 +12,6 @@
     "ignoreDeprecations": "5.0",
     "types": ["node", "jest"]
   },
-  "include": ["src/**/*", "../shared/**/*"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

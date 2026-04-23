@@ -1,13 +1,17 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { Post } from '@shared/post.types';
+import { Post } from '@travel-together/shared/types/post.types';
+import { IUserDocument } from './User.schema';
 
-export interface IPostDocument extends Omit<Post, '_id' | 'author' | 'createdAt' | 'updatedAt'>, Document {
+export interface IPostDocument extends Omit<Post, '_id' | 'author' | 'commentCount' | 'createdAt' | 'updatedAt'>, Document {
+  author?: IUserDocument;
+  commentCount?: number;
   createdAt: string;
   updatedAt: string;
 }
 
 const postSchema = new Schema<IPostDocument>({
   authorId: { type: String, required: true, ref: 'User' },
+  destination: { type: String, required: true, trim: true },
   title: { type: String, required: true },
   content: { type: String, required: true },
   imageUrl: { type: String, default: '' },

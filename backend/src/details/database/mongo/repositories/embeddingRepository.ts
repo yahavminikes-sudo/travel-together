@@ -1,6 +1,6 @@
 import { EmbeddingRecord, IEmbeddingRepository } from '../../../../entities/IRepositories';
 import { EmbeddingModel } from '../models/Embedding.schema';
-import { ContentType } from '@shared/search.types';
+import { ContentType } from '@travel-together/shared/types/search.types';
 
 export const createEmbeddingRepository = (): IEmbeddingRepository => ({
   save: async (record: Omit<EmbeddingRecord, '_id'>): Promise<EmbeddingRecord> => {

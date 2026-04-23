@@ -1,7 +1,7 @@
 import { IEmbeddingProvider } from '../entities/IEmbeddingProvider';
 import { IEmbeddingRepository } from '../entities/IRepositories';
 import { IEmbeddingService } from '../entities/IServices';
-import { ContentType, SearchResult } from '@shared/search.types';
+import { ContentType, SearchResult } from '@travel-together/shared/types/search.types';
 import { chunkText } from '../utils/chunkText';
 import { cosineSimilarity } from '../utils/cosineSimilarity';
 

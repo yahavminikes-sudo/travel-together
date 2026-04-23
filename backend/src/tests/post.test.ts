@@ -29,6 +29,7 @@ describe('Post API Endpoints', () => {
       .post('/api/posts')
       .set('Authorization', `Bearer ${authToken}`)
       .send({
+        destination: 'Japan',
         title: 'My Journey to Japan',
         content: 'It was an amazing experience exploring Tokyo.',
       });

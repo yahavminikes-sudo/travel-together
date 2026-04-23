@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { User } from '@shared/user.types';
+import { User } from '@travel-together/shared/types/user.types';
 
 export interface IUserDocument extends Omit<User, '_id' | 'createdAt' | 'updatedAt'>, Document {
   password?: string;

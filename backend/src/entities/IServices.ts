@@ -1,8 +1,8 @@
-import { User } from '@shared/user.types';
-import { Post, CreatePostDto, UpdatePostDto } from '@shared/post.types';
-import { Comment, CreateCommentDto, UpdateCommentDto } from '@shared/comment.types';
-import { LoginCredentials, RegisterCredentials, AuthResponse } from '@shared/auth.types';
-import { ContentType, SearchResult } from '@shared/search.types';
+import { UpdateProfileDto, User } from '@travel-together/shared/types/user.types';
+import { Post, CreatePostDto, UpdatePostDto } from '@travel-together/shared/types/post.types';
+import { Comment, CreateCommentDto, UpdateCommentDto } from '@travel-together/shared/types/comment.types';
+import { LoginCredentials, RegisterCredentials, AuthResponse } from '@travel-together/shared/types/auth.types';
+import { ContentType, SearchResult } from '@travel-together/shared';
 
 export interface IAuthService {
   register(dto: RegisterCredentials): Promise<AuthResponse>;
@@ -12,6 +12,7 @@ export interface IAuthService {
 export interface IUserService {
   getUserProfile(userId: string): Promise<User | null>;
   getUserById(id: string): Promise<User | null>;
+  updateUserProfile(userId: string, updates: UpdateProfileDto): Promise<User | null>;
 }
 
 export interface IPostService {

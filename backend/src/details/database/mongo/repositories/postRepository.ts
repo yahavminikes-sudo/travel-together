@@ -1,27 +1,42 @@
 import { IPostRepository } from '../../../../entities/IRepositories';
+import { CommentModel } from '../models/Comment.schema';
 import { PostModel } from '../models/Post.schema';
-import { Post, CreatePostDto, UpdatePostDto } from '@shared/post.types';
-import { mapToPost } from '../utils/mappers';
+import { UserModel } from '../models/User.schema';
+import { Post, CreatePostDto, UpdatePostDto } from '@travel-together/shared/types/post.types';
+import { mapToPost, mapToUser } from '../utils/mappers';
+
+const enrichPost = async (doc: any): Promise<Post> => {
+  const [authorDoc, commentCount] = await Promise.all([
+    UserModel.findById(doc.authorId).exec(),
+    CommentModel.countDocuments({ postId: doc._id.toString() }).exec(),
+  ]);
+
+  return mapToPost({
+    ...doc.toObject(),
+    author: authorDoc ? mapToUser(authorDoc) : undefined,
+    commentCount,
+  });
+};
 
 export const createPostRepository = (): IPostRepository => ({
   findById: async (id: string): Promise<Post | null> => {
     const doc = await PostModel.findById(id).exec();
-    return doc ? mapToPost(doc) : null;
+    return doc ? enrichPost(doc) : null;
   },
 
   findAll: async (): Promise<Post[]> => {
     const docs = await PostModel.find().sort({ createdAt: -1 }).exec();
-    return docs.map(mapToPost);
+    return Promise.all(docs.map(enrichPost));
   },
 
   create: async (authorId: string, postDto: CreatePostDto): Promise<Post> => {
     const doc = await PostModel.create({ ...postDto, authorId });
-    return mapToPost(doc);
+    return enrichPost(doc);
   },
 
   update: async (id: string, postDto: UpdatePostDto): Promise<Post | null> => {
     const doc = await PostModel.findByIdAndUpdate(id, postDto, { new: true }).exec();
-    return doc ? mapToPost(doc) : null;
+    return doc ? enrichPost(doc) : null;
   },
 
   delete: async (id: string): Promise<boolean> => {
