@@ -30,6 +30,7 @@ export interface ICommentRepository {
   findByPost(postId: string): Promise<Comment[]>;
   create(postId: string, authorId: string, commentDto: CreateCommentDto): Promise<Comment>;
   update(id: string, commentDto: UpdateCommentDto): Promise<Comment | null>;
+  countByPost(postId: string): Promise<number>;
   delete(id: string): Promise<boolean>;
 }
 

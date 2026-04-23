@@ -22,8 +22,8 @@ const embeddingProvider = createGeminiEmbeddingProvider();
 
 const authRepository = createAuthRepository();
 const userRepository = createUserRepository();
-const postRepository = createPostRepository();
-const commentRepository = createCommentRepository();
+const commentRepository = createCommentRepository(userRepository);
+const postRepository = createPostRepository(userRepository, commentRepository);
 const embeddingRepository = createEmbeddingRepository();
 
 const authService = createAuthService({ authRepository, authProvider });
