@@ -1,7 +1,7 @@
 import React from 'react';
-import { Container } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
-import { EditPostForm } from '@/components/features/EditPostForm';
+import { uploadImage } from '@/api';
+import { PostEditorForm } from '@/components/features/PostEditorForm';
 import { PageError } from '@/components/ui/PageError';
 import { PageLoader } from '@/components/ui/PageLoader';
 import { useAuth } from '@/hooks/useAuth';
@@ -14,9 +14,62 @@ export const EditPostContainer: React.FC = () => {
   const { currentUser, isAuthenticated, isInitializing } = useAuth();
   const { data: post, error: queryError, isLoading } = usePost(id);
   const mutation = useUpdatePost();
+  const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = React.useState('');
+  const [uploadError, setUploadError] = React.useState<string | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = React.useState(false);
+  const maxUploadSizeBytes = 5 * 1024 * 1024;
 
   const error = queryError instanceof Error ? queryError.message : null;
   const submitError = mutation.isError ? mutation.error.message : null;
+
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] ?? null;
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Please choose an image file.');
+      event.target.value = '';
+      return;
+    }
+
+    if (file.size > maxUploadSizeBytes) {
+      setUploadError('Cover photo is too large. Please choose an image smaller than 5 MB.');
+      event.target.value = '';
+      return;
+    }
+
+    setSelectedImage(file);
+    setUploadError(null);
+
+    const previewUrl = URL.createObjectURL(file);
+    setImagePreviewUrl((currentUrl) => {
+      if (currentUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(currentUrl);
+      }
+
+      return previewUrl;
+    });
+  };
+
+  React.useEffect(() => {
+    return () => {
+      if (imagePreviewUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(imagePreviewUrl);
+      }
+    };
+  }, [imagePreviewUrl]);
+
+  React.useEffect(() => {
+    if (post?.imageUrl) {
+      setImagePreviewUrl(post.imageUrl);
+    } else {
+      setImagePreviewUrl('');
+    }
+  }, [post?.imageUrl]);
 
   if (!id) {
     return (
@@ -65,23 +118,39 @@ export const EditPostContainer: React.FC = () => {
   };
 
   return (
-    <Container className="py-5" style={{ maxWidth: '800px' }}>
-      <EditPostForm
-        initialValues={initialValues}
-        isSubmitting={mutation.isPending}
-        onCancel={() => navigate(-1)}
-        onSubmit={(data) =>
+    <PostEditorForm
+      mode="edit"
+      initialValues={initialValues}
+      isSubmitting={mutation.isPending || isUploadingImage}
+      onBack={() => navigate(-1)}
+      onImageSelect={handleImageSelect}
+      onSubmit={async (data) => {
+        try {
+          setUploadError(null);
+
+          let imageUrl = data.imageUrl;
+          if (selectedImage) {
+            setIsUploadingImage(true);
+            imageUrl = await uploadImage(selectedImage);
+          }
+
           mutation.mutate(
-            { id, data },
+            { id, data: { ...data, imageUrl } },
             {
-              onSuccess: () => {
-                navigate(-1);
+              onSuccess: (updatedPost) => {
+                navigate(`/posts/${updatedPost._id}`);
               },
             }
-          )
+          );
+        } catch (uploadingError) {
+          setUploadError(uploadingError instanceof Error ? uploadingError.message : 'Failed to upload cover photo.');
+        } finally {
+          setIsUploadingImage(false);
         }
-        submitError={submitError}
-      />
-    </Container>
+      }}
+      previewUrl={imagePreviewUrl}
+      submitError={submitError}
+      uploadError={uploadError}
+    />
   );
 };
