@@ -6,6 +6,14 @@ import { CreatePostFormData } from '@travel-together/shared/schemas/postSchemas'
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const createPostInitialValues: CreatePostFormData = {
+  content: '',
+  destination: '',
+  imageUrl: '',
+  tags: '',
+  title: '',
+};
+
 export const CreatePost: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
@@ -101,7 +109,7 @@ export const CreatePost: React.FC = () => {
   return (
     <PostEditorForm
       mode="create"
-      initialValues={{ content: '', destination: '', imageUrl: '', tags: '', title: '' }}
+      initialValues={createPostInitialValues}
       isSubmitting={isSubmitting}
       onBack={() => navigate(-1)}
       onImageSelect={handleImageSelect}
