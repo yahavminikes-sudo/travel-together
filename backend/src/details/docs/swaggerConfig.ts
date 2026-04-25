@@ -74,5 +74,5 @@ export const swaggerOptions: Options = {
       }
     ]
   },
-  apis: ['./src/details/docs/api/*.docs.ts'], // Path to the API docs
+  apis: ['./src/details/docs/api/*.docs.ts'],
 };

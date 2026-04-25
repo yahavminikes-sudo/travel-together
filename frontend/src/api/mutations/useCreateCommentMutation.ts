@@ -19,7 +19,6 @@ export const useCreateCommentMutation = <TOnMutateResult = unknown>(
     ...options,
     mutationFn: postComment,
     onSuccess: (data, variables, onMutateResult, context) => {
-      // Update the comments cache after the server confirms creation.
       queryClient.setQueryData<Comment[]>(['comments', variables.postId], (old) => {
         return old ? [data, ...old] : [data];
       });

@@ -14,7 +14,7 @@ const userSchema = new Schema<IUserDocument>(
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     googleId: { type: String, required: false, unique: true, sparse: true },
-    password: { type: String, required: false }, // Optional if we plan OAuth in future
+    password: { type: String, required: false },
     avatarUrl: { type: String, default: '' },
     bio: { type: String, default: '' },
     refreshTokens: [{ type: String, default: [] }]

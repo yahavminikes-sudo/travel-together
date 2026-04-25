@@ -1,7 +1,3 @@
-/**
- * Calculates the cosine similarity between two vectors.
- * Returns a value between -1 and 1, where 1 means identical direction.
- */
 export const cosineSimilarity = (a: number[], b: number[]): number => {
   if (a.length !== b.length) {
     throw new Error('Vectors must be the same length');

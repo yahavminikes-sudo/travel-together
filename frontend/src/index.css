@@ -100,7 +100,6 @@ h4 {
   font-family: 'Playfair Display', serif;
 }
 
-/* Bootstrap theme bridge — map Bootstrap to our HSL tokens */
 :root {
   --bs-primary: hsl(var(--primary));
   --bs-primary-rgb: 26, 95, 180;

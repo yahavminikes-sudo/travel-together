@@ -35,7 +35,7 @@ export const createCommentController = ({ commentService }: { commentService: IC
           res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Unauthorized' });
           return;
         }
-        const { postId } = req.params; // Or from body depending on route structure
+        const { postId } = req.params;
         const comment = await commentService.createComment(postId, req.userId, req.body);
         res.status(StatusCodes.CREATED).json(comment);
       } catch (err) {

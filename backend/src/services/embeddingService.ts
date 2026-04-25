@@ -44,14 +44,11 @@ export const createEmbeddingService = ({
         score: cosineSimilarity(queryEmbedding, record.embedding)
       }))
       .filter((result) => result.score >= threshold);
-
-    // Deduplicate by contentId, keeping the highest score
     const uniqueResults = scored.reduce((acc, current) => {
       const existing = acc.find((r) => r.contentId === current.contentId);
       if (!existing) {
         acc.push(current);
       } else if (current.score > existing.score) {
-        // Keep the best matching chunk
         Object.assign(existing, current);
       }
       return acc;
