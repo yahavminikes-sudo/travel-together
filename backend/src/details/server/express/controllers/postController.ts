@@ -8,11 +8,9 @@ export const createPostController = ({ postService }: { postService: IPostServic
     pageStr: string | undefined,
     limitStr: string | undefined
   ): { page: number; limit: number; valid: boolean; error?: string } => {
-    // Default values
     let page = 1;
     let limit = 10;
 
-    // Parse page if provided
     if (pageStr) {
       page = parseInt(pageStr);
       if (isNaN(page)) {
@@ -23,7 +21,6 @@ export const createPostController = ({ postService }: { postService: IPostServic
       }
     }
 
-    // Parse limit if provided
     if (limitStr) {
       limit = parseInt(limitStr);
       if (isNaN(limit)) {
