@@ -40,7 +40,8 @@ describe('Search API Endpoints', () => {
       destination: 'Paris',
       title: 'Eiffel Tower Adventure',
       content: 'Visited the beautiful Eiffel Tower in Paris.',
-      tags: ['france', 'paris', 'europe'],
+      imageUrl: 'https://example.com/eiffel-tower.jpg',
+      tags: 'france,paris,europe',
       ...overrides
     });
   };
@@ -65,7 +66,6 @@ describe('Search API Endpoints', () => {
     });
 
     it('should return paginated search response structure', async () => {
-      await authenticateUser();
       await createPost({ destination: 'Paris', title: 'Paris Trip', content: 'Paris is nice' });
       
       const response = await request(app).get('/api/search?q=paris');
@@ -76,7 +76,6 @@ describe('Search API Endpoints', () => {
     });
 
     it('should respect custom page parameter', async () => {
-      await authenticateUser();
       for (let i = 0; i < 10; i++) {
         await createPost({ destination: 'Paris', title: `Paris Post ${i}` });
       }
@@ -125,7 +124,6 @@ describe('Search API Endpoints', () => {
     });
 
     it('should return results when query matches content', async () => {
-      await authenticateUser();
       await createPost({ destination: 'Paris', title: 'Eiffel Tower', content: 'Beautiful landmark' });
 
       const response = await request(app).get('/api/search?q=paris');
