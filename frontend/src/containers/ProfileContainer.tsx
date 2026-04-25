@@ -3,11 +3,17 @@ import { ProfileView } from '@/components/features/ProfileView';
 import { PageError } from '@/components/ui/PageError';
 import { PageLoader } from '@/components/ui/PageLoader';
 import { useAuth } from '@/hooks/useAuth';
-import { usePosts, useTogglePostLike } from '@/hooks/usePosts';
+import { useMyPosts, useTogglePostLike } from '@/hooks/usePosts';
 
 export const ProfileContainer: React.FC = () => {
   const { currentUser, isAuthenticated, isInitializing } = useAuth();
-  const { data: posts = [], isLoading } = usePosts();
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useMyPosts();
   const toggleLikeMutation = useTogglePostLike();
 
   if (isInitializing || isLoading) {
@@ -18,7 +24,8 @@ export const ProfileContainer: React.FC = () => {
     return <PageError message="You need to sign in to view your profile." />;
   }
 
-  const userPosts = posts.filter((post) => post.authorId === currentUser._id);
+  const posts = data?.pages.flatMap((page) => page.data) ?? [];
+  const totalCount = data?.pages[0]?.total ?? 0;
 
   return (
     <ProfileView
@@ -27,9 +34,12 @@ export const ProfileContainer: React.FC = () => {
       onLikeToggle={(postId) => {
         void toggleLikeMutation.mutateAsync(postId);
       }}
-      postCount={userPosts.length}
-      posts={userPosts}
+      postCount={totalCount}
+      posts={posts}
       user={currentUser}
+      onLoadMore={fetchNextPage}
+      hasMore={hasNextPage}
+      isFetchingNextPage={isFetchingNextPage}
     />
   );
 };

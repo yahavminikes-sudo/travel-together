@@ -4,11 +4,61 @@ import { IPostService } from '../../../../entities/IServices';
 import { AuthRequest } from '../middlewares/authenticate';
 
 export const createPostController = ({ postService }: { postService: IPostService }) => {
+  const validatePaginationParams = (
+    pageStr: string | undefined,
+    limitStr: string | undefined
+  ): { page: number; limit: number; valid: boolean; error?: string } => {
+    // Default values
+    let page = 1;
+    let limit = 10;
+
+    // Parse page if provided
+    if (pageStr) {
+      page = parseInt(pageStr);
+      if (isNaN(page)) {
+        return { page: 1, limit: 10, valid: false, error: 'page must be a number' };
+      }
+      if (page < 1) {
+        return { page, limit, valid: false, error: 'page must be a positive integer' };
+      }
+    }
+
+    // Parse limit if provided
+    if (limitStr) {
+      limit = parseInt(limitStr);
+      if (isNaN(limit)) {
+        return { page, limit: 10, valid: false, error: 'limit must be a number' };
+      }
+      if (limit < 1) {
+        return { page, limit, valid: false, error: 'limit must be a positive integer' };
+      }
+      if (limit > 100) {
+        return { page, limit, valid: false, error: 'limit cannot exceed 100' };
+      }
+    }
+
+    return { page, limit, valid: true };
+  };
+
   return {
-    getAllPosts: async (req: Request, res: Response) => {
+    getPosts: async (req: Request, res: Response) => {
       try {
-        const posts = await postService.getAllPosts();
-        res.status(StatusCodes.OK).json(posts);
+        const pageStr = req.query.page as string | undefined;
+        const limitStr = req.query.limit as string | undefined;
+        const authorId = req.query.authorId as string | undefined;
+
+        const validation = validatePaginationParams(pageStr, limitStr);
+        if (!validation.valid) {
+          res.status(StatusCodes.BAD_REQUEST).json({ message: validation.error });
+          return;
+        }
+
+        const options = { page: validation.page, limit: validation.limit };
+        const result = authorId
+          ? await postService.getPostsByUser(authorId, options)
+          : await postService.getPosts(options);
+
+        res.status(StatusCodes.OK).json(result);
       } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
       }
@@ -80,7 +130,7 @@ export const createPostController = ({ postService }: { postService: IPostServic
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
       }
     },
-    
+
     deletePost: async (req: AuthRequest, res: Response) => {
       try {
         if (!req.userId) {

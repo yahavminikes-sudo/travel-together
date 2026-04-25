@@ -7,7 +7,7 @@ export const createPostRouter = (
 ) => {
   const router = Router();
 
-  router.get('/', postController.getAllPosts);
+  router.get('/', postController.getPosts);
   router.get('/:id', postController.getPostById);
   router.post('/', authenticate, postController.createPost);
   router.post('/:id/like', authenticate, postController.toggleLike);

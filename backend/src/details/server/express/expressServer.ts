@@ -65,7 +65,7 @@ export const createExpressServer = ({
   const postController = createPostController({ postService });
   const commentController = createCommentController({ commentService });
   const userController = createUserController({ userService });
-  const searchController = createSearchController({ embeddingService });
+  const searchController = createSearchController({ embeddingService, postService });
   const uploadController = createUploadController();
 
   app.get('/health', (req, res) => {

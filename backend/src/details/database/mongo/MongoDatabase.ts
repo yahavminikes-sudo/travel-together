@@ -2,11 +2,10 @@ import mongoose from 'mongoose';
 import { IDatabase } from '../../../entities/IDatabase';
 import { appConfig } from '../../../config/appConfig';
 
-// Factory function generating the Database entity
 export const createMongoDatabase = (): IDatabase => ({
   connect: async (): Promise<void> => {
     console.log(`Connecting to MongoDB at ${appConfig.MONGO_URI}...`);
-    await mongoose.connect(appConfig.MONGO_URI as string);
+    await mongoose.connect(appConfig.MONGO_URI);
     console.log('Successfully connected to MongoDB.');
   },
 

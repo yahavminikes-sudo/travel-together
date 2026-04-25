@@ -3,6 +3,7 @@ import { Post, CreatePostDto, UpdatePostDto } from '@travel-together/shared/type
 import { Comment, CreateCommentDto, UpdateCommentDto } from '@travel-together/shared/types/comment.types';
 import { AuthRecord } from './AuthRecord';
 import { ContentType } from '@travel-together/shared/types/search.types';
+import { PaginatedResponse, PaginationOptions } from '@travel-together/shared/types/pagination.types';
 
 export interface IAuthRepository {
   findAuthRecordByEmail(email: string): Promise<AuthRecord | null>;
@@ -19,7 +20,8 @@ export interface IUserRepository {
 
 export interface IPostRepository {
   findById(id: string): Promise<Post | null>;
-  findAll(): Promise<Post[]>;
+  findAll(options?: PaginationOptions): Promise<PaginatedResponse<Post>>;
+  findByUser(userId: string, options?: PaginationOptions): Promise<PaginatedResponse<Post>>;
   create(authorId: string, postDto: CreatePostDto): Promise<Post>;
   update(id: string, postDto: UpdatePostDto): Promise<Post | null>;
   toggleLike(postId: string, userId: string): Promise<Post | null>;
