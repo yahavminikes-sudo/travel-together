@@ -14,6 +14,7 @@ interface PostEditorFormProps {
   onImageSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (data: PostEditorFormData) => Promise<void> | void;
   previewUrl?: string;
+  imageError?: string | null;
   submitError?: string | null;
   uploadError?: string | null;
 }
@@ -26,6 +27,7 @@ export const PostEditorForm: React.FC<PostEditorFormProps> = ({
   onImageSelect,
   onSubmit,
   previewUrl,
+  imageError,
   submitError,
   uploadError,
 }) => {
@@ -121,8 +123,8 @@ export const PostEditorForm: React.FC<PostEditorFormProps> = ({
               className="d-none"
               onChange={onImageSelect}
             />
-            {errors.imageUrl?.message ? (
-              <div className="invalid-feedback d-block">{errors.imageUrl.message}</div>
+            {imageError || errors.imageUrl?.message ? (
+              <div className="invalid-feedback d-block">{imageError || errors.imageUrl?.message}</div>
             ) : null}
           </Form.Group>
 

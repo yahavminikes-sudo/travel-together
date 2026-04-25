@@ -63,6 +63,7 @@
  *               - title
  *               - content
  *               - destination
+ *               - imageUrl
  *             properties:
  *               title:
  *                 type: string
@@ -107,6 +108,11 @@
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - title
+ *               - content
+ *               - destination
+ *               - imageUrl
  *             properties:
  *               title:
  *                 type: string

@@ -5,7 +5,7 @@ export interface CreatePostData {
   destination: string;
   title: string;
   content: string;
-  imageUrl?: string;
+  imageUrl: string;
   tags?: string;
 }
 

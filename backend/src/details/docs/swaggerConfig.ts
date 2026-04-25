@@ -38,6 +38,7 @@ export const swaggerOptions: Options = {
         },
         Post: {
           type: 'object',
+          required: ['_id', 'authorId', 'commentCount', 'destination', 'title', 'content', 'imageUrl', 'likes', 'createdAt', 'updatedAt'],
           properties: {
             _id: { type: 'string' },
             authorId: { type: 'string' },
