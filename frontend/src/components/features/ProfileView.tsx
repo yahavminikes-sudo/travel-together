@@ -5,9 +5,10 @@ import { Post } from '@travel-together/shared/types/post.types';
 import { User } from '@travel-together/shared/types/user.types';
 import { MapPin, Pencil, X } from 'lucide-react';
 import React from 'react';
-import { Alert, Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
+import { Alert, Button, Col, Container, Form, Modal, Row, Spinner } from 'react-bootstrap';
 import { PostCard } from './PostCard';
 import styles from './ProfileView.module.css';
+import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 
 interface ProfileViewProps {
   currentUserId?: string;
@@ -16,6 +17,9 @@ interface ProfileViewProps {
   postCount: number;
   posts: Post[];
   user: User;
+  onLoadMore?: () => void;
+  hasMore?: boolean;
+  isFetchingNextPage?: boolean;
 }
 
 export const ProfileView: React.FC<ProfileViewProps> = ({
@@ -25,6 +29,9 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   postCount,
   posts,
   user,
+  onLoadMore,
+  hasMore = false,
+  isFetchingNextPage = false
 }) => {
   const maxProfilePhotoSizeBytes = 2 * 1024 * 1024;
   const { updateProfile } = useAuth();
@@ -110,6 +117,15 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
     }
   };
 
+  const loadMoreRef = useIntersectionObserver({
+    onIntersect: () => {
+      if (hasMore && !isFetchingNextPage) {
+        onLoadMore?.();
+      }
+    },
+    enabled: hasMore && !isFetchingNextPage
+  });
+
   return (
     <>
       <section className={`bg-hero py-5 ${styles.hero}`}>
@@ -165,6 +181,15 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             ))}
           </Row>
         )}
+
+        <div ref={loadMoreRef} className="d-flex justify-content-center mt-5 py-4">
+          {isFetchingNextPage && (
+            <div className="text-center">
+              <Spinner animation="border" variant="primary" />
+              <p className="text-muted mt-2">Loading more...</p>
+            </div>
+          )}
+        </div>
       </Container>
 
       {isEditable ? (

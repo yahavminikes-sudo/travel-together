@@ -7,9 +7,21 @@ import { usePosts, useTogglePostLike } from '@/hooks/usePosts';
 
 export const PostsFeedContainer: React.FC = () => {
   const { currentUser } = useAuth();
-  const { data: posts = [], error: queryError, isLoading } = usePosts();
+  const {
+    data: pagesData,
+    error: queryError,
+    isLoading,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage
+  } = usePosts();
   const toggleLikeMutation = useTogglePostLike();
   const error = queryError instanceof Error ? queryError.message : null;
+
+  const allPosts = React.useMemo(() => {
+    if (!pagesData?.pages) return [];
+    return pagesData.pages.flatMap((page) => page.data);
+  }, [pagesData?.pages]);
 
   if (isLoading) {
     return <PageLoader />;
@@ -26,10 +38,13 @@ export const PostsFeedContainer: React.FC = () => {
       onLikeToggle={(postId) => {
         void toggleLikeMutation.mutateAsync(postId);
       }}
-      posts={posts}
+      posts={allPosts}
       searchPlaceholder="Search destinations, stories..."
       subtitle="Explore destinations, share your adventures, and connect with fellow travelers"
       title="Discover Amazing Travel Stories"
+      isLoadingPosts={isFetchingNextPage}
+      onLoadMore={() => fetchNextPage()}
+      hasMore={hasNextPage ?? false}
     />
   );
 };

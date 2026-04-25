@@ -14,15 +14,22 @@ import { createEmbeddingService } from '../../services/embeddingService';
 import { createPostService } from '../../services/postService';
 import { createUserService } from '../../services/userService';
 
-const createMockEmbeddingProvider = (): IEmbeddingProvider => ({
-  generateEmbedding: async (text: string): Promise<number[]> => {
-    const vector = new Array(768).fill(0);
-    for (let i = 0; i < text.length && i < 768; i++) {
-      vector[i] = text.charCodeAt(i) / 255;
+const createMockEmbeddingProvider = (): IEmbeddingProvider => {
+  return {
+    generateEmbedding: async (text: string): Promise<number[]> => {
+      const normalizedText = text.toLowerCase().trim();
+      const vector = new Array(768).fill(0);
+      for (let i = 0; i < normalizedText.length; i++) {
+        const code = normalizedText.charCodeAt(i);
+        if (code < 768) {
+          vector[code]++;
+        }
+      }
+      
+      return vector;
     }
-    return vector;
-  }
-});
+  };
+};
 
 type MockGooglePayload = VerifiedGoogleCredentialPayload;
 

@@ -6,21 +6,28 @@ import { PageError } from '@/components/ui/PageError';
 import { PageLoader } from '@/components/ui/PageLoader';
 import { getUserById } from '@/api';
 import { useAuth } from '@/hooks/useAuth';
-import { usePosts, useTogglePostLike } from '@/hooks/usePosts';
+import { useUserPosts, useTogglePostLike } from '@/hooks/usePosts';
 
 export const UserProfileContainer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { currentUser, isInitializing } = useAuth();
-  const { data: posts = [], error: postsError, isLoading: isPostsLoading } = usePosts();
+  const {
+    data: postsResponse,
+    error: postsError,
+    isLoading: isPostsLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useUserPosts(id);
   const toggleLikeMutation = useTogglePostLike();
   const {
     data: user,
     error: userError,
-    isLoading: isUserLoading,
+    isLoading: isUserLoading
   } = useQuery({
     queryKey: ['user', id],
     queryFn: ({ signal }) => getUserById(id as string, signal),
-    enabled: !!id,
+    enabled: !!id
   });
 
   if (isInitializing || isUserLoading || isPostsLoading) {
@@ -36,7 +43,8 @@ export const UserProfileContainer: React.FC = () => {
     return <PageError message={message} />;
   }
 
-  const userPosts = posts.filter((post) => post.authorId === id);
+  const posts = postsResponse?.pages.flatMap((page) => page.data) ?? [];
+  const totalCount = postsResponse?.pages[0]?.total ?? 0;
 
   return (
     <ProfileView
@@ -45,9 +53,12 @@ export const UserProfileContainer: React.FC = () => {
       onLikeToggle={(postId) => {
         void toggleLikeMutation.mutateAsync(postId);
       }}
-      postCount={userPosts.length}
-      posts={userPosts}
+      postCount={totalCount}
+      posts={posts}
       user={user}
+      onLoadMore={fetchNextPage}
+      hasMore={hasNextPage}
+      isFetchingNextPage={isFetchingNextPage}
     />
   );
 };

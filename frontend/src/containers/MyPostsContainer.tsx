@@ -7,7 +7,14 @@ import { useMyPosts, useTogglePostLike } from '@/hooks/usePosts';
 
 export const MyPostsContainer: React.FC = () => {
   const { currentUser, isAuthenticated, isInitializing } = useAuth();
-  const { data: posts = [], error: queryError, isLoading } = useMyPosts();
+  const {
+    data,
+    error: queryError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading
+  } = useMyPosts();
   const toggleLikeMutation = useTogglePostLike();
   const error = queryError instanceof Error ? queryError.message : null;
 
@@ -23,6 +30,8 @@ export const MyPostsContainer: React.FC = () => {
     return <PageError message={error} />;
   }
 
+  const posts = data?.pages.flatMap((page) => page.data) ?? [];
+
   return (
     <PostsGridView
       currentUserId={currentUser._id}
@@ -34,6 +43,10 @@ export const MyPostsContainer: React.FC = () => {
       }}
       posts={posts}
       title="My Posts"
+      onLoadMore={fetchNextPage}
+      hasMore={hasNextPage}
+      isFetchingNextPage={isFetchingNextPage}
+      showSearch={false}
     />
   );
 };
