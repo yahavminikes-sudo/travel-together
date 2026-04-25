@@ -5,6 +5,7 @@ import type { CreatePostFormData, EditPostFormData } from '@travel-together/shar
 import {
   createComment,
   createPost,
+  deleteComment,
   deletePost,
   getCommentsByPost,
   getMyPosts,
@@ -137,6 +138,39 @@ export const useCreateComment = (postId: string) => {
       queryClient.setQueryData<Post[]>(['myPosts'], (current = []) => {
         return current.map((post) =>
           post._id === postId ? { ...post, commentCount: (post.commentCount ?? 0) + 1 } : post
+        );
+      });
+    }
+  });
+};
+
+export const useDeleteComment = (postId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (commentId: string) => deleteComment(commentId),
+    onSuccess: (_, commentId) => {
+      queryClient.setQueryData<Comment[]>(['comments', postId], (current = []) => {
+        return current.filter((comment) => comment._id !== commentId);
+      });
+      queryClient.setQueryData<Post | undefined>(['post', postId], (current) => {
+        if (!current) {
+          return current;
+        }
+
+        return {
+          ...current,
+          commentCount: Math.max((current.commentCount ?? 0) - 1, 0)
+        };
+      });
+      queryClient.setQueryData<Post[]>(['posts'], (current = []) => {
+        return current.map((post) =>
+          post._id === postId ? { ...post, commentCount: Math.max((post.commentCount ?? 0) - 1, 0) } : post
+        );
+      });
+      queryClient.setQueryData<Post[]>(['myPosts'], (current = []) => {
+        return current.map((post) =>
+          post._id === postId ? { ...post, commentCount: Math.max((post.commentCount ?? 0) - 1, 0) } : post
         );
       });
     }

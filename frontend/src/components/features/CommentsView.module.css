@@ -112,10 +112,17 @@
 
 .metaRow {
   display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.metaIdentity {
+  display: flex;
   align-items: baseline;
   flex-wrap: wrap;
   gap: 0.45rem;
-  margin-bottom: 0.35rem;
 }
 
 .author {
@@ -133,6 +140,14 @@
   line-height: 1.7;
 }
 
+.deleteButton:global(.btn) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
 @media (max-width: 575.98px) {
   .card,
   .composer,
@@ -142,6 +157,12 @@
   }
 
   .metaRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .metaIdentity {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.15rem;

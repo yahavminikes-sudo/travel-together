@@ -15,15 +15,12 @@ export const PostDetailContainer: React.FC = () => {
   const deletePostMutation = useDeletePost();
   const toggleLikeMutation = useTogglePostLike();
   const error = queryError instanceof Error ? queryError.message : null;
+  const deleteError = deletePostMutation.error instanceof Error ? deletePostMutation.error.message : null;
   const fromPath = location.state?.from || '/';
 
   const handleDelete = async (postId: string) => {
-    try {
-      await deletePostMutation.mutateAsync(postId);
-      navigate(fromPath);
-    } catch (err) {
-      console.error('Failed to delete post:', err);
-    }
+    await deletePostMutation.mutateAsync(postId);
+    navigate(fromPath);
   };
 
   const handleEdit = (postId: string) => {
@@ -43,6 +40,8 @@ export const PostDetailContainer: React.FC = () => {
       currentUserId={currentUser?._id}
       post={post}
       onBack={() => navigate(fromPath)}
+      isDeleting={deletePostMutation.isPending}
+      deleteError={deleteError}
       onLikeToggle={(postId) => {
         void toggleLikeMutation.mutateAsync(postId);
       }}

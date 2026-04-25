@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Container, Image } from 'react-bootstrap';
+import { Alert, Button, Container, Image, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { MapPin, MessageCircle, ArrowLeft, Pencil, Trash2 } from 'lucide-react';
 import { Post } from '@travel-together/shared/types/post.types';
@@ -12,14 +12,26 @@ interface PostDetailViewProps {
   onBack: () => void;
   post: Post;
   onDelete?: (postId: string) => void;
+  isDeleting?: boolean;
+  deleteError?: string | null;
   onEdit?: (postId: string) => void;
   onLikeToggle?: (postId: string) => void;
 }
 
-export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, onBack, post, onDelete, onEdit, onLikeToggle }) => {
+export const PostDetailView: React.FC<PostDetailViewProps> = ({
+  currentUserId,
+  onBack,
+  post,
+  onDelete,
+  isDeleting = false,
+  deleteError = null,
+  onEdit,
+  onLikeToggle
+}) => {
   const isOwner = currentUserId === post.authorId;
   const isLiked = currentUserId ? post.likes.includes(currentUserId) : false;
   const authorName = post.author?.username || 'Unknown';
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const postDate = new Date(post.createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
@@ -27,9 +39,19 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
   });
 
   const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this post?')) {
-      onDelete?.(post._id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteCancel = () => {
+    if (isDeleting) {
+      return;
     }
+
+    setIsDeleteDialogOpen(false);
+  };
+
+  const handleDeleteConfirm = () => {
+    onDelete?.(post._id);
   };
 
   const handleEdit = () => {
@@ -161,6 +183,34 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
         </div>
         <CommentsContainer postId={post._id} />
       </section>
+
+      <Modal
+        show={isDeleteDialogOpen}
+        onHide={handleDeleteCancel}
+        centered
+      >
+        <Modal.Header closeButton={!isDeleting}>
+          <Modal.Title>Delete Post</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {deleteError && isDeleteDialogOpen ? (
+            <Alert variant="danger" className="mb-3">
+              {deleteError}
+            </Alert>
+          ) : null}
+          <p className={`mb-0 ${styles.deleteDialogText}`}>
+            Are you sure you want to delete this post? This action cannot be undone.
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="outline-secondary" onClick={handleDeleteCancel} disabled={isDeleting}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDeleteConfirm} disabled={isDeleting}>
+            {isDeleting ? 'Deleting...' : 'Delete'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

@@ -51,6 +51,10 @@
   font-weight: 700;
 }
 
+.deleteDialogText {
+  line-height: 1.6;
+}
+
 @media (max-width: 575.98px) {
   .commentsSection {
     padding-top: 1.5rem;
