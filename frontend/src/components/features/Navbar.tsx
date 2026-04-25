@@ -21,6 +21,7 @@ export const Navbar: React.FC<Props> = ({ isAuthenticated, onLogout, currentUser
       <Container className="d-flex justify-content-between align-items-center">
         <BsNavbar.Brand as={Link} to="/" className="d-flex align-items-center gap-2 m-0">
           <img src={logo} alt="Travel Together" style={{ height: 40 }} />
+          <h4 className="d-none d-sm-inline m-0">Travel Together</h4>
         </BsNavbar.Brand>
 
         <Nav className="d-flex flex-row align-items-center gap-2">
