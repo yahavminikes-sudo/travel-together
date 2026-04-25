@@ -107,7 +107,6 @@ export const useTogglePostLike = () => {
   return useMutation({
     mutationFn: (postId: string) => togglePostLike(postId),
     onSuccess: (updatedPost) => {
-      // Update infinite query posts
       queryClient.setQueryData<{ pages: PaginatedResponse<Post>[]; pageParams: number[] }>(
         ['posts'],
         (current) => {
@@ -219,7 +218,6 @@ export const useDeleteComment = (postId: string) => {
           commentCount: Math.max((current.commentCount ?? 0) - 1, 0)
         };
       });
-      // Update infinite query posts
       queryClient.setQueryData<{ pages: PaginatedResponse<Post>[]; pageParams: number[] }>(
         ['posts'],
         (current) => {
