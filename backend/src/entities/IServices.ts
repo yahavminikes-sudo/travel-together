@@ -1,12 +1,13 @@
 import { UpdateProfileDto, User } from '@travel-together/shared/types/user.types';
 import { Post, CreatePostDto, UpdatePostDto } from '@travel-together/shared/types/post.types';
 import { Comment, CreateCommentDto, UpdateCommentDto } from '@travel-together/shared/types/comment.types';
-import { LoginCredentials, RegisterCredentials, AuthResponse } from '@travel-together/shared/types/auth.types';
+import { LoginCredentials, RegisterCredentials, AuthResponse, GoogleAuthRequest } from '@travel-together/shared/types/auth.types';
 import { ContentType, SearchResult } from '@travel-together/shared';
 
 export interface IAuthService {
   register(dto: RegisterCredentials): Promise<AuthResponse>;
   login(dto: LoginCredentials): Promise<AuthResponse>;
+  googleLogin(dto: GoogleAuthRequest): Promise<AuthResponse>;
 }
 
 export interface IUserService {

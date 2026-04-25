@@ -1,11 +1,12 @@
 import React, { createContext, useEffect, useState } from 'react';
-import type { LoginCredentials, RegisterCredentials } from '@travel-together/shared/types/auth.types';
+import type { GoogleAuthRequest, LoginCredentials, RegisterCredentials } from '@travel-together/shared/types/auth.types';
 import type { UpdateProfileDto, User } from '@travel-together/shared/types/user.types';
 import {
   clearStoredAuthToken,
   getProfile,
   getStoredAuthToken,
   login as loginRequest,
+  loginWithGoogle as loginWithGoogleRequest,
   register as registerRequest,
   setStoredAuthToken,
   updateProfile as updateProfileRequest
@@ -19,6 +20,7 @@ interface AuthContextValue {
   logout: () => void;
   refreshProfile: () => Promise<User | null>;
   register: (credentials: RegisterCredentials) => Promise<User>;
+  signInWithGoogle: (request: GoogleAuthRequest) => Promise<User>;
   token: string | null;
   updateProfile: (updates: UpdateProfileDto) => Promise<User>;
 }
@@ -70,6 +72,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (credentials: RegisterCredentials) => {
     const response = await registerRequest(credentials);
+    applyAuth(response.token, response.user);
+    return response.user;
+  };
+
+  const signInWithGoogle = async (request: GoogleAuthRequest) => {
+    const response = await loginWithGoogleRequest(request);
     applyAuth(response.token, response.user);
     return response.user;
   };
@@ -127,6 +135,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         logout,
         refreshProfile,
         register,
+        signInWithGoogle,
         token,
         updateProfile
       }}

@@ -1,3 +1,4 @@
+import { GoogleAuthRequest } from '@travel-together/shared/types/auth.types';
 import { createJwtAuthProvider } from '../../details/auth/jwtAuthProvider';
 import { createAuthRepository } from '../../details/database/mongo/repositories/authRepository';
 import { createCommentRepository } from '../../details/database/mongo/repositories/commentRepository';
@@ -6,6 +7,7 @@ import { createPostRepository } from '../../details/database/mongo/repositories/
 import { createUserRepository } from '../../details/database/mongo/repositories/userRepository';
 import { createExpressServer, ExpressDependencies } from '../../details/server/express/expressServer';
 import { IEmbeddingProvider } from '../../entities/IEmbeddingProvider';
+import { IGoogleAuthVerifier, VerifiedGoogleCredentialPayload } from '../../entities/IGoogleAuthVerifier';
 import { createAuthService } from '../../services/authService';
 import { createCommentService } from '../../services/commentService';
 import { createEmbeddingService } from '../../services/embeddingService';
@@ -22,8 +24,32 @@ const createMockEmbeddingProvider = (): IEmbeddingProvider => ({
   }
 });
 
+type MockGooglePayload = VerifiedGoogleCredentialPayload;
+
+const mockGoogleCredentials = new Map<string, MockGooglePayload>();
+
+export const setMockGoogleCredential = (credential: string, payload: MockGooglePayload): void => {
+  mockGoogleCredentials.set(credential, payload);
+};
+
+export const clearMockGoogleCredentials = (): void => {
+  mockGoogleCredentials.clear();
+};
+
+const createMockGoogleAuthVerifier = (): IGoogleAuthVerifier => ({
+  verifyCredential: async (credential: GoogleAuthRequest['credential']): Promise<VerifiedGoogleCredentialPayload> => {
+    const payload = mockGoogleCredentials.get(credential);
+    if (!payload) {
+      throw new Error('Invalid Google credential');
+    }
+
+    return payload;
+  }
+});
+
 export const getTestApp = () => {
   const authProvider = createJwtAuthProvider();
+  const googleAuthVerifier = createMockGoogleAuthVerifier();
   const embeddingProvider = createMockEmbeddingProvider();
 
   const authRepository = createAuthRepository();
@@ -32,7 +58,7 @@ export const getTestApp = () => {
   const postRepository = createPostRepository(userRepository, commentRepository);
   const embeddingRepository = createEmbeddingRepository();
 
-  const authService = createAuthService({ authRepository, authProvider });
+  const authService = createAuthService({ authRepository, authProvider, googleAuthVerifier });
   const userService = createUserService({ userRepository });
   const embeddingService = createEmbeddingService({
     embeddingRepository,

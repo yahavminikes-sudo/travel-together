@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { getTestApp } from './utils/testApp';
 import { StatusCodes } from 'http-status-codes';
+import { setMockGoogleCredential } from './utils/testApp';
 
 const app = getTestApp();
 
@@ -77,6 +78,99 @@ describe('Auth API Endpoints', () => {
         .send({ email: 'nobody@example.com', password: 'Password123!' });
 
       expect(response.status).toBe(StatusCodes.UNAUTHORIZED);
+    });
+  });
+
+  describe('POST /api/auth/google', () => {
+    const googleCredential = 'valid-google-credential';
+    const googlePayload = {
+      email: 'google.user@example.com',
+      emailVerified: true,
+      googleId: 'google-sub-123',
+      name: 'Google User',
+      picture: 'https://example.com/google-user.png'
+    };
+
+    it('should return 200 with app auth tokens for a valid Google credential', async () => {
+      setMockGoogleCredential(googleCredential, googlePayload);
+
+      const response = await request(app).post('/api/auth/google').send({ credential: googleCredential });
+
+      expect(response.status).toBe(StatusCodes.OK);
+      expect(response.body).toHaveProperty('user');
+      expect(response.body.user).toHaveProperty('email', googlePayload.email);
+      expect(response.body).toHaveProperty('token');
+      expect(response.body).toHaveProperty('refreshToken');
+    });
+
+    it('should link an existing local user with the same email', async () => {
+      const localUser = {
+        username: 'linkeduser',
+        email: 'linked@example.com',
+        password: 'Password123!'
+      };
+
+      await request(app).post('/api/auth/register').send(localUser);
+      setMockGoogleCredential(googleCredential, {
+        ...googlePayload,
+        email: localUser.email,
+        googleId: 'google-sub-linked'
+      });
+
+      const googleResponse = await request(app).post('/api/auth/google').send({ credential: googleCredential });
+      const loginResponse = await request(app).post('/api/auth/login').send({
+        email: localUser.email,
+        password: localUser.password
+      });
+
+      expect(googleResponse.status).toBe(StatusCodes.OK);
+      expect(googleResponse.body.user).toHaveProperty('email', localUser.email);
+      expect(loginResponse.status).toBe(StatusCodes.OK);
+    });
+
+    it('should create a new user without a password for a new Google email', async () => {
+      setMockGoogleCredential(googleCredential, googlePayload);
+
+      const googleResponse = await request(app).post('/api/auth/google').send({ credential: googleCredential });
+      const loginResponse = await request(app).post('/api/auth/login').send({
+        email: googlePayload.email,
+        password: 'Password123!'
+      });
+
+      expect(googleResponse.status).toBe(StatusCodes.OK);
+      expect(googleResponse.body.user).toHaveProperty('username', 'google-user');
+      expect(loginResponse.status).toBe(StatusCodes.UNAUTHORIZED);
+    });
+
+    it('should return 401 for an invalid Google credential', async () => {
+      const response = await request(app).post('/api/auth/google').send({ credential: 'invalid-google-credential' });
+
+      expect(response.status).toBe(StatusCodes.UNAUTHORIZED);
+      expect(response.body).toHaveProperty('message', 'Invalid Google credential');
+    });
+
+    it('should return 409 for an email collision with a different stored googleId', async () => {
+      const email = 'collision@example.com';
+
+      setMockGoogleCredential('first-credential', {
+        ...googlePayload,
+        email,
+        googleId: 'google-sub-first'
+      });
+      setMockGoogleCredential('second-credential', {
+        ...googlePayload,
+        email,
+        googleId: 'google-sub-second'
+      });
+
+      await request(app).post('/api/auth/google').send({ credential: 'first-credential' });
+      const conflictResponse = await request(app).post('/api/auth/google').send({ credential: 'second-credential' });
+
+      expect(conflictResponse.status).toBe(StatusCodes.CONFLICT);
+      expect(conflictResponse.body).toHaveProperty(
+        'message',
+        'A different Google account is already linked to this email'
+      );
     });
   });
 });
