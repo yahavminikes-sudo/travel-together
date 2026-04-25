@@ -1,3 +1,4 @@
+import { uploadImage } from '@/api';
 import { AvatarSize, CustomAvatar } from '@/components/ui/CustomAvatar';
 import { useAuth } from '@/hooks/useAuth';
 import { Post } from '@travel-together/shared/types/post.types';
@@ -30,13 +31,23 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   const [isEditOpen, setIsEditOpen] = React.useState(false);
   const [username, setUsername] = React.useState(user.username);
   const [avatarPreview, setAvatarPreview] = React.useState(user.avatarUrl || '');
+  const [selectedAvatar, setSelectedAvatar] = React.useState<File | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [isSaving, setIsSaving] = React.useState(false);
 
   React.useEffect(() => {
     setUsername(user.username);
     setAvatarPreview(user.avatarUrl || '');
+    setSelectedAvatar(null);
   }, [user.avatarUrl, user.username]);
+
+  React.useEffect(() => {
+    return () => {
+      if (avatarPreview.startsWith('blob:')) {
+        URL.revokeObjectURL(avatarPreview);
+      }
+    };
+  }, [avatarPreview]);
 
   const handlePhotoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -56,17 +67,17 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        setAvatarPreview(reader.result);
-        setError(null);
+    setSelectedAvatar(file);
+    setError(null);
+
+    const previewUrl = URL.createObjectURL(file);
+    setAvatarPreview((currentPreview) => {
+      if (currentPreview.startsWith('blob:')) {
+        URL.revokeObjectURL(currentPreview);
       }
-    };
-    reader.onerror = () => {
-      setError('Failed to read the selected image.');
-    };
-    reader.readAsDataURL(file);
+
+      return previewUrl;
+    });
   };
 
   const handleSave = async () => {
@@ -80,10 +91,17 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
     try {
       setIsSaving(true);
       setError(null);
+
+      let avatarUrl = avatarPreview || undefined;
+      if (selectedAvatar) {
+        avatarUrl = await uploadImage(selectedAvatar);
+      }
+
       await updateProfile({
-        avatarUrl: avatarPreview || undefined,
+        avatarUrl,
         username: trimmedUsername
       });
+      setSelectedAvatar(null);
       setIsEditOpen(false);
     } catch (saveError) {
       setError(saveError instanceof Error ? saveError.message : 'Failed to update profile.');
@@ -121,6 +139,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               onClick={() => {
                 setUsername(user.username);
                 setAvatarPreview(user.avatarUrl || '');
+                setSelectedAvatar(null);
                 setError(null);
                 setIsEditOpen(true);
               }}
@@ -162,7 +181,12 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             <button
               type="button"
               className="btn btn-link text-muted p-0 border-0 ms-auto"
-              onClick={() => setIsEditOpen(false)}
+              onClick={() => {
+                setAvatarPreview(user.avatarUrl || '');
+                setSelectedAvatar(null);
+                setError(null);
+                setIsEditOpen(false);
+              }}
               aria-label="Close"
             >
               <X size={28} />
