@@ -135,6 +135,33 @@
 
 /**
  * @swagger
+ * /api/posts/{id}/like:
+ *   post:
+ *     summary: Toggle like on a post
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Post like toggled successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Post'
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Post not found
+ */
+
+/**
+ * @swagger
  * /api/posts/{id}:
  *   delete:
  *     summary: Delete a post
@@ -148,7 +175,7 @@
  *         schema:
  *           type: string
  *     responses:
- *       200:
+ *       204:
  *         description: Post deleted successfully
  *       401:
  *         description: Unauthorized
