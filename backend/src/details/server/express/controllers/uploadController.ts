@@ -6,7 +6,6 @@ import { StatusCodes } from 'http-status-codes';
 import { AuthRequest } from '../middlewares/authenticate';
 
 const uploadsDir = path.resolve(process.cwd(), 'uploads');
-const maxUploadSizeBytes = 5 * 1024 * 1024;
 
 const mimeToExtension: Record<string, string> = {
   'image/gif': 'gif',
@@ -25,28 +24,15 @@ export const createUploadController = () => {
           return;
         }
 
-        const dataUrl = typeof req.body?.dataUrl === 'string' ? req.body.dataUrl : '';
-        const match = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
-
-        if (!match) {
-          res.status(StatusCodes.BAD_REQUEST).json({ message: 'Invalid image payload.' });
+        if (!req.file) {
+          res.status(StatusCodes.BAD_REQUEST).json({ message: 'Image file is required.' });
           return;
         }
 
-        const [, mimeType, encoded] = match;
-        const extension = mimeToExtension[mimeType];
+        const extension = mimeToExtension[req.file.mimetype];
 
         if (!extension) {
           res.status(StatusCodes.BAD_REQUEST).json({ message: 'Unsupported image type. Use PNG, JPG, WEBP, or GIF.' });
-          return;
-        }
-
-        const buffer = Buffer.from(encoded, 'base64');
-
-        if (buffer.byteLength > maxUploadSizeBytes) {
-          res
-            .status(StatusCodes.BAD_REQUEST)
-            .json({ message: 'Image is too large. Please upload a file smaller than 5 MB.' });
           return;
         }
 
@@ -54,7 +40,7 @@ export const createUploadController = () => {
 
         const fileName = `${randomUUID()}.${extension}`;
         const absolutePath = path.join(uploadsDir, fileName);
-        await fs.writeFile(absolutePath, buffer);
+        await fs.writeFile(absolutePath, req.file.buffer);
 
         const baseUrl = `${req.protocol}://${req.get('host')}`;
         res.status(StatusCodes.CREATED).json({

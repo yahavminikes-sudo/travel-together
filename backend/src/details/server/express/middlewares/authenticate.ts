@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 export interface AuthRequest extends Request {
   userId?: string;
+  file?: Express.Multer.File;
 }
 
 export const createAuthenticateMiddleware = (authenticator: (token: string) => string | null) => {
