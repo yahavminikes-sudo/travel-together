@@ -83,6 +83,11 @@
 
 * {
   border-color: hsl(var(--border));
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 body {

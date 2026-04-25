@@ -1,6 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import type { CreateCommentDto, Comment } from '@travel-together/shared/types/comment.types';
 import type { Post } from '@travel-together/shared/types/post.types';
+import type { PaginatedResponse } from '@travel-together/shared/types/pagination.types';
 import type { CreatePostFormData, EditPostFormData } from '@travel-together/shared/schemas/postSchemas';
 import {
   createComment,
@@ -12,14 +13,17 @@ import {
   getPostById,
   getPosts,
   togglePostLike,
-  updatePost,
+  updatePost
 } from '@/api';
 import { useAuth } from '@/hooks/useAuth';
 
-export const usePosts = () => {
-  return useQuery({
+export const usePosts = (pageSize = 9) => {
+  return useInfiniteQuery({
     queryKey: ['posts'],
-    queryFn: ({ signal }) => getPosts(signal)
+    queryFn: ({ pageParam = 1, signal }) =>
+      getPosts({ page: pageParam, limit: pageSize }, signal),
+    getNextPageParam: (lastPage) => (lastPage.hasMore ? lastPage.page + 1 : undefined),
+    initialPageParam: 1
   });
 };
 
@@ -31,20 +35,31 @@ export const usePost = (postId?: string) => {
   });
 };
 
-export const useMyPosts = () => {
-  const { currentUser, isAuthenticated } = useAuth();
-
-  return useQuery({
-    queryKey: ['myPosts', currentUser?._id],
-    queryFn: ({ signal }) => {
-      if (!currentUser?._id) {
-        return Promise.resolve([]);
+export const useUserPosts = (userId?: string, pageSize = 9) => {
+  return useInfiniteQuery({
+    queryKey: ['userPosts', userId],
+    queryFn: ({ pageParam = 1, signal }) => {
+      if (!userId) {
+        return Promise.resolve({
+          data: [],
+          total: 0,
+          page: 1,
+          limit: pageSize,
+          hasMore: false
+        } as PaginatedResponse<Post>);
       }
 
-      return getMyPosts(currentUser._id, signal);
+      return getMyPosts(userId, { page: pageParam, limit: pageSize }, signal);
     },
-    enabled: isAuthenticated && !!currentUser?._id
+    getNextPageParam: (lastPage) => (lastPage.hasMore ? lastPage.page + 1 : undefined),
+    initialPageParam: 1,
+    enabled: !!userId
   });
+};
+
+export const useMyPosts = (pageSize = 9) => {
+  const { currentUser } = useAuth();
+  return useUserPosts(currentUser?._id, pageSize);
 };
 
 export const useCreatePost = () => {
@@ -54,7 +69,7 @@ export const useCreatePost = () => {
     mutationFn: (data: CreatePostFormData) => createPost(data),
     onSuccess: (post) => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
-      queryClient.invalidateQueries({ queryKey: ['myPosts'] });
+      queryClient.invalidateQueries({ queryKey: ['userPosts', post.authorId] });
       queryClient.setQueryData<Post>(['post', post._id], post);
     }
   });
@@ -67,7 +82,7 @@ export const useUpdatePost = () => {
     mutationFn: ({ data, id }: { id: string; data: EditPostFormData }) => updatePost(id, data),
     onSuccess: (post) => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
-      queryClient.invalidateQueries({ queryKey: ['myPosts'] });
+      queryClient.invalidateQueries({ queryKey: ['userPosts', post.authorId] });
       queryClient.setQueryData<Post>(['post', post._id], post);
     }
   });
@@ -80,7 +95,7 @@ export const useDeletePost = () => {
     mutationFn: (postId: string) => deletePost(postId),
     onSuccess: (_, postId) => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
-      queryClient.invalidateQueries({ queryKey: ['myPosts'] });
+      queryClient.invalidateQueries({ queryKey: ['userPosts'] });
       queryClient.removeQueries({ queryKey: ['post', postId] });
     }
   });
@@ -92,14 +107,34 @@ export const useTogglePostLike = () => {
   return useMutation({
     mutationFn: (postId: string) => togglePostLike(postId),
     onSuccess: (updatedPost) => {
-      queryClient.setQueryData<Post[]>(['posts'], (current = []) => {
-        return current.map((post) => (post._id === updatedPost._id ? updatedPost : post));
-      });
+      queryClient.setQueryData<{ pages: PaginatedResponse<Post>[]; pageParams: number[] }>(
+        ['posts'],
+        (current) => {
+          if (!current) return current;
+          return {
+            ...current,
+            pages: current.pages.map((page) => ({
+              ...page,
+              data: page.data.map((post) => (post._id === updatedPost._id ? updatedPost : post))
+            }))
+          };
+        }
+      );
       queryClient.setQueryData<Post | undefined>(['post', updatedPost._id], updatedPost);
-      queryClient.setQueriesData<Post[]>({ queryKey: ['myPosts'] }, (current = []) => {
-        return current.map((post) => (post._id === updatedPost._id ? updatedPost : post));
-      });
-    },
+      queryClient.setQueriesData<{ pages: PaginatedResponse<Post>[]; pageParams: number[] }>(
+        { queryKey: ['userPosts'] },
+        (current) => {
+          if (!current) return current;
+          return {
+            ...current,
+            pages: current.pages.map((page) => ({
+              ...page,
+              data: page.data.map((post) => (post._id === updatedPost._id ? updatedPost : post))
+            }))
+          };
+        }
+      );
+    }
   });
 };
 
@@ -130,16 +165,36 @@ export const useCreateComment = (postId: string) => {
           commentCount: (current.commentCount ?? 0) + 1
         };
       });
-      queryClient.setQueryData<Post[]>(['posts'], (current = []) => {
-        return current.map((post) =>
-          post._id === postId ? { ...post, commentCount: (post.commentCount ?? 0) + 1 } : post
-        );
-      });
-      queryClient.setQueryData<Post[]>(['myPosts'], (current = []) => {
-        return current.map((post) =>
-          post._id === postId ? { ...post, commentCount: (post.commentCount ?? 0) + 1 } : post
-        );
-      });
+      queryClient.setQueryData<{ pages: PaginatedResponse<Post>[]; pageParams: number[] }>(
+        ['posts'],
+        (current) => {
+          if (!current) return current;
+          return {
+            ...current,
+            pages: current.pages.map((page) => ({
+              ...page,
+              data: page.data.map((post) =>
+                post._id === postId ? { ...post, commentCount: (post.commentCount ?? 0) + 1 } : post
+              )
+            }))
+          };
+        }
+      );
+      queryClient.setQueriesData<{ pages: PaginatedResponse<Post>[]; pageParams: number[] }>(
+        { queryKey: ['userPosts'] },
+        (current) => {
+          if (!current) return current;
+          return {
+            ...current,
+            pages: current.pages.map((page) => ({
+              ...page,
+              data: page.data.map((post) =>
+                post._id === postId ? { ...post, commentCount: (post.commentCount ?? 0) + 1 } : post
+              )
+            }))
+          };
+        }
+      );
     }
   });
 };
@@ -163,16 +218,38 @@ export const useDeleteComment = (postId: string) => {
           commentCount: Math.max((current.commentCount ?? 0) - 1, 0)
         };
       });
-      queryClient.setQueryData<Post[]>(['posts'], (current = []) => {
-        return current.map((post) =>
-          post._id === postId ? { ...post, commentCount: Math.max((post.commentCount ?? 0) - 1, 0) } : post
-        );
-      });
-      queryClient.setQueryData<Post[]>(['myPosts'], (current = []) => {
-        return current.map((post) =>
-          post._id === postId ? { ...post, commentCount: Math.max((post.commentCount ?? 0) - 1, 0) } : post
-        );
-      });
+      queryClient.setQueryData<{ pages: PaginatedResponse<Post>[]; pageParams: number[] }>(
+        ['posts'],
+        (current) => {
+          if (!current) return current;
+          return {
+            ...current,
+            pages: current.pages.map((page) => ({
+              ...page,
+              data: page.data.map((post) =>
+                post._id === postId ? { ...post, commentCount: Math.max((post.commentCount ?? 0) - 1, 0) } : post
+              )
+            }))
+          };
+        }
+      );
+      queryClient.setQueriesData<{ pages: PaginatedResponse<Post>[]; pageParams: number[] }>(
+        { queryKey: ['userPosts'] },
+        (current) => {
+          if (!current) return current;
+          return {
+            ...current,
+            pages: current.pages.map((page) => ({
+              ...page,
+              data: page.data.map((post) =>
+                post._id === postId
+                  ? { ...post, commentCount: Math.max((post.commentCount ?? 0) - 1, 0) }
+                  : post
+              )
+            }))
+          };
+        }
+      );
     }
   });
 };

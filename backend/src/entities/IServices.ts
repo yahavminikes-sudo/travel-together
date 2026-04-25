@@ -3,6 +3,7 @@ import { Post, CreatePostDto, UpdatePostDto } from '@travel-together/shared/type
 import { Comment, CreateCommentDto, UpdateCommentDto } from '@travel-together/shared/types/comment.types';
 import { LoginCredentials, RegisterCredentials, AuthResponse, GoogleAuthRequest } from '@travel-together/shared/types/auth.types';
 import { ContentType, SearchResult } from '@travel-together/shared';
+import { PaginatedResponse, PaginationOptions } from '@travel-together/shared/types/pagination.types';
 
 export interface IAuthService {
   register(dto: RegisterCredentials): Promise<AuthResponse>;
@@ -17,7 +18,8 @@ export interface IUserService {
 }
 
 export interface IPostService {
-  getAllPosts(): Promise<Post[]>;
+  getPosts(options?: PaginationOptions): Promise<PaginatedResponse<Post>>;
+  getPostsByUser(userId: string, options?: PaginationOptions): Promise<PaginatedResponse<Post>>;
   getPostById(id: string): Promise<Post | null>;
   createPost(authorId: string, postDto: CreatePostDto): Promise<Post>;
   updatePost(id: string, postDto: UpdatePostDto): Promise<Post | null>;
@@ -35,6 +37,6 @@ export interface ICommentService {
 
 export interface IEmbeddingService {
   indexContent(contentId: string, contentType: ContentType, text: string): Promise<void>;
-  search(query: string, topK?: number): Promise<SearchResult[]>;
+  search(query: string): Promise<SearchResult[]>;
   removeContent(contentId: string, contentType: ContentType): Promise<void>;
 }

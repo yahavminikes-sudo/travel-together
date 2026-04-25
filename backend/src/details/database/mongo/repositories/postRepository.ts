@@ -1,6 +1,7 @@
 import { ICommentRepository, IPostRepository, IUserRepository } from '../../../../entities/IRepositories';
 import { IPostDocument, PostModel } from '../models/Post.schema';
 import { Post, CreatePostDto, UpdatePostDto } from '@travel-together/shared/types/post.types';
+import { PaginatedResponse, PaginationOptions } from '@travel-together/shared/types/pagination.types';
 import { mapToPost } from '../utils/mappers';
 
 export const createPostRepository = (
@@ -26,9 +27,50 @@ export const createPostRepository = (
       return doc ? enrichPost(doc) : null;
     },
 
-    findAll: async (): Promise<Post[]> => {
-      const docs = await PostModel.find().sort({ createdAt: -1 }).exec();
-      return Promise.all(docs.map(enrichPost));
+    findAll: async (options?: PaginationOptions): Promise<PaginatedResponse<Post>> => {
+      const page = options?.page || 1;
+      const limit = options?.limit || 10;
+
+      const skip = (page - 1) * limit;
+      const [docs, total] = await Promise.all([
+        PostModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit).exec(),
+        PostModel.countDocuments().exec()
+      ]);
+
+      const data = await Promise.all(docs.map(enrichPost));
+      const hasMore = skip + limit < total;
+
+      return {
+        data,
+        total,
+        page,
+        limit,
+        hasMore
+      };
+    },
+
+    findByUser: async (userId: string, options?: PaginationOptions): Promise<PaginatedResponse<Post>> => {
+      const page = options?.page || 1;
+      const limit = options?.limit || 10;
+
+      const skip = (page - 1) * limit;
+      const query = { authorId: userId };
+
+      const [docs, total] = await Promise.all([
+        PostModel.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).exec(),
+        PostModel.countDocuments(query).exec()
+      ]);
+
+      const data = await Promise.all(docs.map(enrichPost));
+      const hasMore = skip + limit < total;
+
+      return {
+        data,
+        total,
+        page,
+        limit,
+        hasMore
+      };
     },
 
     create: async (authorId: string, postDto: CreatePostDto): Promise<Post> => {
@@ -51,9 +93,7 @@ export const createPostRepository = (
       const hasLiked = existingPost.likes.includes(userId);
       const doc = await PostModel.findByIdAndUpdate(
         postId,
-        hasLiked
-          ? { $pull: { likes: userId } }
-          : { $addToSet: { likes: userId } },
+        hasLiked ? { $pull: { likes: userId } } : { $addToSet: { likes: userId } },
         { new: true }
       ).exec();
 

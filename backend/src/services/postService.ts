@@ -1,6 +1,7 @@
 import { IEmbeddingService, IPostService } from '../entities/IServices';
 import { IPostRepository } from '../entities/IRepositories';
 import { CreatePostDto, UpdatePostDto } from '@travel-together/shared/types/post.types';
+import { PaginatedResponse, PaginationOptions } from '@travel-together/shared/types/pagination.types';
 import { ContentType } from '@travel-together/shared/types/search.types';
 
 interface PostServiceDependencies {
@@ -10,8 +11,11 @@ interface PostServiceDependencies {
 
 export const createPostService = ({ postRepository, embeddingService }: PostServiceDependencies): IPostService => {
   return {
-    getAllPosts: async () => {
-      return postRepository.findAll();
+    getPosts: async (options?: PaginationOptions): Promise<PaginatedResponse<any>> => {
+      return postRepository.findAll(options);
+    },
+    getPostsByUser: async (userId: string, options?: PaginationOptions): Promise<PaginatedResponse<any>> => {
+      return postRepository.findByUser(userId, options);
     },
     getPostById: async (id: string) => {
       return postRepository.findById(id);

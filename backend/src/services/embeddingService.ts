@@ -30,7 +30,7 @@ export const createEmbeddingService = ({
     }
   },
 
-  search: async (query: string, topK = 20): Promise<SearchResult[]> => {
+  search: async (query: string): Promise<SearchResult[]> => {
     const queryEmbedding = await embeddingProvider.generateEmbedding(query);
     const allEmbeddings = await embeddingRepository.findAll();
 
@@ -45,13 +45,11 @@ export const createEmbeddingService = ({
       }))
       .filter((result) => result.score >= threshold);
 
-    // Deduplicate by contentId, keeping the highest score
     const uniqueResults = scored.reduce((acc, current) => {
       const existing = acc.find((r) => r.contentId === current.contentId);
       if (!existing) {
         acc.push(current);
       } else if (current.score > existing.score) {
-        // Keep the best matching chunk
         Object.assign(existing, current);
       }
       return acc;
@@ -59,7 +57,7 @@ export const createEmbeddingService = ({
 
     uniqueResults.sort((a, b) => b.score - a.score);
 
-    return uniqueResults.slice(0, topK);
+    return uniqueResults;
   },
 
   removeContent: async (contentId: string, contentType: ContentType): Promise<void> => {

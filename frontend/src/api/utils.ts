@@ -1,6 +1,4 @@
 import type { Post } from '@travel-together/shared/types/post.types';
-import type { SearchResult } from '@travel-together/shared/types/search.types';
-import { ContentType } from '@travel-together/shared/types/search.types';
 
 export const parseTags = (tags?: string[] | string) => {
   if (!tags) {
@@ -17,7 +15,7 @@ export const parseTags = (tags?: string[] | string) => {
     .filter(Boolean);
 };
 
-export const buildSearchFallback = (posts: Post[], query: string, limit = 10): SearchResult[] => {
+export const buildSearchFallback = (posts: Post[], query: string, limit = 10): Post[] => {
   const normalizedQuery = query.trim().toLowerCase();
 
   if (!normalizedQuery) {
@@ -25,18 +23,9 @@ export const buildSearchFallback = (posts: Post[], query: string, limit = 10): S
   }
 
   return posts
-    .map((post) => {
+    .filter((post) => {
       const haystack = [post.title, post.content, post.tags?.join(' ')].filter(Boolean).join(' ').toLowerCase();
-      const occurrences = haystack.split(normalizedQuery).length - 1;
-
-      return {
-        contentId: post._id,
-        contentType: ContentType.Post,
-        textChunk: post.content.substring(0, 200),
-        score: occurrences > 0 ? occurrences : haystack.includes(normalizedQuery) ? 0.5 : 0
-      };
+      return haystack.includes(normalizedQuery);
     })
-    .filter((result) => result.score > 0)
-    .sort((left, right) => right.score - left.score)
     .slice(0, limit);
 };
