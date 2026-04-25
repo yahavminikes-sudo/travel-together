@@ -6,6 +6,7 @@ import { createCommentRepository } from './details/database/mongo/repositories/c
 import { createEmbeddingRepository } from './details/database/mongo/repositories/embeddingRepository';
 import { createPostRepository } from './details/database/mongo/repositories/postRepository';
 import { createUserRepository } from './details/database/mongo/repositories/userRepository';
+import { createSwaggerDocsProvider } from './details/docs/swaggerDocsProvider';
 import { createGeminiEmbeddingProvider } from './details/embedding/geminiEmbeddingProvider';
 import { createExpressServer, ExpressDependencies } from './details/server/express/expressServer';
 import { startServer } from './server';
@@ -32,6 +33,8 @@ const embeddingService = createEmbeddingService({ embeddingRepository, embedding
 const postService = createPostService({ postRepository, embeddingService });
 const commentService = createCommentService({ commentRepository, embeddingService });
 
+const docsProvider = createSwaggerDocsProvider();
+
 const dependencies: ExpressDependencies = {
   authService,
   authenticator: (token: string) => {
@@ -41,7 +44,8 @@ const dependencies: ExpressDependencies = {
   postService,
   commentService,
   userService,
-  embeddingService
+  embeddingService,
+  docsProvider
 };
 
 const webServer = createExpressServer(dependencies);

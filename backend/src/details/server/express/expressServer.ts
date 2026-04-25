@@ -3,9 +3,7 @@ import express, { Application } from 'express';
 import { Server } from 'http';
 import { StatusCodes } from 'http-status-codes';
 import path from 'path';
-import swaggerJsdoc from 'swagger-jsdoc';
-import swaggerUi from 'swagger-ui-express';
-import { swaggerOptions } from '../../../config/swaggerConfig';
+import { IDocsProvider } from '../../../entities/IDocsProvider';
 import {
   IAuthService,
   ICommentService,
@@ -36,6 +34,7 @@ export interface ExpressDependencies {
   commentService: ICommentService;
   userService: IUserService;
   embeddingService: IEmbeddingService;
+  docsProvider?: IDocsProvider;
 }
 
 export const createExpressServer = ({
@@ -44,7 +43,8 @@ export const createExpressServer = ({
   postService,
   commentService,
   userService,
-  embeddingService
+  embeddingService,
+  docsProvider
 }: ExpressDependencies): IWebServer => {
   const app: Application = express();
   let serverInstance: Server | null = null;
@@ -68,8 +68,11 @@ export const createExpressServer = ({
     res.status(StatusCodes.OK).json({ status: 'ok', timestamp: new Date().toISOString() });
   });
 
-  const swaggerSpec = swaggerJsdoc(swaggerOptions);
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  if (docsProvider) {
+    docsProvider.getRoutes().forEach((route) => {
+      app.use(route.path, ...route.handlers);
+    });
+  }
 
   app.use('/api/auth', createAuthRouter(authController));
   app.use('/api/posts', createPostRouter(postController, authenticate));

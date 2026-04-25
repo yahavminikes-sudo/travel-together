@@ -1,5 +1,5 @@
 import { Options } from 'swagger-jsdoc';
-import { appConfig } from './appConfig';
+import { appConfig } from '../../config/appConfig';
 
 export const swaggerOptions: Options = {
   definition: {
@@ -73,5 +73,5 @@ export const swaggerOptions: Options = {
       }
     ]
   },
-  apis: ['./src/details/server/express/routes/*.ts'] // Path to the API docs
+  apis: ['./src/details/docs/api/*.docs.ts'], // Path to the API docs
 };
