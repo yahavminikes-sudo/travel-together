@@ -17,8 +17,6 @@ const createMockEmbeddingProvider = (): IEmbeddingProvider => {
     generateEmbedding: async (text: string): Promise<number[]> => {
       const normalizedText = text.toLowerCase().trim();
       const vector = new Array(768).fill(0);
-      
-      // Bag-of-characters model: count occurrences of each character
       for (let i = 0; i < normalizedText.length; i++) {
         const code = normalizedText.charCodeAt(i);
         if (code < 768) {
