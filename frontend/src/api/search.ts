@@ -27,7 +27,7 @@ export const searchPosts = async (
 
     if (status === 404) {
       const result = await getPosts(undefined, signal);
-      const filtered = buildSearchFallback(result.data, query, 100); // Get more results for client-side pagination
+      const filtered = buildSearchFallback(result.data, query, 100);
       const page = options?.page || 1;
       const pageLimit = options?.limit || 5;
       const start = (page - 1) * pageLimit;
