@@ -17,17 +17,17 @@ export const useCreatePostMutation = <TOnMutateResult = unknown>(
   options?: UseMutationOptions<any, Error, CreatePostData, TOnMutateResult>
 ) => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     ...options,
     mutationFn: createPost,
     onSuccess: (data, variables, onMutateResult, context) => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['myPosts'] });
-      
+
       if (options?.onSuccess) {
         options.onSuccess(data, variables, onMutateResult, context);
       }
-    },
+    }
   });
 };

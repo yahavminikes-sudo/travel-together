@@ -7,6 +7,6 @@ export const useSearch = (query: string, limit = 10) => {
   return useQuery({
     queryKey: ['search', normalizedQuery, limit],
     queryFn: ({ signal }) => searchPosts({ limit, query: normalizedQuery }, signal),
-    enabled: normalizedQuery.length > 0,
+    enabled: normalizedQuery.length > 0
   });
 };

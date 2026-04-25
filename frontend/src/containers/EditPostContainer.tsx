@@ -72,13 +72,7 @@ export const EditPostContainer: React.FC = () => {
   }, [post?.imageUrl]);
 
   if (!id) {
-    return (
-      <PageError
-        message="Post not found"
-        actionLabel="Go Back"
-        onAction={() => navigate(-1)}
-      />
-    );
+    return <PageError message="Post not found" actionLabel="Go Back" onAction={() => navigate(-1)} />;
   }
 
   if (isInitializing || isLoading) {
@@ -86,17 +80,17 @@ export const EditPostContainer: React.FC = () => {
   }
 
   if (!isAuthenticated || !currentUser) {
-    return <PageError message="You need to sign in to edit a post." actionLabel="Go to Login" onAction={() => navigate('/login')} />;
+    return (
+      <PageError
+        message="You need to sign in to edit a post."
+        actionLabel="Go to Login"
+        onAction={() => navigate('/login')}
+      />
+    );
   }
 
   if (error || !post) {
-    return (
-      <PageError
-        message={error || 'Failed to load post'}
-        actionLabel="Go Back"
-        onAction={() => navigate(-1)}
-      />
-    );
+    return <PageError message={error || 'Failed to load post'} actionLabel="Go Back" onAction={() => navigate(-1)} />;
   }
 
   if (post.authorId !== currentUser._id) {
@@ -114,7 +108,7 @@ export const EditPostContainer: React.FC = () => {
     title: post.title,
     content: post.content,
     imageUrl: post.imageUrl || '',
-    tags: post.tags?.join(', ') || '',
+    tags: post.tags?.join(', ') || ''
   };
 
   return (

@@ -4,7 +4,7 @@ import { IWebServer } from './entities/IWebServer';
 export const startServer = async (database: IDatabase, webServer: IWebServer, port: number | string): Promise<void> => {
   try {
     await database.connect();
-    
+
     await webServer.start(port);
 
     const shutdown = async () => {
@@ -17,7 +17,6 @@ export const startServer = async (database: IDatabase, webServer: IWebServer, po
 
     process.on('SIGINT', shutdown);
     process.on('SIGTERM', shutdown);
-
   } catch (error) {
     console.error('Failed to start server:', error);
     process.exit(1);

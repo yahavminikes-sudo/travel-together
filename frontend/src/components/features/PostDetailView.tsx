@@ -19,7 +19,11 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
   const isOwner = currentUserId === post.authorId;
   const isLiked = currentUserId ? post.likes.includes(currentUserId) : false;
   const authorName = post.author?.username || 'Unknown';
-  const postDate = new Date(post.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  const postDate = new Date(post.createdAt).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
 
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this post?')) {
@@ -38,17 +42,17 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
 
   return (
     <Container className="py-4" style={{ maxWidth: 800 }}>
-      <Button variant="link" className="text-decoration-none text-body mb-3 p-0 d-flex align-items-center gap-1" onClick={onBack}>
+      <Button
+        variant="link"
+        className="text-decoration-none text-body mb-3 p-0 d-flex align-items-center gap-1"
+        onClick={onBack}
+      >
         <ArrowLeft size={16} /> Back
       </Button>
 
       <div className="rounded overflow-hidden mb-4">
         {post.imageUrl ? (
-          <img
-            src={post.imageUrl}
-            alt={post.title}
-            style={{ width: '100%', maxHeight: 450, objectFit: 'cover' }}
-          />
+          <img src={post.imageUrl} alt={post.title} style={{ width: '100%', maxHeight: 450, objectFit: 'cover' }} />
         ) : null}
       </div>
 
@@ -118,12 +122,22 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
         {isOwner && (onEdit || onDelete) && (
           <div className="d-flex gap-2 mb-3">
             {onEdit && (
-              <Button variant="outline-secondary" size="sm" onClick={handleEdit} className="d-flex align-items-center gap-1">
+              <Button
+                variant="outline-secondary"
+                size="sm"
+                onClick={handleEdit}
+                className="d-flex align-items-center gap-1"
+              >
                 <Pencil size={12} /> Edit
               </Button>
             )}
             {onDelete && (
-              <Button variant="outline-danger" size="sm" onClick={handleDelete} className="d-flex align-items-center gap-1">
+              <Button
+                variant="outline-danger"
+                size="sm"
+                onClick={handleDelete}
+                className="d-flex align-items-center gap-1"
+              >
                 <Trash2 size={12} /> Delete
               </Button>
             )}

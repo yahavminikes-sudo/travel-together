@@ -13,7 +13,7 @@ export const createPostController = ({ postService }: { postService: IPostServic
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
       }
     },
-    
+
     getPostById: async (req: Request, res: Response) => {
       try {
         const { id } = req.params;
@@ -27,7 +27,7 @@ export const createPostController = ({ postService }: { postService: IPostServic
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
       }
     },
-    
+
     createPost: async (req: AuthRequest, res: Response) => {
       try {
         if (!req.userId) {
@@ -40,14 +40,14 @@ export const createPostController = ({ postService }: { postService: IPostServic
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
       }
     },
-    
+
     updatePost: async (req: AuthRequest, res: Response) => {
       try {
         if (!req.userId) {
           res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Unauthorized' });
           return;
         }
-        
+
         const { id } = req.params;
         const post = await postService.updatePost(id, req.body);
         if (!post) {
@@ -87,7 +87,7 @@ export const createPostController = ({ postService }: { postService: IPostServic
           res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Unauthorized' });
           return;
         }
-        
+
         const { id } = req.params;
         const success = await postService.deletePost(id);
         if (!success) {

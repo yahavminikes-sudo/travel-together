@@ -1,10 +1,10 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { uploadImage } from '@/api';
 import { PostEditorForm } from '@/components/features/PostEditorForm';
 import { useAuth } from '@/hooks/useAuth';
 import { useCreatePost } from '@/hooks/usePosts';
 import { CreatePostFormData } from '@travel-together/shared/schemas/postSchemas';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const CreatePost: React.FC = () => {
   const navigate = useNavigate();
@@ -70,12 +70,12 @@ export const CreatePost: React.FC = () => {
       mutation.mutate(
         {
           ...data,
-          imageUrl,
+          imageUrl
         },
         {
           onSuccess: (post) => {
             navigate(`/posts/${post._id}`);
-          },
+          }
         }
       );
     } catch (error) {

@@ -93,7 +93,10 @@ body {
   min-height: 100vh;
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   font-family: 'Playfair Display', serif;
 }
 
@@ -112,7 +115,9 @@ h1, h2, h3, h4 {
   border-color: hsl(var(--primary));
   color: hsl(var(--primary-foreground));
 }
-.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
   background-color: hsl(var(--primary) / 0.9) !important;
   border-color: hsl(var(--primary) / 0.9) !important;
   color: hsl(var(--primary-foreground)) !important;
@@ -122,17 +127,25 @@ h1, h2, h3, h4 {
   border-color: hsl(var(--accent));
   color: hsl(var(--accent-foreground));
 }
-.btn-accent:hover, .btn-accent:focus {
+.btn-accent:hover,
+.btn-accent:focus {
   background-color: hsl(var(--accent) / 0.9);
   border-color: hsl(var(--accent) / 0.9);
   color: hsl(var(--accent-foreground));
 }
-.text-accent-brand { color: hsl(var(--accent)); }
-.text-muted-fg { color: hsl(var(--muted-foreground)) !important; }
+.text-accent-brand {
+  color: hsl(var(--accent));
+}
+.text-muted-fg {
+  color: hsl(var(--muted-foreground)) !important;
+}
 .bg-hero {
   background: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--background)), hsl(var(--accent) / 0.1));
 }
-.card { background-color: hsl(var(--card)); border-color: hsl(var(--border)); }
+.card {
+  background-color: hsl(var(--card));
+  border-color: hsl(var(--border));
+}
 .form-control:focus {
   border-color: hsl(var(--ring));
   box-shadow: 0 0 0 0.2rem hsl(var(--ring) / 0.25);

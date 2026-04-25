@@ -4,6 +4,7 @@ import { Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Post } from '@travel-together/shared/types/post.types';
 import { PostCard } from './PostCard';
+import { useSearch } from '@/hooks/useSearch';
 
 interface PostsGridViewProps {
   currentUserId?: string;
@@ -30,32 +31,36 @@ export const PostsGridView: React.FC<PostsGridViewProps> = ({
   posts,
   searchPlaceholder = 'Search destinations, stories...',
   title,
-  subtitle,
+  subtitle
 }) => {
   const [searchValue, setSearchValue] = React.useState('');
+  const [debouncedSearchValue, setDebouncedSearchValue] = React.useState('');
 
-  const filteredPosts = React.useMemo(() => {
-    const normalizedQuery = searchValue.trim().toLowerCase();
+  React.useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchValue(searchValue);
+    }, 500);
 
-    if (!normalizedQuery) {
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchValue]);
+
+  const { data: searchResults, isLoading: isSearchLoading } = useSearch(debouncedSearchValue);
+
+  const displayPosts = React.useMemo(() => {
+    if (!debouncedSearchValue) {
       return posts;
     }
 
-    return posts.filter((post) => {
-      const haystack = [
-        post.destination,
-        post.title,
-        post.content,
-        post.author?.username,
-        ...(post.tags ?? []),
-      ]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase();
+    if (!searchResults) {
+      return [];
+    }
 
-      return haystack.includes(normalizedQuery);
-    });
-  }, [posts, searchValue]);
+    return searchResults
+      .map((result) => posts.find((p) => p._id === result.contentId))
+      .filter((post): post is Post => !!post);
+  }, [posts, debouncedSearchValue, searchResults]);
 
   return (
     <div className="min-vh-100">
@@ -99,10 +104,10 @@ export const PostsGridView: React.FC<PostsGridViewProps> = ({
           </div>
         ) : null}
 
-        {filteredPosts.length === 0 ? (
+        {displayPosts.length === 0 ? (
           <div className="text-center py-5">
-            <p className="text-muted fs-5 mb-4">{emptyMessage}</p>
-            {emptyActionLabel && emptyActionTo ? (
+            <p className="text-muted fs-5 mb-4">{isSearchLoading ? 'Searching...' : emptyMessage}</p>
+            {!isSearchLoading && emptyActionLabel && emptyActionTo ? (
               <Link to={emptyActionTo} className="btn btn-outline-primary">
                 {emptyActionLabel}
               </Link>
@@ -110,7 +115,7 @@ export const PostsGridView: React.FC<PostsGridViewProps> = ({
           </div>
         ) : (
           <Row xs={1} md={2} lg={3} className="g-4">
-            {filteredPosts.map((post) => (
+            {displayPosts.map((post) => (
               <Col key={post._id}>
                 <PostCard post={post} currentUserId={currentUserId} onLikeToggle={onLikeToggle} />
               </Col>

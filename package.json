@@ -1,0 +1,11 @@
+{
+  "name": "travel-together-root",
+  "private": true,
+  "scripts": {
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,md}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.2.5"
+  }
+}

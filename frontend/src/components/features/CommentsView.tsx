@@ -1,10 +1,12 @@
-import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm as useRHForm } from 'react-hook-form';
-import { Alert, Form } from 'react-bootstrap';
-import { Comment } from '@travel-together/shared/types/comment.types';
-import { commentSchema, CommentFormData } from '@travel-together/shared/schemas/commentSchemas';
 import { AvatarSize, CustomAvatar } from '@/components/ui/CustomAvatar';
+import { CommentFormData, commentSchema } from '@travel-together/shared/schemas/commentSchemas';
+import { Comment } from '@travel-together/shared/types/comment.types';
+import { MessageCircle } from 'lucide-react';
+import React from 'react';
+import { Alert, Form, ListGroup } from 'react-bootstrap';
+import styles from './CommentsView.module.css';
 
 interface CommentsViewProps {
   canComment: boolean;
@@ -19,15 +21,15 @@ export const CommentsView: React.FC<CommentsViewProps> = ({
   comments,
   isSubmitting,
   submitError,
-  onSubmit,
+  onSubmit
 }) => {
   const {
     formState: { errors },
     handleSubmit,
     register,
-    reset,
+    reset
   } = useRHForm<CommentFormData>({
-    resolver: zodResolver(commentSchema),
+    resolver: zodResolver(commentSchema)
   });
 
   const handleFormSubmit = async (data: CommentFormData) => {
@@ -97,7 +99,7 @@ export const CommentsView: React.FC<CommentsViewProps> = ({
                       {new Date(comment.createdAt).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'short',
-                        day: 'numeric',
+                        day: 'numeric'
                       })}
                     </span>
                   </div>

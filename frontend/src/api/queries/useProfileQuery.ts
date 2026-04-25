@@ -10,6 +10,6 @@ export const useProfileQuery = (options?: Omit<UseQueryOptions<User, Error>, 'qu
   return useQuery({
     queryKey: ['profile'],
     queryFn: fetchProfile,
-    ...options,
+    ...options
   });
 };

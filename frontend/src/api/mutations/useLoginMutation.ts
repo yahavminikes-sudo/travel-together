@@ -11,6 +11,6 @@ export const useLoginMutation = <TOnMutateResult = unknown>(
 ) => {
   return useMutation({
     mutationFn: loginMutationFn,
-    ...options,
+    ...options
   });
 };
