@@ -3,6 +3,7 @@ import express, { Application } from 'express';
 import { Server } from 'http';
 import { StatusCodes } from 'http-status-codes';
 import path from 'path';
+import { IDocsProvider } from '../../../entities/IDocsProvider';
 import {
   IAuthService,
   ICommentService,
@@ -19,6 +20,7 @@ import { createUploadController } from './controllers/uploadController';
 import { createUserController } from './controllers/userController';
 import { createAuthenticateMiddleware } from './middlewares/authenticate';
 import { errorHandler } from './middlewares/errorHandler';
+import { requestLogger } from './middlewares/requestLogger';
 import { createAuthRouter } from './routes/auth';
 import { createCommentRouter } from './routes/comments';
 import { createPostRouter } from './routes/posts';
@@ -33,6 +35,7 @@ export interface ExpressDependencies {
   commentService: ICommentService;
   userService: IUserService;
   embeddingService: IEmbeddingService;
+  docsProvider?: IDocsProvider;
 }
 
 export const createExpressServer = ({
@@ -41,7 +44,8 @@ export const createExpressServer = ({
   postService,
   commentService,
   userService,
-  embeddingService
+  embeddingService,
+  docsProvider
 }: ExpressDependencies): IWebServer => {
   const app: Application = express();
   let serverInstance: Server | null = null;
@@ -50,6 +54,9 @@ export const createExpressServer = ({
   app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+
+  app.use(requestLogger);
+
   app.use('/uploads', express.static(uploadsDir));
 
   const authenticate = createAuthenticateMiddleware(authenticator);
@@ -64,6 +71,12 @@ export const createExpressServer = ({
   app.get('/health', (req, res) => {
     res.status(StatusCodes.OK).json({ status: 'ok', timestamp: new Date().toISOString() });
   });
+
+  if (docsProvider) {
+    docsProvider.getRoutes().forEach((route) => {
+      app.use(route.path, ...route.handlers);
+    });
+  }
 
   app.use('/api/auth', createAuthRouter(authController));
   app.use('/api/posts', createPostRouter(postController, authenticate));
