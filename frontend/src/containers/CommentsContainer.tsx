@@ -3,7 +3,7 @@ import { Spinner } from 'react-bootstrap';
 import { CommentsView } from '@/components/features/CommentsView';
 import { PageError } from '@/components/ui/PageError';
 import { useAuth } from '@/hooks/useAuth';
-import { useCreateComment, useComments } from '@/hooks/usePosts';
+import { useCreateComment, useComments, useDeleteComment } from '@/hooks/usePosts';
 import { CommentFormData } from '@travel-together/shared/schemas/commentSchemas';
 
 interface CommentsContainerProps {
@@ -11,18 +11,28 @@ interface CommentsContainerProps {
 }
 
 export const CommentsContainer: React.FC<CommentsContainerProps> = ({ postId }) => {
-  const { isAuthenticated } = useAuth();
+  const { currentUser, isAuthenticated } = useAuth();
   const { data: comments = [], error: queryError, isLoading } = useComments(postId);
-  const mutation = useCreateComment(postId);
+  const createCommentMutation = useCreateComment(postId);
+  const deleteCommentMutation = useDeleteComment(postId);
   const error = queryError instanceof Error ? queryError.message : null;
-  const submitError = mutation.isError ? mutation.error.message : null;
+  const submitError = createCommentMutation.isError ? createCommentMutation.error.message : null;
+  const deleteError = deleteCommentMutation.isError ? deleteCommentMutation.error.message : null;
 
   const handleSubmit = async (data: CommentFormData) => {
     if (!isAuthenticated) {
       throw new Error('You need to sign in to post a comment.');
     }
 
-    await mutation.mutateAsync(data);
+    await createCommentMutation.mutateAsync(data);
+  };
+
+  const handleDelete = async (commentId: string) => {
+    if (!isAuthenticated) {
+      throw new Error('You need to sign in to delete a comment.');
+    }
+
+    await deleteCommentMutation.mutateAsync(commentId);
   };
 
   if (isLoading) {
@@ -37,7 +47,12 @@ export const CommentsContainer: React.FC<CommentsContainerProps> = ({ postId }) 
     <CommentsView
       canComment={isAuthenticated}
       comments={comments}
-      isSubmitting={mutation.isPending}
+      currentUserId={currentUser?._id}
+      deleteError={deleteError}
+      deletingCommentId={deleteCommentMutation.variables}
+      isDeleting={deleteCommentMutation.isPending}
+      isSubmitting={createCommentMutation.isPending}
+      onDelete={handleDelete}
       onSubmit={handleSubmit}
       submitError={submitError}
     />

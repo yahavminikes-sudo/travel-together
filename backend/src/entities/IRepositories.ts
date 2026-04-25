@@ -22,6 +22,7 @@ export interface IPostRepository {
   findAll(): Promise<Post[]>;
   create(authorId: string, postDto: CreatePostDto): Promise<Post>;
   update(id: string, postDto: UpdatePostDto): Promise<Post | null>;
+  toggleLike(postId: string, userId: string): Promise<Post | null>;
   delete(id: string): Promise<boolean>;
 }
 

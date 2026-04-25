@@ -133,9 +133,6 @@ h4 {
   border-color: hsl(var(--accent) / 0.9);
   color: hsl(var(--accent-foreground));
 }
-.text-accent-brand {
-  color: hsl(var(--accent));
-}
 .text-muted-fg {
   color: hsl(var(--muted-foreground)) !important;
 }
@@ -149,7 +146,4 @@ h4 {
 .form-control:focus {
   border-color: hsl(var(--ring));
   box-shadow: 0 0 0 0.2rem hsl(var(--ring) / 0.25);
-}
-.dropdown-toggle::after {
-  display: none;
 }

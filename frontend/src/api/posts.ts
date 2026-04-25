@@ -35,6 +35,11 @@ export const deletePost = async (postId: string) => {
   await apiClient.delete(`/api/posts/${postId}`);
 };
 
+export const togglePostLike = async (postId: string) => {
+  const response = await apiClient.post<Post>(`/api/posts/${postId}/like`);
+  return response.data;
+};
+
 export const getMyPosts = async (userId: string, signal?: AbortSignal) => {
   const posts = await getPosts(signal);
   return posts.filter((post) => post.authorId === userId);

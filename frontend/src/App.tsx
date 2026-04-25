@@ -7,6 +7,7 @@ import { MyPostsContainer } from './containers/MyPostsContainer';
 import { PostDetailContainer } from './containers/PostDetailContainer';
 import { PostsFeedContainer } from './containers/PostsFeedContainer';
 import { ProfileContainer } from './containers/ProfileContainer';
+import { UserProfileContainer } from './containers/UserProfileContainer';
 import { Navbar } from './components/features/Navbar';
 import { PageLoader } from './components/ui/PageLoader';
 import { CreatePost } from './pages/CreatePost';
@@ -33,6 +34,7 @@ const AppShell = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/profile" element={<ProfileContainer />} />
+            <Route path="/profile/:id" element={<UserProfileContainer />} />
             <Route path="/my-posts" element={<MyPostsContainer />} />
             <Route path="/posts/create" element={<CreatePost />} />
             <Route path="/posts/:id" element={<PostDetailContainer />} />

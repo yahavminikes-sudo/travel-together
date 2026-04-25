@@ -7,6 +7,10 @@ export const getCommentsByPost = async (postId: string, signal?: AbortSignal) =>
 };
 
 export const createComment = async (postId: string, data: CreateCommentDto) => {
-  const response = await apiClient.post<Comment>(`/api/comments/${postId}`, data);
+  const response = await apiClient.post<Comment>(`/api/comments/post/${postId}`, data);
   return response.data;
+};
+
+export const deleteComment = async (commentId: string) => {
+  await apiClient.delete(`/api/comments/${commentId}`);
 };

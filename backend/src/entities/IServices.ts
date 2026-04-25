@@ -20,6 +20,7 @@ export interface IPostService {
   getPostById(id: string): Promise<Post | null>;
   createPost(authorId: string, postDto: CreatePostDto): Promise<Post>;
   updatePost(id: string, postDto: UpdatePostDto): Promise<Post | null>;
+  toggleLike(postId: string, userId: string): Promise<Post | null>;
   deletePost(id: string): Promise<boolean>;
 }
 

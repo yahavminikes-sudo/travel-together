@@ -42,6 +42,9 @@ export const createPostService = ({ postRepository, embeddingService }: PostServ
       }
       return post;
     },
+    toggleLike: async (postId: string, userId: string) => {
+      return postRepository.toggleLike(postId, userId);
+    },
     deletePost: async (id: string) => {
       const success = await postRepository.delete(id);
       if (success) {

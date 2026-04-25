@@ -4,7 +4,7 @@ import { PostDetailView } from '@/components/features/PostDetailView';
 import { PageError } from '@/components/ui/PageError';
 import { PageLoader } from '@/components/ui/PageLoader';
 import { useAuth } from '@/hooks/useAuth';
-import { usePost, useDeletePost } from '@/hooks/usePosts';
+import { usePost, useDeletePost, useTogglePostLike } from '@/hooks/usePosts';
 
 export const PostDetailContainer: React.FC = () => {
   const navigate = useNavigate();
@@ -13,16 +13,14 @@ export const PostDetailContainer: React.FC = () => {
   const { currentUser } = useAuth();
   const { data: post, error: queryError, isLoading } = usePost(id);
   const deletePostMutation = useDeletePost();
+  const toggleLikeMutation = useTogglePostLike();
   const error = queryError instanceof Error ? queryError.message : null;
+  const deleteError = deletePostMutation.error instanceof Error ? deletePostMutation.error.message : null;
   const fromPath = location.state?.from || '/';
 
   const handleDelete = async (postId: string) => {
-    try {
-      await deletePostMutation.mutateAsync(postId);
-      navigate(fromPath);
-    } catch (err) {
-      console.error('Failed to delete post:', err);
-    }
+    await deletePostMutation.mutateAsync(postId);
+    navigate(fromPath);
   };
 
   const handleEdit = (postId: string) => {
@@ -42,6 +40,11 @@ export const PostDetailContainer: React.FC = () => {
       currentUserId={currentUser?._id}
       post={post}
       onBack={() => navigate(fromPath)}
+      isDeleting={deletePostMutation.isPending}
+      deleteError={deleteError}
+      onLikeToggle={(postId) => {
+        void toggleLikeMutation.mutateAsync(postId);
+      }}
       onDelete={currentUser?._id === post.authorId ? handleDelete : undefined}
       onEdit={currentUser?._id === post.authorId ? handleEdit : undefined}
     />

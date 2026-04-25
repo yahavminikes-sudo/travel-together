@@ -1,22 +1,37 @@
 import React from 'react';
-import { Button, Container, Image } from 'react-bootstrap';
+import { Alert, Button, Container, Image, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { MapPin, MessageCircle, ArrowLeft, Pencil, Trash2 } from 'lucide-react';
 import { Post } from '@travel-together/shared/types/post.types';
 import { CommentsContainer } from '@/containers/CommentsContainer';
 import { LikeButton } from '@/components/ui/LikeButton';
+import styles from './PostDetailView.module.css';
 
 interface PostDetailViewProps {
   currentUserId?: string;
   onBack: () => void;
   post: Post;
   onDelete?: (postId: string) => void;
+  isDeleting?: boolean;
+  deleteError?: string | null;
   onEdit?: (postId: string) => void;
+  onLikeToggle?: (postId: string) => void;
 }
 
-export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, onBack, post, onDelete, onEdit }) => {
+export const PostDetailView: React.FC<PostDetailViewProps> = ({
+  currentUserId,
+  onBack,
+  post,
+  onDelete,
+  isDeleting = false,
+  deleteError = null,
+  onEdit,
+  onLikeToggle
+}) => {
   const isOwner = currentUserId === post.authorId;
+  const isLiked = currentUserId ? post.likes.includes(currentUserId) : false;
   const authorName = post.author?.username || 'Unknown';
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const postDate = new Date(post.createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
@@ -24,13 +39,28 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
   });
 
   const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this post?')) {
-      onDelete?.(post._id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteCancel = () => {
+    if (isDeleting) {
+      return;
     }
+
+    setIsDeleteDialogOpen(false);
+  };
+
+  const handleDeleteConfirm = () => {
+    onDelete?.(post._id);
   };
 
   const handleEdit = () => {
     onEdit?.(post._id);
+  };
+
+  const handleLikeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onLikeToggle?.(post._id);
   };
 
   return (
@@ -50,45 +80,65 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
       </div>
 
       <div>
-        <div className="d-flex align-items-center gap-1 small fw-medium text-accent-brand mb-2">
+        <div className={`d-flex align-items-center gap-1 small fw-medium mb-2 ${styles.metaLabel}`}>
           <MapPin size={14} />
           {post.destination}
         </div>
 
-        <h1 className="fw-bold mb-3" style={{ fontFamily: "'Playfair Display', serif", fontSize: '2rem' }}>
+        <h1 className={`fw-bold mb-3 ${styles.title}`}>
           {post.title}
         </h1>
 
         <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-          <Link
-            to={`/profile/${post.author?._id}`}
-            className="d-flex align-items-center gap-2 text-decoration-none text-body"
-          >
-            {post.author?.avatarUrl ? (
-              <Image
-                src={post.author.avatarUrl}
-                alt={authorName}
-                roundedCircle
-                width={36}
-                height={36}
-                style={{ objectFit: 'cover' }}
-              />
-            ) : (
-              <span className="travel-post-avatar-fallback" style={{ width: 36, height: 36, fontSize: '1rem' }}>
-                {authorName.charAt(0).toUpperCase()}
-              </span>
-            )}
-            <div>
-              <p className="small fw-medium mb-0">{authorName}</p>
-              <p className="small text-muted-fg mb-0">{postDate}</p>
+          {post.author?._id ? (
+            <Link to={`/profile/${post.author._id}`} className="d-flex align-items-center gap-2 text-decoration-none text-body">
+              {post.author?.avatarUrl ? (
+                <Image
+                  src={post.author.avatarUrl}
+                  alt={authorName}
+                  roundedCircle
+                  width={36}
+                  height={36}
+                  style={{ objectFit: 'cover' }}
+                />
+              ) : (
+                <span className={styles.avatarFallback}>
+                  {authorName.charAt(0).toUpperCase()}
+                </span>
+              )}
+              <div>
+                <p className="small fw-medium mb-0">{authorName}</p>
+                <p className={`small mb-0 ${styles.metaDate}`}>{postDate}</p>
+              </div>
+            </Link>
+          ) : (
+            <div className="d-flex align-items-center gap-2 text-body">
+              {post.author?.avatarUrl ? (
+                <Image
+                  src={post.author.avatarUrl}
+                  alt={authorName}
+                  roundedCircle
+                  width={36}
+                  height={36}
+                  style={{ objectFit: 'cover' }}
+                />
+              ) : (
+                <span className={styles.avatarFallback}>
+                  {authorName.charAt(0).toUpperCase()}
+                </span>
+              )}
+              <div>
+                <p className="small fw-medium mb-0">{authorName}</p>
+                <p className={`small mb-0 ${styles.metaDate}`}>{postDate}</p>
+              </div>
             </div>
-          </Link>
+          )}
 
           <div className="d-flex align-items-center gap-3">
-            <LikeButton isLiked={false} likeCount={post.likes.length} onClick={() => {}} disabled={!currentUserId} />
+            <LikeButton isLiked={isLiked} likeCount={post.likes.length} onClick={handleLikeClick} disabled={!currentUserId} />
             <Link
               to={`/posts/${post._id}#comments`}
-              className="d-flex align-items-center gap-1 small text-muted-fg text-decoration-none"
+              className={`d-flex align-items-center gap-1 small text-decoration-none ${styles.commentsLink}`}
             >
               <MessageCircle size={16} /> {post.commentCount ?? 0} comments
             </Link>
@@ -121,19 +171,46 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
         )}
 
         <div className="mt-4">
-          <p className="fs-6" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7, fontWeight: 300 }}>
+          <p className={`fs-6 ${styles.content}`}>
             {post.content}
           </p>
         </div>
       </div>
 
-      <section id="comments" className="mt-5">
-        <div className="d-flex align-items-center gap-2 mb-3">
-          <MessageCircle size={18} />
-          <h2 className="mb-0 fs-4">Comments ({post.commentCount ?? 0})</h2>
+      <section id="comments" className={`${styles.commentsSection} mt-5`}>
+        <div className={styles.commentsSectionHeader}>
+          <h2 className={`${styles.commentsSectionTitle} mb-0`}>Comments ({post.commentCount ?? 0})</h2>
         </div>
         <CommentsContainer postId={post._id} />
       </section>
+
+      <Modal
+        show={isDeleteDialogOpen}
+        onHide={handleDeleteCancel}
+        centered
+      >
+        <Modal.Header closeButton={!isDeleting}>
+          <Modal.Title>Delete Post</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {deleteError && isDeleteDialogOpen ? (
+            <Alert variant="danger" className="mb-3">
+              {deleteError}
+            </Alert>
+          ) : null}
+          <p className={`mb-0 ${styles.deleteDialogText}`}>
+            Are you sure you want to delete this post? This action cannot be undone.
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="outline-secondary" onClick={handleDeleteCancel} disabled={isDeleting}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDeleteConfirm} disabled={isDeleting}>
+            {isDeleting ? 'Deleting...' : 'Delete'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

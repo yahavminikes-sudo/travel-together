@@ -9,6 +9,10 @@
   box-shadow: none !important;
 }
 
+.avatarToggle::after {
+  display: none;
+}
+
 .avatarFallback {
   width: 36px;
   height: 36px;

@@ -3,11 +3,12 @@ import { PostsGridView } from '@/components/features/PostsGridView';
 import { PageError } from '@/components/ui/PageError';
 import { PageLoader } from '@/components/ui/PageLoader';
 import { useAuth } from '@/hooks/useAuth';
-import { useMyPosts } from '@/hooks/usePosts';
+import { useMyPosts, useTogglePostLike } from '@/hooks/usePosts';
 
 export const MyPostsContainer: React.FC = () => {
   const { currentUser, isAuthenticated, isInitializing } = useAuth();
   const { data: posts = [], error: queryError, isLoading } = useMyPosts();
+  const toggleLikeMutation = useTogglePostLike();
   const error = queryError instanceof Error ? queryError.message : null;
 
   if (isInitializing || isLoading) {
@@ -28,6 +29,9 @@ export const MyPostsContainer: React.FC = () => {
       emptyActionLabel="Share your first post"
       emptyActionTo="/posts/create"
       emptyMessage="You haven't shared any adventures yet."
+      onLikeToggle={(postId) => {
+        void toggleLikeMutation.mutateAsync(postId);
+      }}
       posts={posts}
       title="My Posts"
     />

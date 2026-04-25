@@ -9,12 +9,22 @@ import { PostCard } from './PostCard';
 import styles from './ProfileView.module.css';
 
 interface ProfileViewProps {
+  currentUserId?: string;
+  isEditable?: boolean;
+  onLikeToggle?: (postId: string) => void;
   postCount: number;
   posts: Post[];
   user: User;
 }
 
-export const ProfileView: React.FC<ProfileViewProps> = ({ postCount, posts, user }) => {
+export const ProfileView: React.FC<ProfileViewProps> = ({
+  currentUserId,
+  isEditable = false,
+  onLikeToggle,
+  postCount,
+  posts,
+  user,
+}) => {
   const maxProfilePhotoSizeBytes = 2 * 1024 * 1024;
   const { updateProfile } = useAuth();
   const [isEditOpen, setIsEditOpen] = React.useState(false);
@@ -103,20 +113,22 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ postCount, posts, user
             </div>
           </div>
 
-          <Button
-            variant="outline-secondary"
-            size="sm"
-            className="d-flex align-items-center gap-1"
-            onClick={() => {
-              setUsername(user.username);
-              setAvatarPreview(user.avatarUrl || '');
-              setError(null);
-              setIsEditOpen(true);
-            }}
-          >
-            <Pencil size={12} />
-            Edit Profile
-          </Button>
+          {isEditable ? (
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              className="d-flex align-items-center gap-1"
+              onClick={() => {
+                setUsername(user.username);
+                setAvatarPreview(user.avatarUrl || '');
+                setError(null);
+                setIsEditOpen(true);
+              }}
+            >
+              <Pencil size={12} />
+              Edit Profile
+            </Button>
+          ) : null}
         </Container>
       </section>
 
@@ -129,60 +141,67 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ postCount, posts, user
           <Row xs={1} md={2} lg={3} className="g-4">
             {posts.map((post) => (
               <Col key={post._id}>
-                <PostCard post={post} currentUserId={user._id} />
+                <PostCard post={post} currentUserId={currentUserId} onLikeToggle={onLikeToggle} />
               </Col>
             ))}
           </Row>
         )}
       </Container>
 
-      <Modal show={isEditOpen} onHide={() => setIsEditOpen(false)} centered dialogClassName={styles.editModal}>
-        <Modal.Header className="border-bottom-0 pb-0">
-          <Modal.Title className="fs-1 fw-semibold" style={{ fontSize: '1.2rem' }}>
-            Edit Profile
-          </Modal.Title>
-          <button
-            type="button"
-            className="btn btn-link text-muted p-0 border-0 ms-auto"
-            onClick={() => setIsEditOpen(false)}
-            aria-label="Close"
-          >
-            <X size={28} />
-          </button>
-        </Modal.Header>
-        <Modal.Body className="pt-3">
-          {error ? <Alert variant="danger">{error}</Alert> : null}
+      {isEditable ? (
+        <Modal
+          show={isEditOpen}
+          onHide={() => setIsEditOpen(false)}
+          centered
+          dialogClassName={styles.editModal}
+        >
+          <Modal.Header className="border-bottom-0 pb-0">
+            <Modal.Title className="fs-1 fw-semibold" style={{ fontSize: '1.2rem' }}>
+              Edit Profile
+            </Modal.Title>
+            <button
+              type="button"
+              className="btn btn-link text-muted p-0 border-0 ms-auto"
+              onClick={() => setIsEditOpen(false)}
+              aria-label="Close"
+            >
+              <X size={28} />
+            </button>
+          </Modal.Header>
+          <Modal.Body className="pt-3">
+            {error ? <Alert variant="danger">{error}</Alert> : null}
 
-          <div className="text-center mb-4">
-            <CustomAvatar
-              imageUrl={avatarPreview}
-              altText={username || user.username}
-              size={AvatarSize.LARGE}
-              fallback={username || user.username}
-              className={styles.modalAvatar}
-            />
-          </div>
+            <div className="text-center mb-4">
+              <CustomAvatar
+                imageUrl={avatarPreview}
+                altText={username || user.username}
+                size={AvatarSize.LARGE}
+                fallback={username || user.username}
+                className={styles.modalAvatar}
+              />
+            </div>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Profile Photo</Form.Label>
-            <Form.Control type="file" accept="image/*" onChange={handlePhotoChange} />
-          </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Profile Photo</Form.Label>
+              <Form.Control type="file" accept="image/*" onChange={handlePhotoChange} />
+            </Form.Group>
 
-          <Form.Group>
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              value={username}
-              onChange={(event) => setUsername(event.target.value)}
-              placeholder="Enter your username"
-            />
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer className="border-top-0 pt-0">
-          <Button className="btn-primary w-100" onClick={handleSave} disabled={isSaving}>
-            {isSaving ? 'Saving...' : 'Save'}
-          </Button>
-        </Modal.Footer>
-      </Modal>
+            <Form.Group>
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+                placeholder="Enter your username"
+              />
+            </Form.Group>
+          </Modal.Body>
+          <Modal.Footer className="border-top-0 pt-0">
+            <Button className="btn-primary w-100" onClick={handleSave} disabled={isSaving}>
+              {isSaving ? 'Saving...' : 'Save'}
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      ) : null}
     </>
   );
 };

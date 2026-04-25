@@ -6,12 +6,83 @@
 .item {
   background-color: hsl(var(--card));
   border: 1px solid hsl(var(--border));
-  border-radius: 0.85rem;
-  box-shadow: 0 10px 26px hsl(var(--foreground) / 0.04);
+  border-radius: 0.95rem;
+  box-shadow: 0 12px 28px hsl(var(--foreground) / 0.05);
 }
 
 .card {
+  padding: 1rem;
+}
+
+.composer {
   padding: 1.25rem;
+}
+
+.composerTitle {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 0.9rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.textarea:global(.form-control) {
+  min-height: 5.4rem;
+  resize: vertical;
+  border-radius: 0.75rem;
+  border-color: hsl(var(--border));
+  background-color: hsl(var(--background));
+  padding: 0.9rem 0.95rem;
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: hsl(var(--foreground));
+  box-shadow: inset 0 1px 0 hsl(var(--card) / 0.5);
+}
+
+.textarea:global(.form-control)::placeholder {
+  color: hsl(var(--muted-foreground));
+}
+
+.textarea:global(.form-control):focus {
+  border-color: hsl(var(--ring));
+  box-shadow: 0 0 0 0.2rem hsl(var(--ring) / 0.18);
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.submit {
+  border-radius: 0.65rem;
+  padding: 0.7rem 1.15rem;
+  font-weight: 500;
+}
+
+.notice {
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.8rem;
+  background: linear-gradient(180deg, hsl(var(--background)), hsl(var(--card)));
+  padding: 1rem;
+}
+
+.noticeTitle,
+.emptyTitle {
+  color: hsl(var(--foreground));
+  font-weight: 600;
+}
+
+.noticeCopy,
+.emptyCopy {
+  color: hsl(var(--muted-foreground));
+  line-height: 1.6;
+}
+
+.empty {
+  padding: 1.15rem 1.25rem;
 }
 
 .list {
@@ -20,5 +91,88 @@
 }
 
 .item {
-  padding: 1rem 1.25rem;
+  padding: 1.15rem 1.2rem;
+}
+
+.itemHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.95rem;
+}
+
+.avatar {
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px hsl(var(--foreground) / 0.08);
+}
+
+.meta {
+  min-width: 0;
+  flex: 1;
+}
+
+.metaRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.metaIdentity {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.author {
+  color: hsl(var(--foreground));
+  font-size: 1rem;
+}
+
+.date {
+  color: hsl(var(--muted-foreground));
+  font-size: 0.95rem;
+}
+
+.content {
+  color: hsl(var(--foreground));
+  line-height: 1.7;
+}
+
+.deleteButton:global(.btn) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 575.98px) {
+  .card,
+  .composer,
+  .item,
+  .empty {
+    padding: 1rem;
+  }
+
+  .metaRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .metaIdentity {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+  }
+
+  .formActions {
+    justify-content: stretch;
+  }
+
+  .submit {
+    width: 100%;
+  }
 }

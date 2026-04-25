@@ -60,6 +60,27 @@ export const createPostController = ({ postService }: { postService: IPostServic
       }
     },
 
+    toggleLike: async (req: AuthRequest, res: Response) => {
+      try {
+        if (!req.userId) {
+          res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Unauthorized' });
+          return;
+        }
+
+        const { id } = req.params;
+        const post = await postService.toggleLike(id, req.userId);
+
+        if (!post) {
+          res.status(StatusCodes.NOT_FOUND).json({ message: 'Post not found' });
+          return;
+        }
+
+        res.status(StatusCodes.OK).json(post);
+      } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
+      }
+    },
+    
     deletePost: async (req: AuthRequest, res: Response) => {
       try {
         if (!req.userId) {

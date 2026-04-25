@@ -70,6 +70,18 @@ export const createCommentController = ({ commentService }: { commentService: IC
         }
 
         const { id } = req.params;
+        const comment = await commentService.getCommentById(id);
+
+        if (!comment) {
+          res.status(StatusCodes.NOT_FOUND).json({ message: 'Comment not found' });
+          return;
+        }
+
+        if (comment.authorId !== req.userId) {
+          res.status(StatusCodes.FORBIDDEN).json({ message: 'You can only delete your own comments' });
+          return;
+        }
+
         const success = await commentService.deleteComment(id);
         if (!success) {
           res.status(StatusCodes.NOT_FOUND).json({ message: 'Comment not found' });
