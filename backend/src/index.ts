@@ -1,4 +1,5 @@
 import { appConfig } from './config/appConfig';
+import { createGoogleAuthVerifier } from './details/auth/googleAuthVerifier';
 import { createJwtAuthProvider } from './details/auth/jwtAuthProvider';
 import { createMongoDatabase } from './details/database/mongo/MongoDatabase';
 import { createAuthRepository } from './details/database/mongo/repositories/authRepository';
@@ -19,6 +20,7 @@ import { createUserService } from './services/userService';
 const mongoDatabase = createMongoDatabase();
 
 const authProvider = createJwtAuthProvider();
+const googleAuthVerifier = createGoogleAuthVerifier();
 const embeddingProvider = createGeminiEmbeddingProvider();
 
 const authRepository = createAuthRepository();
@@ -27,7 +29,7 @@ const commentRepository = createCommentRepository(userRepository);
 const postRepository = createPostRepository(userRepository, commentRepository);
 const embeddingRepository = createEmbeddingRepository();
 
-const authService = createAuthService({ authRepository, authProvider });
+const authService = createAuthService({ authRepository, authProvider, googleAuthVerifier });
 const userService = createUserService({ userRepository });
 const embeddingService = createEmbeddingService({ embeddingRepository, embeddingProvider });
 const postService = createPostService({ postRepository, embeddingService });

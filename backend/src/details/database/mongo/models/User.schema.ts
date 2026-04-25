@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 import { User } from '@travel-together/shared/types/user.types';
 
 export interface IUserDocument extends Omit<User, '_id' | 'createdAt' | 'updatedAt'>, Document {
+  googleId?: string;
   password?: string;
   refreshTokens?: string[];
   createdAt: string;
@@ -12,6 +13,7 @@ const userSchema = new Schema<IUserDocument>(
   {
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
+    googleId: { type: String, required: false, unique: true, sparse: true },
     password: { type: String, required: false }, // Optional if we plan OAuth in future
     avatarUrl: { type: String, default: '' },
     bio: { type: String, default: '' },

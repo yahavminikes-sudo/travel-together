@@ -6,6 +6,7 @@ export const createAuthRouter = (authController: ReturnType<typeof createAuthCon
 
   router.post('/register', authController.register);
   router.post('/login', authController.login);
+  router.post('/google', authController.googleLogin);
 
   return router;
 };

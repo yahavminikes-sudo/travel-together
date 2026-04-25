@@ -1,3 +1,4 @@
+import { clearMockGoogleCredentials } from './utils/testApp';
 import dotenv from 'dotenv';
 import path from 'path';
 
@@ -17,6 +18,8 @@ beforeAll(async () => {
 });
 
 afterEach(async () => {
+  clearMockGoogleCredentials();
+
   // Clear all collections after each test so tests don't pollute each other
   const collections = mongoose.connection.collections;
   for (const key in collections) {

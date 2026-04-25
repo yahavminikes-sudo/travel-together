@@ -6,6 +6,8 @@ import { ContentType } from '@travel-together/shared/types/search.types';
 
 export interface IAuthRepository {
   findAuthRecordByEmail(email: string): Promise<AuthRecord | null>;
+  findAuthRecordByGoogleId(googleId: string): Promise<AuthRecord | null>;
+  findAuthRecordByUsername(username: string): Promise<AuthRecord | null>;
   saveAuthRecord(record: Omit<AuthRecord, '_id'> & Partial<Pick<AuthRecord, '_id'>>): Promise<AuthRecord>;
 }
 
