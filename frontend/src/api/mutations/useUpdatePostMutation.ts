@@ -5,7 +5,7 @@ export interface UpdatePostData {
   destination: string;
   title: string;
   content: string;
-  imageUrl?: string;
+  imageUrl: string;
   tags?: string;
 }
 

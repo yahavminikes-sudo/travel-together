@@ -18,7 +18,6 @@ export const getPostById = async (postId: string, signal?: AbortSignal) => {
 export const createPost = async (data: CreatePostFormData) => {
   const response = await apiClient.post<Post>('/api/posts', {
     ...data,
-    imageUrl: data.imageUrl || undefined,
     tags: parseTags(data.tags)
   });
   return response.data;
@@ -27,7 +26,6 @@ export const createPost = async (data: CreatePostFormData) => {
 export const updatePost = async (postId: string, data: EditPostFormData) => {
   const response = await apiClient.put<Post>(`/api/posts/${postId}`, {
     ...data,
-    imageUrl: data.imageUrl || undefined,
     tags: parseTags(data.tags)
   });
   return response.data;

@@ -1,8 +1,3 @@
-/**
- * Splits a text into smaller chunks for embedding.
- * Each chunk will be at most `maxChunkSize` characters,
- * splitting on sentence boundaries where possible.
- */
 export const chunkText = (text: string, maxChunkSize = 500): string[] => {
   if (!text || text.length === 0) return [];
   if (text.length <= maxChunkSize) return [text];

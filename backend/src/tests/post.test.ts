@@ -8,13 +8,14 @@ describe('Post API Endpoints', () => {
   let authToken = '';
   let authUserId = '';
 
-  const validUser = {
-    username: 'posttester',
-    email: 'posttester@example.com',
-    password: 'Password123!'
-  };
-
   const authenticateUser = async () => {
+    const uniqueId = Math.random().toString(36).slice(2, 10);
+    const validUser = {
+      username: `posttester_${uniqueId}`,
+      email: `posttester_${uniqueId}@example.com`,
+      password: 'Password123!'
+    };
+
     await request(app).post('/api/auth/register').send(validUser);
     const loginRes = await request(app).post('/api/auth/login').send({
       email: validUser.email,
@@ -29,6 +30,7 @@ describe('Post API Endpoints', () => {
       destination: 'Japan',
       title: 'My Journey to Japan',
       content: 'It was an amazing experience exploring Tokyo.',
+      imageUrl: 'https://example.com/japan.jpg',
       ...overrides
     });
   };
@@ -45,12 +47,24 @@ describe('Post API Endpoints', () => {
       expect(response.body).toHaveProperty('_id');
       expect(response.body).toHaveProperty('title', 'My Journey to Japan');
       expect(response.body).toHaveProperty('authorId', authUserId);
+      expect(response.body).toHaveProperty('imageUrl', 'https://example.com/japan.jpg');
     });
 
     it('should return 401 when missing auth token', async () => {
       const response = await request(app).post('/api/posts').send({ title: 'Test', content: 'Test' });
 
       expect(response.status).toBe(StatusCodes.UNAUTHORIZED);
+    });
+
+    it('should return 400 when imageUrl is missing', async () => {
+      const response = await request(app).post('/api/posts').set('Authorization', `Bearer ${authToken}`).send({
+        destination: 'Japan',
+        title: 'My Journey to Japan',
+        content: 'It was an amazing experience exploring Tokyo.'
+      });
+
+      expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+      expect(response.body).toHaveProperty('message', 'Invalid input: expected string, received undefined');
     });
   });
 
@@ -141,16 +155,40 @@ describe('Post API Endpoints', () => {
 
     it('should filter posts by authorId', async () => {
       // Create valid user posts
-      await request(app).post('/api/posts').set('Authorization', `Bearer ${authToken}`).send({ destination: 'P1', title: 'T1', content: 'C1' });
-      await request(app).post('/api/posts').set('Authorization', `Bearer ${authToken}`).send({ destination: 'P1', title: 'T2', content: 'C2' });
+      await request(app)
+        .post('/api/posts')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          destination: 'Paris',
+          title: 'Trip One',
+          content: 'Content for the first valid trip.',
+          imageUrl: 'https://example.com/p1-t1.jpg'
+        });
+      await request(app)
+        .post('/api/posts')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          destination: 'Paris',
+          title: 'Trip Two',
+          content: 'Content for the second valid trip.',
+          imageUrl: 'https://example.com/p1-t2.jpg'
+        });
 
       // Create user 2 and their post
-      const user2 = { username: 'u2', email: 'u2@ex.com', password: 'Password123!' };
+      const user2 = { username: 'user2', email: 'user2@example.com', password: 'Password123!' };
       await request(app).post('/api/auth/register').send(user2);
       const login2 = await request(app).post('/api/auth/login').send({ email: user2.email, password: user2.password });
       const token2 = login2.body.token;
 
-      await request(app).post('/api/posts').set('Authorization', `Bearer ${token2}`).send({ destination: 'P2', title: 'T3', content: 'C3' });
+      await request(app)
+        .post('/api/posts')
+        .set('Authorization', `Bearer ${token2}`)
+        .send({
+          destination: 'Berlin',
+          title: 'Trip Three',
+          content: 'Content for the third valid trip.',
+          imageUrl: 'https://example.com/p2-t3.jpg'
+        });
 
       // Filter by user 1
       const response = await request(app).get(`/api/posts?authorId=${authUserId}`);
@@ -164,7 +202,15 @@ describe('Post API Endpoints', () => {
     it('should respect pagination when filtering by authorId', async () => {
       // Create 5 posts for valid user
       for (let i = 0; i < 5; i++) {
-        await request(app).post('/api/posts').set('Authorization', `Bearer ${authToken}`).send({ destination: 'P1', title: `T${i}`, content: 'C1' });
+        await request(app)
+          .post('/api/posts')
+          .set('Authorization', `Bearer ${authToken}`)
+          .send({
+            destination: 'Paris',
+            title: `Trip ${i}`,
+            content: `Content for valid trip number ${i}.`,
+            imageUrl: `https://example.com/p1-${i}.jpg`
+          });
       }
 
       // Filter by valid user with page 1, limit 2
@@ -186,6 +232,43 @@ describe('Post API Endpoints', () => {
       expect(response.status).toBe(StatusCodes.OK);
       expect(response.body.data.length).toBe(0);
       expect(response.body.total).toBe(0);
+    });
+  });
+
+  describe('PUT /api/posts/:id', () => {
+    it('should update a post when imageUrl is provided', async () => {
+      const createdPost = await createPost();
+
+      const response = await request(app)
+        .put(`/api/posts/${createdPost.body._id}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          destination: 'Kyoto',
+          title: 'Updated Japan Journey',
+          content: 'Kyoto was peaceful and filled with amazing temples.',
+          imageUrl: 'https://example.com/kyoto.jpg'
+        });
+
+      expect(response.status).toBe(StatusCodes.OK);
+      expect(response.body).toHaveProperty('title', 'Updated Japan Journey');
+      expect(response.body).toHaveProperty('imageUrl', 'https://example.com/kyoto.jpg');
+    });
+
+    it('should return 400 when imageUrl is empty during update', async () => {
+      const createdPost = await createPost();
+
+      const response = await request(app)
+        .put(`/api/posts/${createdPost.body._id}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          destination: 'Kyoto',
+          title: 'Updated Japan Journey',
+          content: 'Kyoto was peaceful and filled with amazing temples.',
+          imageUrl: ''
+        });
+
+      expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+      expect(response.body).toHaveProperty('message', 'Must be a valid URL');
     });
   });
 });

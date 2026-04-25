@@ -29,10 +29,7 @@ describe('Auth API Endpoints', () => {
     });
 
     it('should return 409 if email is already registered', async () => {
-      // Register first time
       await request(app).post('/api/auth/register').send(validUser);
-
-      // Register second time
       const response = await request(app).post('/api/auth/register').send(validUser);
 
       expect(response.status).toBe(StatusCodes.CONFLICT);
@@ -40,7 +37,7 @@ describe('Auth API Endpoints', () => {
     });
 
     it('should return 400 if required fields are missing', async () => {
-      const response = await request(app).post('/api/auth/register').send({ email: 'test@example.com' }); // missing password and username
+      const response = await request(app).post('/api/auth/register').send({ email: 'test@example.com' });
 
       expect(response.status).toBe(StatusCodes.BAD_REQUEST);
     });
@@ -48,7 +45,6 @@ describe('Auth API Endpoints', () => {
 
   describe('POST /api/auth/login', () => {
     beforeEach(async () => {
-      // Ensure user exists before each login test
       await request(app).post('/api/auth/register').send(validUser);
     });
 

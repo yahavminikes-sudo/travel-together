@@ -38,6 +38,7 @@ export const swaggerOptions: Options = {
         },
         Post: {
           type: 'object',
+          required: ['_id', 'authorId', 'commentCount', 'destination', 'title', 'content', 'imageUrl', 'likes', 'createdAt', 'updatedAt'],
           properties: {
             _id: { type: 'string' },
             authorId: { type: 'string' },
@@ -73,5 +74,5 @@ export const swaggerOptions: Options = {
       }
     ]
   },
-  apis: ['./src/details/docs/api/*.docs.ts'], // Path to the API docs
+  apis: ['./src/details/docs/api/*.docs.ts'],
 };

@@ -19,14 +19,14 @@ export interface CreatePostDto {
   destination: string;
   title: string;
   content: string;
-  imageUrl?: string;
+  imageUrl: string;
   tags?: string[];
 }
 
 export interface UpdatePostDto {
-  destination?: string;
-  title?: string;
-  content?: string;
-  imageUrl?: string;
+  destination: string;
+  title: string;
+  content: string;
+  imageUrl: string;
   tags?: string[];
 }

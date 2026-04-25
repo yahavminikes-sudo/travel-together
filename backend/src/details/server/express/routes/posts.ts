@@ -1,5 +1,7 @@
 import { Router, RequestHandler } from 'express';
+import { createPostSchema, editPostSchema } from '@travel-together/shared/schemas/postSchemas';
 import { createPostController } from '../controllers/postController';
+import { validateRequestBody } from '../middlewares/validateRequestBody';
 
 export const createPostRouter = (
   postController: ReturnType<typeof createPostController>,
@@ -9,9 +11,9 @@ export const createPostRouter = (
 
   router.get('/', postController.getPosts);
   router.get('/:id', postController.getPostById);
-  router.post('/', authenticate, postController.createPost);
+  router.post('/', authenticate, validateRequestBody(createPostSchema), postController.createPost);
   router.post('/:id/like', authenticate, postController.toggleLike);
-  router.put('/:id', authenticate, postController.updatePost);
+  router.put('/:id', authenticate, validateRequestBody(editPostSchema), postController.updatePost);
   router.delete('/:id', authenticate, postController.deletePost);
 
   return router;

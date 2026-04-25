@@ -19,12 +19,14 @@
  *         multipart/form-data:
  *           schema:
  *             type: object
+ *             required:
+ *               - image
  *             properties:
  *               image:
  *                 type: string
  *                 format: binary
  *     responses:
- *       200:
+ *       201:
  *         description: Image uploaded successfully
  *         content:
  *           application/json:

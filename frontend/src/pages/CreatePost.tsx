@@ -1,19 +1,29 @@
 import { uploadImage } from '@/api';
 import { PostEditorForm } from '@/components/features/PostEditorForm';
+import { POST_IMAGE_MESSAGES } from '@/components/features/postEditor.constants';
+import { validatePostImageFile } from '@/components/features/postEditor.utils';
 import { useAuth } from '@/hooks/useAuth';
 import { useCreatePost } from '@/hooks/usePosts';
-import { CreatePostFormData } from '@travel-together/shared/schemas/postSchemas';
+import { createPostSchema, PostEditorFormData } from '@travel-together/shared/schemas/postSchemas';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+
+const createPostInitialValues: PostEditorFormData = {
+  content: '',
+  destination: '',
+  imageUrl: '',
+  tags: '',
+  title: '',
+};
 
 export const CreatePost: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = React.useState<string>('');
+  const [imageError, setImageError] = React.useState<string | null>(null);
   const [uploadError, setUploadError] = React.useState<string | null>(null);
   const [isUploadingImage, setIsUploadingImage] = React.useState(false);
-  const maxUploadSizeBytes = 5 * 1024 * 1024;
 
   const mutation = useCreatePost();
 
@@ -24,19 +34,16 @@ export const CreatePost: React.FC = () => {
       return;
     }
 
-    if (!file.type.startsWith('image/')) {
-      setUploadError('Please choose an image file.');
-      event.target.value = '';
-      return;
-    }
-
-    if (file.size > maxUploadSizeBytes) {
-      setUploadError('Cover photo is too large. Please choose an image smaller than 5 MB.');
+    const validationError = validatePostImageFile(file);
+    if (validationError) {
+      setImageError(validationError);
+      setUploadError(null);
       event.target.value = '';
       return;
     }
 
     setSelectedImage(file);
+    setImageError(null);
     setUploadError(null);
 
     const previewUrl = URL.createObjectURL(file);
@@ -57,21 +64,24 @@ export const CreatePost: React.FC = () => {
     };
   }, [imagePreviewUrl]);
 
-  const onSubmit = async (data: CreatePostFormData) => {
+  const onSubmit = async (data: PostEditorFormData) => {
     try {
-      setUploadError(null);
-
-      let imageUrl = data.imageUrl;
-      if (selectedImage) {
-        setIsUploadingImage(true);
-        imageUrl = await uploadImage(selectedImage);
+      if (!selectedImage) {
+        setImageError(POST_IMAGE_MESSAGES.missing);
+        return;
       }
 
+      setImageError(null);
+      setUploadError(null);
+      setIsUploadingImage(true);
+      const imageUrl = await uploadImage(selectedImage);
+      const parsedData = createPostSchema.parse({
+        ...data,
+        imageUrl
+      });
+
       mutation.mutate(
-        {
-          ...data,
-          imageUrl
-        },
+        parsedData,
         {
           onSuccess: (post) => {
             navigate(`/posts/${post._id}`);
@@ -79,7 +89,7 @@ export const CreatePost: React.FC = () => {
         }
       );
     } catch (error) {
-      setUploadError(error instanceof Error ? error.message : 'Failed to upload cover photo.');
+      setUploadError(error instanceof Error ? error.message : POST_IMAGE_MESSAGES.uploadFailed);
     } finally {
       setIsUploadingImage(false);
     }
@@ -101,11 +111,12 @@ export const CreatePost: React.FC = () => {
   return (
     <PostEditorForm
       mode="create"
-      initialValues={{ content: '', destination: '', imageUrl: '', tags: '', title: '' }}
+      initialValues={createPostInitialValues}
       isSubmitting={isSubmitting}
       onBack={() => navigate(-1)}
       onImageSelect={handleImageSelect}
       onSubmit={onSubmit}
+      imageError={imageError}
       previewUrl={imagePreviewUrl}
       submitError={error}
       uploadError={uploadError}
