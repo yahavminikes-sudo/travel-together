@@ -1,0 +1,58 @@
+.metaLabel {
+  color: hsl(var(--accent));
+}
+
+.title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+}
+
+.avatarFallback {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+  color: hsl(var(--primary-foreground));
+  font-size: 1rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.metaDate,
+.commentsLink {
+  color: hsl(var(--muted-foreground));
+}
+
+.commentsLink:hover {
+  color: hsl(var(--foreground));
+}
+
+.content {
+  white-space: pre-wrap;
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.commentsSection {
+  border-top: 1px solid hsl(var(--border));
+  padding-top: 2rem;
+}
+
+.commentsSectionHeader {
+  margin-bottom: 1.5rem;
+}
+
+.commentsSectionTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.55rem, 2vw, 1.9rem);
+  font-weight: 700;
+}
+
+@media (max-width: 575.98px) {
+  .commentsSection {
+    padding-top: 1.5rem;
+  }
+}

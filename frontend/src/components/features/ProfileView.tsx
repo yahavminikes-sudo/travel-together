@@ -153,7 +153,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           show={isEditOpen}
           onHide={() => setIsEditOpen(false)}
           centered
-          dialogClassName="profile-edit-modal"
+          dialogClassName={styles.editModal}
         >
           <Modal.Header className="border-bottom-0 pb-0">
             <Modal.Title className="fs-1 fw-semibold" style={{ fontSize: '1.2rem' }}>
@@ -177,7 +177,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 altText={username || user.username}
                 size={AvatarSize.LARGE}
                 fallback={username || user.username}
-                className="profile-modal-avatar"
+                className={styles.modalAvatar}
               />
             </div>
 

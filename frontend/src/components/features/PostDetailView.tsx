@@ -5,6 +5,7 @@ import { MapPin, MessageCircle, ArrowLeft, Pencil, Trash2 } from 'lucide-react';
 import { Post } from '@travel-together/shared/types/post.types';
 import { CommentsContainer } from '@/containers/CommentsContainer';
 import { LikeButton } from '@/components/ui/LikeButton';
+import styles from './PostDetailView.module.css';
 
 interface PostDetailViewProps {
   currentUserId?: string;
@@ -57,12 +58,12 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
       </div>
 
       <div>
-        <div className="d-flex align-items-center gap-1 small fw-medium text-accent-brand mb-2">
+        <div className={`d-flex align-items-center gap-1 small fw-medium mb-2 ${styles.metaLabel}`}>
           <MapPin size={14} />
           {post.destination}
         </div>
 
-        <h1 className="fw-bold mb-3" style={{ fontFamily: "'Playfair Display', serif", fontSize: '2rem' }}>
+        <h1 className={`fw-bold mb-3 ${styles.title}`}>
           {post.title}
         </h1>
 
@@ -79,13 +80,13 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
                   style={{ objectFit: 'cover' }}
                 />
               ) : (
-                <span className="travel-post-avatar-fallback" style={{ width: 36, height: 36, fontSize: '1rem' }}>
+                <span className={styles.avatarFallback}>
                   {authorName.charAt(0).toUpperCase()}
                 </span>
               )}
               <div>
                 <p className="small fw-medium mb-0">{authorName}</p>
-                <p className="small text-muted-fg mb-0">{postDate}</p>
+                <p className={`small mb-0 ${styles.metaDate}`}>{postDate}</p>
               </div>
             </Link>
           ) : (
@@ -100,20 +101,23 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
                   style={{ objectFit: 'cover' }}
                 />
               ) : (
-                <span className="travel-post-avatar-fallback" style={{ width: 36, height: 36, fontSize: '1rem' }}>
+                <span className={styles.avatarFallback}>
                   {authorName.charAt(0).toUpperCase()}
                 </span>
               )}
               <div>
                 <p className="small fw-medium mb-0">{authorName}</p>
-                <p className="small text-muted-fg mb-0">{postDate}</p>
+                <p className={`small mb-0 ${styles.metaDate}`}>{postDate}</p>
               </div>
             </div>
           )}
 
           <div className="d-flex align-items-center gap-3">
             <LikeButton isLiked={isLiked} likeCount={post.likes.length} onClick={handleLikeClick} disabled={!currentUserId} />
-            <Link to={`/posts/${post._id}#comments`} className="d-flex align-items-center gap-1 small text-muted-fg text-decoration-none">
+            <Link
+              to={`/posts/${post._id}#comments`}
+              className={`d-flex align-items-center gap-1 small text-decoration-none ${styles.commentsLink}`}
+            >
               <MessageCircle size={16} /> {post.commentCount ?? 0} comments
             </Link>
           </div>
@@ -145,15 +149,15 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
         )}
 
         <div className="mt-4">
-          <p className="fs-6" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7, fontWeight: 300 }}>
+          <p className={`fs-6 ${styles.content}`}>
             {post.content}
           </p>
         </div>
       </div>
 
-      <section id="comments" className="travel-comments-section mt-5">
-        <div className="travel-comments-section-header">
-          <h2 className="travel-comments-section-title mb-0">Comments ({post.commentCount ?? 0})</h2>
+      <section id="comments" className={`${styles.commentsSection} mt-5`}>
+        <div className={styles.commentsSectionHeader}>
+          <h2 className={`${styles.commentsSectionTitle} mb-0`}>Comments ({post.commentCount ?? 0})</h2>
         </div>
         <CommentsContainer postId={post._id} />
       </section>

@@ -43,6 +43,10 @@
   overflow: hidden;
 }
 
+.metaLabel {
+  color: hsl(var(--accent));
+}
+
 .author {
   color: hsl(var(--muted-foreground));
   font-size: 0.98rem;

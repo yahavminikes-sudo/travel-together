@@ -33,7 +33,7 @@ export const PostCard: React.FC<Props> = ({ post, currentUserId, onLikeToggle })
       )}
       <Card.Body className="d-flex flex-column p-3 p-md-4">
         {metaLabel ? (
-          <div className="d-flex align-items-center gap-1 mb-2 small fw-medium text-accent-brand">
+          <div className={`d-flex align-items-center gap-1 mb-2 small fw-medium ${styles.metaLabel}`}>
             <MapPin size={12} />
             <span>{metaLabel}</span>
           </div>
@@ -61,9 +61,9 @@ export const PostCard: React.FC<Props> = ({ post, currentUserId, onLikeToggle })
                   style={{ objectFit: 'cover' }}
                 />
               ) : (
-                <span className="travel-post-avatar-fallback">{authorFallback}</span>
+                <span className={styles.avatarFallback}>{authorFallback}</span>
               )}
-              <span className="travel-post-author text-truncate">{authorName}</span>
+              <span className={`${styles.author} text-truncate`}>{authorName}</span>
             </Link>
           ) : (
             <div className="d-flex align-items-center gap-2 min-w-0">
@@ -77,9 +77,9 @@ export const PostCard: React.FC<Props> = ({ post, currentUserId, onLikeToggle })
                   style={{ objectFit: 'cover' }}
                 />
               ) : (
-                <span className="travel-post-avatar-fallback">{authorFallback}</span>
+                <span className={styles.avatarFallback}>{authorFallback}</span>
               )}
-              <span className="travel-post-author text-truncate">{authorName}</span>
+              <span className={`${styles.author} text-truncate`}>{authorName}</span>
             </div>
           )}
 

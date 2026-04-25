@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { Alert, Container, Form } from 'react-bootstrap';
 import { ArrowLeft, ImagePlus } from 'lucide-react';
 import { postEditorSchema, PostEditorFormData } from '@travel-together/shared/schemas/postSchemas';
+import styles from './PostEditor.module.css';
 
 interface PostEditorFormProps {
   mode: 'create' | 'edit';
@@ -103,11 +104,11 @@ export const PostEditorForm: React.FC<PostEditorFormProps> = ({
 
           <Form.Group className="mb-4">
             <Form.Label>Cover Photo</Form.Label>
-            <label className="create-post-upload" htmlFor={`cover-photo-input-${mode}`}>
+            <label className={styles.upload} htmlFor={`cover-photo-input-${mode}`}>
               {previewUrl ? (
-                <img src={previewUrl} alt="Cover preview" className="create-post-upload-preview" />
+                <img src={previewUrl} alt="Cover preview" className={styles.uploadPreview} />
               ) : (
-                <div className="create-post-upload-empty">
+                <div className={styles.uploadEmpty}>
                   <ImagePlus size={36} />
                   <span>Click to upload a photo</span>
                 </div>
