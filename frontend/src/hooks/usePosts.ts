@@ -166,7 +166,6 @@ export const useCreateComment = (postId: string) => {
           commentCount: (current.commentCount ?? 0) + 1
         };
       });
-      // Update infinite query posts
       queryClient.setQueryData<{ pages: PaginatedResponse<Post>[]; pageParams: number[] }>(
         ['posts'],
         (current) => {
