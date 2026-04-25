@@ -17,7 +17,11 @@ interface PostDetailViewProps {
 export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, onBack, post, onDelete, onEdit }) => {
   const isOwner = currentUserId === post.authorId;
   const authorName = post.author?.username || 'Unknown';
-  const postDate = new Date(post.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  const postDate = new Date(post.createdAt).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
 
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this post?')) {
@@ -31,17 +35,17 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
 
   return (
     <Container className="py-4" style={{ maxWidth: 800 }}>
-      <Button variant="link" className="text-decoration-none text-body mb-3 p-0 d-flex align-items-center gap-1" onClick={onBack}>
+      <Button
+        variant="link"
+        className="text-decoration-none text-body mb-3 p-0 d-flex align-items-center gap-1"
+        onClick={onBack}
+      >
         <ArrowLeft size={16} /> Back
       </Button>
 
       <div className="rounded overflow-hidden mb-4">
         {post.imageUrl ? (
-          <img
-            src={post.imageUrl}
-            alt={post.title}
-            style={{ width: '100%', maxHeight: 450, objectFit: 'cover' }}
-          />
+          <img src={post.imageUrl} alt={post.title} style={{ width: '100%', maxHeight: 450, objectFit: 'cover' }} />
         ) : null}
       </div>
 
@@ -56,7 +60,10 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
         </h1>
 
         <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-          <Link to={`/profile/${post.author?._id}`} className="d-flex align-items-center gap-2 text-decoration-none text-body">
+          <Link
+            to={`/profile/${post.author?._id}`}
+            className="d-flex align-items-center gap-2 text-decoration-none text-body"
+          >
             {post.author?.avatarUrl ? (
               <Image
                 src={post.author.avatarUrl}
@@ -79,7 +86,10 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
 
           <div className="d-flex align-items-center gap-3">
             <LikeButton isLiked={false} likeCount={post.likes.length} onClick={() => {}} disabled={!currentUserId} />
-            <Link to={`/posts/${post._id}#comments`} className="d-flex align-items-center gap-1 small text-muted-fg text-decoration-none">
+            <Link
+              to={`/posts/${post._id}#comments`}
+              className="d-flex align-items-center gap-1 small text-muted-fg text-decoration-none"
+            >
               <MessageCircle size={16} /> {post.commentCount ?? 0} comments
             </Link>
           </div>
@@ -88,12 +98,22 @@ export const PostDetailView: React.FC<PostDetailViewProps> = ({ currentUserId, o
         {isOwner && (onEdit || onDelete) && (
           <div className="d-flex gap-2 mb-3">
             {onEdit && (
-              <Button variant="outline-secondary" size="sm" onClick={handleEdit} className="d-flex align-items-center gap-1">
+              <Button
+                variant="outline-secondary"
+                size="sm"
+                onClick={handleEdit}
+                className="d-flex align-items-center gap-1"
+              >
                 <Pencil size={12} /> Edit
               </Button>
             )}
             {onDelete && (
-              <Button variant="outline-danger" size="sm" onClick={handleDelete} className="d-flex align-items-center gap-1">
+              <Button
+                variant="outline-danger"
+                size="sm"
+                onClick={handleDelete}
+                className="d-flex align-items-center gap-1"
+              >
                 <Trash2 size={12} /> Delete
               </Button>
             )}

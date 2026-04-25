@@ -26,11 +26,7 @@ const AppShell = () => {
   return (
     <BrowserRouter>
       <div className="d-flex flex-column min-vh-100 bg-light">
-        <Navbar
-          isAuthenticated={isAuthenticated}
-          onLogout={logout}
-          currentUser={currentUser}
-        />
+        <Navbar isAuthenticated={isAuthenticated} onLogout={logout} currentUser={currentUser} />
         <main className="flex-grow-1">
           <Routes>
             <Route path="/" element={<PostsFeedContainer />} />

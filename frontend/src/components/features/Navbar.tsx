@@ -1,9 +1,10 @@
-import React from 'react';
-import { Button, Container, Dropdown, Image, Nav, Navbar as BsNavbar } from 'react-bootstrap';
-import { Compass, LogOut, PenSquare, User as UserIcon } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
 import logo from '@/assets/logo.png';
 import type { User } from '@travel-together/shared/types/user.types';
+import { Compass, LogOut, PenSquare, User as UserIcon } from 'lucide-react';
+import React from 'react';
+import { Navbar as BsNavbar, Button, Container, Dropdown, Image, Nav } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
+import styles from './Navbar.module.css';
 
 interface Props {
   isAuthenticated?: boolean;
@@ -16,10 +17,11 @@ export const Navbar: React.FC<Props> = ({ isAuthenticated, onLogout, currentUser
   const avatarFallback = currentUser?.username?.charAt(0).toUpperCase() ?? 'U';
 
   return (
-    <BsNavbar expand="sm" className="navbar-brand-bar sticky-top py-2">
+    <BsNavbar expand="sm" className={`${styles.navbar} sticky-top py-2`}>
       <Container className="d-flex justify-content-between align-items-center">
         <BsNavbar.Brand as={Link} to="/" className="d-flex align-items-center gap-2 m-0">
           <img src={logo} alt="Travel Together" style={{ height: 40 }} />
+          <h4 className="d-none d-sm-inline m-0">Travel Together</h4>
         </BsNavbar.Brand>
 
         <Nav className="d-flex flex-row align-items-center gap-2">
@@ -46,7 +48,7 @@ export const Navbar: React.FC<Props> = ({ isAuthenticated, onLogout, currentUser
               <Dropdown align="end">
                 <Dropdown.Toggle
                   as="button"
-                  className="btn btn-link p-0 border-0 navbar-avatar-toggle"
+                  className={`btn btn-link p-0 border-0 ${styles.avatarToggle}`}
                   id="user-menu"
                 >
                   {currentUser?.avatarUrl ? (
@@ -59,7 +61,7 @@ export const Navbar: React.FC<Props> = ({ isAuthenticated, onLogout, currentUser
                       style={{ objectFit: 'cover' }}
                     />
                   ) : (
-                    <span className="navbar-avatar-fallback">{avatarFallback}</span>
+                    <span className={styles.avatarFallback}>{avatarFallback}</span>
                   )}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>

@@ -8,7 +8,7 @@ export interface AuthRequest extends Request {
 export const createAuthenticateMiddleware = (authenticator: (token: string) => string | null) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Missing or invalid authorization header' });
       return;

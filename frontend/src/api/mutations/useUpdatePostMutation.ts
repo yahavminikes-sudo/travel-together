@@ -17,7 +17,7 @@ export const useUpdatePostMutation = <TOnMutateResult = unknown>(
   options?: UseMutationOptions<any, Error, { id: string; data: UpdatePostData }, TOnMutateResult>
 ) => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     ...options,
     mutationFn: updatePost,
@@ -25,10 +25,10 @@ export const useUpdatePostMutation = <TOnMutateResult = unknown>(
       queryClient.invalidateQueries({ queryKey: ['post', variables.id] });
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['myPosts'] });
-      
+
       if (options?.onSuccess) {
         options.onSuccess(data, variables, onMutateResult, context);
       }
-    },
+    }
   });
 };

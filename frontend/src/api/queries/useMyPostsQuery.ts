@@ -21,6 +21,6 @@ export const useMyPostsQuery = (options?: Omit<UseQueryOptions<Post[], Error>, '
   return useQuery({
     queryKey: ['myPosts'],
     queryFn: fetchMyPosts,
-    ...options,
+    ...options
   });
 };

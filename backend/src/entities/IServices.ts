@@ -2,6 +2,7 @@ import { UpdateProfileDto, User } from '@travel-together/shared/types/user.types
 import { Post, CreatePostDto, UpdatePostDto } from '@travel-together/shared/types/post.types';
 import { Comment, CreateCommentDto, UpdateCommentDto } from '@travel-together/shared/types/comment.types';
 import { LoginCredentials, RegisterCredentials, AuthResponse } from '@travel-together/shared/types/auth.types';
+import { ContentType, SearchResult } from '@travel-together/shared';
 
 export interface IAuthService {
   register(dto: RegisterCredentials): Promise<AuthResponse>;
@@ -28,4 +29,10 @@ export interface ICommentService {
   createComment(postId: string, authorId: string, commentDto: CreateCommentDto): Promise<Comment>;
   updateComment(id: string, commentDto: UpdateCommentDto): Promise<Comment | null>;
   deleteComment(id: string): Promise<boolean>;
+}
+
+export interface IEmbeddingService {
+  indexContent(contentId: string, contentType: ContentType, text: string): Promise<void>;
+  search(query: string, topK?: number): Promise<SearchResult[]>;
+  removeContent(contentId: string, contentType: ContentType): Promise<void>;
 }

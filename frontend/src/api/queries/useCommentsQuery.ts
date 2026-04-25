@@ -6,11 +6,14 @@ export const fetchComments = async (postId: string): Promise<Comment[]> => {
   return getCommentsByPost(postId);
 };
 
-export const useCommentsQuery = (postId: string, options?: Omit<UseQueryOptions<Comment[], Error>, 'queryKey' | 'queryFn'>) => {
+export const useCommentsQuery = (
+  postId: string,
+  options?: Omit<UseQueryOptions<Comment[], Error>, 'queryKey' | 'queryFn'>
+) => {
   return useQuery({
     queryKey: ['comments', postId],
     queryFn: () => fetchComments(postId),
     enabled: !!postId,
-    ...options,
+    ...options
   });
 };

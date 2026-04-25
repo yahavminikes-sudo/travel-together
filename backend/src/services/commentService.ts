@@ -1,8 +1,16 @@
-import { ICommentService } from '../entities/IServices';
+import { ICommentService, IEmbeddingService } from '../entities/IServices';
 import { ICommentRepository } from '../entities/IRepositories';
-import { CreateCommentDto, UpdateCommentDto } from '@travel-together/shared/types';
+import { ContentType, CreateCommentDto, UpdateCommentDto } from '@travel-together/shared/types';
 
-export const createCommentService = ({ commentRepository }: { commentRepository: ICommentRepository }): ICommentService => {
+interface CommentServiceDependencies {
+  commentRepository: ICommentRepository;
+  embeddingService: IEmbeddingService;
+}
+
+export const createCommentService = ({
+  commentRepository,
+  embeddingService
+}: CommentServiceDependencies): ICommentService => {
   return {
     getCommentsByPost: async (postId: string) => {
       return commentRepository.findByPost(postId);
@@ -11,14 +19,35 @@ export const createCommentService = ({ commentRepository }: { commentRepository:
       return commentRepository.findById(id);
     },
     createComment: async (postId: string, authorId: string, commentDto: CreateCommentDto) => {
-      // Future: Notification trigger to Post Owner
-      return commentRepository.create(postId, authorId, commentDto);
+      const comment = await commentRepository.create(postId, authorId, commentDto);
+      try {
+        await embeddingService.indexContent(comment._id, ContentType.Comment, comment.content);
+      } catch (err) {
+        console.error('Embedding indexing failed for comment', comment._id, err);
+      }
+      return comment;
     },
     updateComment: async (id: string, commentDto: UpdateCommentDto) => {
-      return commentRepository.update(id, commentDto);
+      const comment = await commentRepository.update(id, commentDto);
+      if (comment) {
+        try {
+          await embeddingService.indexContent(comment._id, ContentType.Comment, comment.content);
+        } catch (err) {
+          console.error('Embedding indexing failed for comment', comment._id, err);
+        }
+      }
+      return comment;
     },
     deleteComment: async (id: string) => {
-      return commentRepository.delete(id);
+      const success = await commentRepository.delete(id);
+      if (success) {
+        try {
+          await embeddingService.removeContent(id, ContentType.Comment);
+        } catch (err) {
+          console.error('Embedding removal failed for comment', id, err);
+        }
+      }
+      return success;
     }
   };
 };

@@ -2,10 +2,11 @@ import { User } from '@travel-together/shared/types/user.types';
 import { Post, CreatePostDto, UpdatePostDto } from '@travel-together/shared/types/post.types';
 import { Comment, CreateCommentDto, UpdateCommentDto } from '@travel-together/shared/types/comment.types';
 import { AuthRecord } from './AuthRecord';
+import { ContentType } from '@travel-together/shared/types/search.types';
 
 export interface IAuthRepository {
   findAuthRecordByEmail(email: string): Promise<AuthRecord | null>;
-  saveAuthRecord(record: AuthRecord): Promise<AuthRecord>;
+  saveAuthRecord(record: Omit<AuthRecord, '_id'> & Partial<Pick<AuthRecord, '_id'>>): Promise<AuthRecord>;
 }
 
 export interface IUserRepository {
@@ -29,5 +30,20 @@ export interface ICommentRepository {
   findByPost(postId: string): Promise<Comment[]>;
   create(postId: string, authorId: string, commentDto: CreateCommentDto): Promise<Comment>;
   update(id: string, commentDto: UpdateCommentDto): Promise<Comment | null>;
+  countByPost(postId: string): Promise<number>;
   delete(id: string): Promise<boolean>;
+}
+
+export interface EmbeddingRecord {
+  _id: string;
+  contentId: string;
+  contentType: ContentType;
+  textChunk: string;
+  embedding: number[];
+}
+
+export interface IEmbeddingRepository {
+  save(record: Omit<EmbeddingRecord, '_id'>): Promise<EmbeddingRecord>;
+  findAll(): Promise<EmbeddingRecord[]>;
+  deleteByContent(contentId: string, contentType: ContentType): Promise<boolean>;
 }

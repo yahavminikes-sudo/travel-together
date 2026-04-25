@@ -1,6 +1,6 @@
-import type { CreatePostDto, Post, UpdatePostDto } from '@travel-together/shared/types/post.types';
+import type { Post } from '@travel-together/shared/types/post.types';
+import type { CreatePostFormData, EditPostFormData } from '@travel-together/shared/schemas/postSchemas';
 import { apiClient } from '@/api/client';
-import type { PostEditorInput } from '@/api/types';
 import { parseTags } from '@/api/utils';
 
 export const getPosts = async (signal?: AbortSignal) => {
@@ -13,20 +13,20 @@ export const getPostById = async (postId: string, signal?: AbortSignal) => {
   return response.data;
 };
 
-export const createPost = async (data: CreatePostDto | PostEditorInput) => {
+export const createPost = async (data: CreatePostFormData) => {
   const response = await apiClient.post<Post>('/api/posts', {
     ...data,
     imageUrl: data.imageUrl || undefined,
-    tags: parseTags(data.tags),
+    tags: parseTags(data.tags)
   });
   return response.data;
 };
 
-export const updatePost = async (postId: string, data: UpdatePostDto | PostEditorInput) => {
+export const updatePost = async (postId: string, data: EditPostFormData) => {
   const response = await apiClient.put<Post>(`/api/posts/${postId}`, {
     ...data,
     imageUrl: data.imageUrl || undefined,
-    tags: parseTags(data.tags),
+    tags: parseTags(data.tags)
   });
   return response.data;
 };

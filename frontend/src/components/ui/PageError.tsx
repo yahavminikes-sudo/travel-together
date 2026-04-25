@@ -8,12 +8,7 @@ interface PageErrorProps {
   onAction?: () => void;
 }
 
-export const PageError: React.FC<PageErrorProps> = ({
-  actionLabel,
-  className = 'mt-5',
-  message,
-  onAction,
-}) => {
+export const PageError: React.FC<PageErrorProps> = ({ actionLabel, className = 'mt-5', message, onAction }) => {
   return (
     <Container className={className}>
       <Alert variant="danger">{message}</Alert>

@@ -1,13 +1,14 @@
+import { uploadImage } from '@/api';
+import styles from '@/components/features/PostEditor.module.css';
+import { useAuth } from '@/hooks/useAuth';
+import { useCreatePost } from '@/hooks/usePosts';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CreatePostFormData, createPostSchema } from '@travel-together/shared/schemas/postSchemas';
+import { ArrowLeft, ImagePlus } from 'lucide-react';
 import React from 'react';
 import { Alert, Container, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ImagePlus } from 'lucide-react';
-import { uploadImage } from '@/api';
-import { useAuth } from '@/hooks/useAuth';
-import { useCreatePost } from '@/hooks/usePosts';
-import { createPostSchema, CreatePostFormData } from '@travel-together/shared/schemas/postSchemas';
 
 export const CreatePost: React.FC = () => {
   const navigate = useNavigate();
@@ -18,7 +19,11 @@ export const CreatePost: React.FC = () => {
   const [isUploadingImage, setIsUploadingImage] = React.useState(false);
   const maxUploadSizeBytes = 5 * 1024 * 1024;
 
-  const { register, handleSubmit, formState: { errors } } = useForm<CreatePostFormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<CreatePostFormData>({
     resolver: zodResolver(createPostSchema)
   });
 
@@ -77,12 +82,12 @@ export const CreatePost: React.FC = () => {
       mutation.mutate(
         {
           ...data,
-          imageUrl,
+          imageUrl
         },
         {
           onSuccess: (post) => {
             navigate(`/posts/${post._id}`);
-          },
+          }
         }
       );
     } catch (error) {
@@ -133,9 +138,7 @@ export const CreatePost: React.FC = () => {
               isInvalid={!!errors.title}
               {...register('title')}
             />
-            <Form.Control.Feedback type="invalid">
-              {errors.title?.message}
-            </Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">{errors.title?.message}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -146,9 +149,7 @@ export const CreatePost: React.FC = () => {
               isInvalid={!!errors.destination}
               {...register('destination')}
             />
-            <Form.Control.Feedback type="invalid">
-              {errors.destination?.message}
-            </Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">{errors.destination?.message}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-4">
@@ -161,18 +162,16 @@ export const CreatePost: React.FC = () => {
               {...register('content')}
               style={{ borderRadius: '0.5rem', resize: 'vertical', minHeight: 220 }}
             />
-            <Form.Control.Feedback type="invalid">
-              {errors.content?.message}
-            </Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">{errors.content?.message}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-4">
             <Form.Label>Cover Photo</Form.Label>
-            <label className="create-post-upload" htmlFor="cover-photo-input">
+            <label className={styles.upload} htmlFor="cover-photo-input">
               {imagePreviewUrl ? (
-                <img src={imagePreviewUrl} alt="Cover preview" className="create-post-upload-preview" />
+                <img src={imagePreviewUrl} alt="Cover preview" className={styles.uploadPreview} />
               ) : (
-                <div className="create-post-upload-empty">
+                <div className={styles.uploadEmpty}>
                   <ImagePlus size={36} />
                   <span>Click to upload a photo</span>
                 </div>
@@ -190,11 +189,7 @@ export const CreatePost: React.FC = () => {
             ) : null}
           </Form.Group>
 
-          <button
-            type="submit"
-            className="btn btn-accent w-100 py-2 fs-5"
-            disabled={isSubmitting}
-          >
+          <button type="submit" className="btn btn-accent w-100 py-2 fs-5" disabled={isSubmitting}>
             {isSubmitting ? 'Publishing...' : 'Publish Post'}
           </button>
         </Form>

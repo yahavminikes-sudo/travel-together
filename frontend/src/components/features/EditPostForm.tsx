@@ -20,15 +20,15 @@ export const EditPostForm: React.FC<EditPostFormProps> = ({
   isSubmitting,
   onCancel,
   onSubmit,
-  submitError,
+  submitError
 }) => {
   const {
     formState: { errors },
     handleSubmit,
     register,
-    reset,
+    reset
   } = useForm<EditPostFormData>({
-    resolver: zodResolver(editPostSchema),
+    resolver: zodResolver(editPostSchema)
   });
 
   useEffect(() => {
@@ -89,12 +89,7 @@ export const EditPostForm: React.FC<EditPostFormProps> = ({
         />
 
         <div className="d-flex justify-content-end gap-3 mt-4">
-          <CustomButton
-            type="button"
-            variant="outline-secondary"
-            onClick={onCancel}
-            disabled={isSubmitting}
-          >
+          <CustomButton type="button" variant="outline-secondary" onClick={onCancel} disabled={isSubmitting}>
             Cancel
           </CustomButton>
           <CustomButton type="submit" variant="primary" disabled={isSubmitting}>

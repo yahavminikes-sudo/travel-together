@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { CreateCommentDto, Comment } from '@travel-together/shared/types/comment.types';
 import type { Post } from '@travel-together/shared/types/post.types';
+import type { CreatePostFormData, EditPostFormData } from '@travel-together/shared/schemas/postSchemas';
 import {
   createComment,
   createPost,
@@ -9,15 +10,14 @@ import {
   getMyPosts,
   getPostById,
   getPosts,
-  type PostEditorInput,
-  updatePost,
+  updatePost
 } from '@/api';
 import { useAuth } from '@/hooks/useAuth';
 
 export const usePosts = () => {
   return useQuery({
     queryKey: ['posts'],
-    queryFn: ({ signal }) => getPosts(signal),
+    queryFn: ({ signal }) => getPosts(signal)
   });
 };
 
@@ -25,7 +25,7 @@ export const usePost = (postId?: string) => {
   return useQuery({
     queryKey: ['post', postId],
     queryFn: ({ signal }) => getPostById(postId as string, signal),
-    enabled: !!postId,
+    enabled: !!postId
   });
 };
 
@@ -41,7 +41,7 @@ export const useMyPosts = () => {
 
       return getMyPosts(currentUser._id, signal);
     },
-    enabled: isAuthenticated && !!currentUser?._id,
+    enabled: isAuthenticated && !!currentUser?._id
   });
 };
 
@@ -49,12 +49,12 @@ export const useCreatePost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: PostEditorInput) => createPost(data),
+    mutationFn: (data: CreatePostFormData) => createPost(data),
     onSuccess: (post) => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['myPosts'] });
       queryClient.setQueryData<Post>(['post', post._id], post);
-    },
+    }
   });
 };
 
@@ -62,12 +62,12 @@ export const useUpdatePost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ data, id }: { id: string; data: PostEditorInput }) => updatePost(id, data),
+    mutationFn: ({ data, id }: { id: string; data: EditPostFormData }) => updatePost(id, data),
     onSuccess: (post) => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['myPosts'] });
       queryClient.setQueryData<Post>(['post', post._id], post);
-    },
+    }
   });
 };
 
@@ -80,7 +80,7 @@ export const useDeletePost = () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['myPosts'] });
       queryClient.removeQueries({ queryKey: ['post', postId] });
-    },
+    }
   });
 };
 
@@ -88,7 +88,7 @@ export const useComments = (postId?: string) => {
   return useQuery({
     queryKey: ['comments', postId],
     queryFn: ({ signal }) => getCommentsByPost(postId as string, signal),
-    enabled: !!postId,
+    enabled: !!postId
   });
 };
 
@@ -108,23 +108,19 @@ export const useCreateComment = (postId: string) => {
 
         return {
           ...current,
-          commentCount: (current.commentCount ?? 0) + 1,
+          commentCount: (current.commentCount ?? 0) + 1
         };
       });
       queryClient.setQueryData<Post[]>(['posts'], (current = []) => {
         return current.map((post) =>
-          post._id === postId
-            ? { ...post, commentCount: (post.commentCount ?? 0) + 1 }
-            : post
+          post._id === postId ? { ...post, commentCount: (post.commentCount ?? 0) + 1 } : post
         );
       });
       queryClient.setQueryData<Post[]>(['myPosts'], (current = []) => {
         return current.map((post) =>
-          post._id === postId
-            ? { ...post, commentCount: (post.commentCount ?? 0) + 1 }
-            : post
+          post._id === postId ? { ...post, commentCount: (post.commentCount ?? 0) + 1 } : post
         );
       });
-    },
+    }
   });
 };

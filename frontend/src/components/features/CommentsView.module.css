@@ -1,0 +1,24 @@
+.wrap {
+  margin-top: 1rem;
+}
+
+.card,
+.item {
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.85rem;
+  box-shadow: 0 10px 26px hsl(var(--foreground) / 0.04);
+}
+
+.card {
+  padding: 1.25rem;
+}
+
+.list {
+  display: grid;
+  gap: 1rem;
+}
+
+.item {
+  padding: 1rem 1.25rem;
+}
