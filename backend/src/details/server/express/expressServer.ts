@@ -20,6 +20,7 @@ import { createUploadController } from './controllers/uploadController';
 import { createUserController } from './controllers/userController';
 import { createAuthenticateMiddleware } from './middlewares/authenticate';
 import { errorHandler } from './middlewares/errorHandler';
+import { requestLogger } from './middlewares/requestLogger';
 import { createAuthRouter } from './routes/auth';
 import { createCommentRouter } from './routes/comments';
 import { createPostRouter } from './routes/posts';
@@ -53,6 +54,9 @@ export const createExpressServer = ({
   app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+
+  app.use(requestLogger);
+
   app.use('/uploads', express.static(uploadsDir));
 
   const authenticate = createAuthenticateMiddleware(authenticator);

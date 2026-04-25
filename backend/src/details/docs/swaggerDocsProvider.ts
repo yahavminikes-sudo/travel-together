@@ -9,7 +9,7 @@ export const createSwaggerDocsProvider = (): IDocsProvider => {
       const swaggerSpec = swaggerJsdoc(swaggerOptions);
       return [
         {
-          path: '/api-docs',
+          path: '/api/docs',
           handlers: [swaggerUi.serve, swaggerUi.setup(swaggerSpec)]
         }
       ];
