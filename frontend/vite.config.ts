@@ -10,5 +10,8 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src')
     }
+  },
+  preview: {
+    allowedHosts: ['node49.cs.colman.ac.il']
   }
 });
