@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { appConfig } from './config/appConfig';
 import { createGoogleAuthVerifier } from './details/auth/googleAuthVerifier';
 import { createJwtAuthProvider } from './details/auth/jwtAuthProvider';
@@ -37,6 +39,25 @@ const commentService = createCommentService({ commentRepository, embeddingServic
 
 const docsProvider = createSwaggerDocsProvider();
 
+let sslOptions: { key: Buffer; cert: Buffer } | undefined;
+if (appConfig.NODE_ENV === 'production') {
+  try {
+    const keyPath = path.resolve(appConfig.SSL_KEY_PATH);
+    const certPath = path.resolve(appConfig.SSL_CERT_PATH);
+
+    if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
+      sslOptions = {
+        key: fs.readFileSync(keyPath),
+        cert: fs.readFileSync(certPath)
+      };
+    } else {
+      console.warn('SSL certificates not found, falling back to HTTP even in production.');
+    }
+  } catch (err) {
+    console.error('Failed to load SSL certificates:', err);
+  }
+}
+
 const dependencies: ExpressDependencies = {
   authService,
   authenticator: (token: string) => {
@@ -47,7 +68,8 @@ const dependencies: ExpressDependencies = {
   commentService,
   userService,
   embeddingService,
-  docsProvider
+  docsProvider,
+  sslOptions
 };
 
 const webServer = createExpressServer(dependencies);

@@ -2,7 +2,12 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "CommonJS",
-    "rootDir": "./src",
+    "baseUrl": ".",
+    "paths": {
+      "@travel-together/shared": ["../shared/index.ts"],
+      "@travel-together/shared/*": ["../shared/*"]
+    },
+    "rootDir": "..",
     "outDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -12,6 +17,6 @@
     "ignoreDeprecations": "5.0",
     "types": ["node", "jest"]
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../shared/**/*"],
   "exclude": ["node_modules", "dist"]
 }
