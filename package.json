@@ -4,8 +4,8 @@
   "scripts": {
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
-    "start": "pm2 restart ecosystem.config.js --env production",
-    "stop": "pm2 stop all"
+    "start": "sudo pm2 restart ecosystem.config.js",
+    "stop": "sudo pm2 stop all"
   },
   "devDependencies": {
     "prettier": "^3.2.5"
