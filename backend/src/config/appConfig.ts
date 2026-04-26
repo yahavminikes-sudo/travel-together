@@ -14,6 +14,6 @@ export const appConfig = {
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || '',
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
   BASE_URL: process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`,
-  SSL_KEY_PATH: process.env.SSL_KEY_PATH || 'certs/client-key.pem',
-  SSL_CERT_PATH: process.env.SSL_CERT_PATH || 'certs/client-cert.pem'
+  SSL_KEY_PATH: process.env.SSL_KEY_PATH || '../certs/client-key.pem',
+  SSL_CERT_PATH: process.env.SSL_CERT_PATH || '../certs/client-cert.pem'
 };

@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "sudo npx vite preview --port 80 --host"
+    "preview": "sudo npx vite preview"
   },
   "dependencies": {
     "@travel-together/shared": "file:../shared",
