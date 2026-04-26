@@ -10,7 +10,6 @@ export interface Post {
   content: string;
   imageUrl?: string;
   likes: string[];
-  tags?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -20,7 +19,6 @@ export interface CreatePostDto {
   title: string;
   content: string;
   imageUrl: string;
-  tags?: string[];
 }
 
 export interface UpdatePostDto {
@@ -28,5 +26,4 @@ export interface UpdatePostDto {
   title: string;
   content: string;
   imageUrl: string;
-  tags?: string[];
 }

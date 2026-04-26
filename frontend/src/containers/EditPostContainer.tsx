@@ -106,8 +106,7 @@ export const EditPostContainer: React.FC = () => {
     destination: post.destination,
     title: post.title,
     content: post.content,
-    imageUrl: post.imageUrl || '',
-    tags: post.tags?.join(', ') || ''
+    imageUrl: post.imageUrl || ''
   };
 
   return (

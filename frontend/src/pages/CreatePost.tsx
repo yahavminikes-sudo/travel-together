@@ -12,7 +12,6 @@ const createPostInitialValues: PostEditorFormData = {
   content: '',
   destination: '',
   imageUrl: '',
-  tags: '',
   title: '',
 };
 

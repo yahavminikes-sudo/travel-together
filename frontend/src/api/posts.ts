@@ -2,7 +2,6 @@ import type { Post } from '@travel-together/shared/types/post.types';
 import type { CreatePostFormData, EditPostFormData } from '@travel-together/shared/schemas/postSchemas';
 import type { PaginatedResponse, PaginationOptions } from '@travel-together/shared/types/pagination.types';
 import { apiClient } from '@/api/client';
-import { parseTags } from '@/api/utils';
 
 export const getPosts = async (options?: PaginationOptions, signal?: AbortSignal) => {
   const params = options ? { page: options.page, limit: options.limit } : {};
@@ -16,18 +15,12 @@ export const getPostById = async (postId: string, signal?: AbortSignal) => {
 };
 
 export const createPost = async (data: CreatePostFormData) => {
-  const response = await apiClient.post<Post>('/api/posts', {
-    ...data,
-    tags: parseTags(data.tags)
-  });
+  const response = await apiClient.post<Post>('/api/posts', data);
   return response.data;
 };
 
 export const updatePost = async (postId: string, data: EditPostFormData) => {
-  const response = await apiClient.put<Post>(`/api/posts/${postId}`, {
-    ...data,
-    tags: parseTags(data.tags)
-  });
+  const response = await apiClient.put<Post>(`/api/posts/${postId}`, data);
   return response.data;
 };
 

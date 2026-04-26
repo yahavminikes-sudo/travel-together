@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { describe, it, expect, beforeEach } from '@jest/globals';
 import { getTestApp } from './utils/testApp';
 import { StatusCodes } from 'http-status-codes';
 
@@ -41,7 +42,6 @@ describe('Search API Endpoints', () => {
       title: 'Eiffel Tower Adventure',
       content: 'Visited the beautiful Eiffel Tower in Paris.',
       imageUrl: 'https://example.com/eiffel-tower.jpg',
-      tags: 'france,paris,europe',
       ...overrides
     });
   };
@@ -124,7 +124,7 @@ describe('Search API Endpoints', () => {
     });
 
     it('should return results when query matches content', async () => {
-      await createPost({ destination: 'Paris', title: 'Eiffel Tower', content: 'Beautiful landmark' });
+      await createPost({ destination: 'Paris', title: 'Eiffel Tower', content: 'Beautiful Paris landmark' });
 
       const response = await request(app).get('/api/search?q=paris');
 

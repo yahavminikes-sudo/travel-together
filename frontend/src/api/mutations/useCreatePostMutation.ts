@@ -6,7 +6,6 @@ export interface CreatePostData {
   title: string;
   content: string;
   imageUrl: string;
-  tags?: string;
 }
 
 export const createPost = async (data: CreatePostData) => {

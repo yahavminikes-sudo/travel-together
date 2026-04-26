@@ -107,10 +107,6 @@
  *                 type: string
  *               imageUrl:
  *                 type: string
- *               tags:
- *                 type: array
- *                 items:
- *                   type: string
  *     responses:
  *       201:
  *         description: Post created successfully
@@ -156,10 +152,6 @@
  *                 type: string
  *               imageUrl:
  *                 type: string
- *               tags:
- *                 type: array
- *                 items:
- *                   type: string
  *     responses:
  *       200:
  *         description: Post updated successfully
