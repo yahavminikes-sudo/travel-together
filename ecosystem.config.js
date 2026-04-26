@@ -2,19 +2,18 @@ module.exports = {
   apps: [
     {
       name: 'backend',
-      script: 'node',
-      args: 'dist/backend/src/index.js',
+      script: 'dist/backend/src/index.js',
       cwd: './backend',
-      env_production: {
+      env: {
         NODE_ENV: 'production'
       }
     },
     {
       name: 'frontend',
-      script: 'npx',
-      args: 'vite preview',
+      script: 'npm',
+      args: 'run preview',
       cwd: './frontend',
-      env_production: {
+      env: {
         NODE_ENV: 'production'
       }
     }
