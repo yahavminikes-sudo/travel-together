@@ -4,7 +4,7 @@
   "description": "Travel Together Backend",
   "main": "index.ts",
   "scripts": {
-    "start": "pm2 restart ecosystem.config.js --env production",
+    "start": "node dist/backend/src/index.js",
     "dev": "nodemon",
     "build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "test": "jest --runInBand"
