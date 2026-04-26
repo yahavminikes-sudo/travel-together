@@ -17,8 +17,7 @@ const postSchema = new Schema<IPostDocument>(
     title: { type: String, required: true },
     content: { type: String, required: true },
     imageUrl: { type: String, required: true, trim: true },
-    likes: [{ type: String, ref: 'User' }],
-    tags: [{ type: String }]
+    likes: [{ type: String, ref: 'User' }]
   },
   { timestamps: true }
 );

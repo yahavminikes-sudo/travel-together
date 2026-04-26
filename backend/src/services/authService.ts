@@ -56,6 +56,11 @@ export const createAuthService = ({
         throw new Error('Email already registered');
       }
 
+      const existingUsername = await authRepository.findAuthRecordByUsername(dto.username);
+      if (existingUsername) {
+        throw new Error('Username already taken');
+      }
+
       if (!dto.password) throw new Error('Password is required');
 
       const hashedPassword = await authProvider.hashPassword(dto.password);

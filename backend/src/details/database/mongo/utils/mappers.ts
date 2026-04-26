@@ -28,7 +28,6 @@ export const mapToPost = (doc: IPostDocument): Post => {
     content: doc.content,
     imageUrl: doc.imageUrl ?? '',
     likes: (doc.likes ?? []).map((id) => id.toString()),
-    tags: doc.tags ?? undefined,
     createdAt: new Date(doc.createdAt).toISOString(),
     updatedAt: new Date(doc.updatedAt).toISOString()
   };

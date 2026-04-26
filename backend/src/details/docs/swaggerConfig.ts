@@ -49,7 +49,6 @@ export const swaggerOptions: Options = {
             content: { type: 'string' },
             imageUrl: { type: 'string' },
             likes: { type: 'array', items: { type: 'string' } },
-            tags: { type: 'array', items: { type: 'string' } },
             createdAt: { type: 'string', format: 'date-time' },
             updatedAt: { type: 'string', format: 'date-time' }
           }

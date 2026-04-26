@@ -128,18 +128,6 @@ export const PostEditorForm: React.FC<PostEditorFormProps> = ({
             ) : null}
           </Form.Group>
 
-          <Form.Group className="mb-4">
-            <Form.Label>Tags</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="beach, europe, sunset"
-              isInvalid={!!errors.tags}
-              {...register('tags')}
-            />
-            <Form.Control.Feedback type="invalid">{errors.tags?.message}</Form.Control.Feedback>
-            <Form.Text className="text-muted">Separate multiple tags with commas.</Form.Text>
-          </Form.Group>
-
           <button type="submit" className="btn btn-accent w-100 py-2 fs-5" disabled={isSubmitting}>
             {isSubmitting ? submittingLabel : submitLabel}
           </button>

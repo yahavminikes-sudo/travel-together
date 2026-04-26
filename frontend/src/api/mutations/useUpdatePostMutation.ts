@@ -6,7 +6,6 @@ export interface UpdatePostData {
   title: string;
   content: string;
   imageUrl: string;
-  tags?: string;
 }
 
 export const updatePost = async ({ id, data }: { id: string; data: UpdatePostData }) => {
