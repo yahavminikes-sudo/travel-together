@@ -22,7 +22,7 @@ export const createAuthController = ({ authService }: { authService: IAuthServic
       } catch (error: unknown) {
         const message = getErrorMessage(error);
 
-        if (message === 'Email already registered') {
+        if (message === 'Email already registered' || message === 'Username already taken') {
           res.status(StatusCodes.CONFLICT).json({ message });
           return;
         }

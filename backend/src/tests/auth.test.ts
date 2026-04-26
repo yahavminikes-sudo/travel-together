@@ -36,6 +36,18 @@ describe('Auth API Endpoints', () => {
       expect(response.body).toHaveProperty('message', 'Email already registered');
     });
 
+    it('should return 409 if username is already taken', async () => {
+      await request(app).post('/api/auth/register').send(validUser);
+
+      const response = await request(app).post('/api/auth/register').send({
+        ...validUser,
+        email: 'another@example.com'
+      });
+
+      expect(response.status).toBe(StatusCodes.CONFLICT);
+      expect(response.body).toHaveProperty('message', 'Username already taken');
+    });
+
     it('should return 400 if required fields are missing', async () => {
       const response = await request(app).post('/api/auth/register').send({ email: 'test@example.com' });
 
