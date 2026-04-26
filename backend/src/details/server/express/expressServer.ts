@@ -1,7 +1,8 @@
 import cors from 'cors';
 import express, { Application } from 'express';
-import { Server } from 'http';
+import http from 'http';
 import { StatusCodes } from 'http-status-codes';
+import https from 'https';
 import path from 'path';
 import { IDocsProvider } from '../../../entities/IDocsProvider';
 import {
@@ -36,6 +37,10 @@ export interface ExpressDependencies {
   userService: IUserService;
   embeddingService: IEmbeddingService;
   docsProvider?: IDocsProvider;
+  sslOptions?: {
+    key: Buffer;
+    cert: Buffer;
+  };
 }
 
 export const createExpressServer = ({
@@ -45,10 +50,11 @@ export const createExpressServer = ({
   commentService,
   userService,
   embeddingService,
-  docsProvider
+  docsProvider,
+  sslOptions
 }: ExpressDependencies): IWebServer => {
   const app: Application = express();
-  let serverInstance: Server | null = null;
+  let serverInstance: http.Server | https.Server | null = null;
   const uploadsDir = path.resolve(process.cwd(), 'uploads');
 
   app.use(cors());
@@ -90,10 +96,17 @@ export const createExpressServer = ({
   return {
     start: async (port: number | string): Promise<void> => {
       return new Promise((resolve) => {
-        serverInstance = app.listen(port, () => {
-          console.log(`Express server is running on port ${port}`);
-          resolve();
-        });
+        if (sslOptions) {
+          serverInstance = https.createServer(sslOptions, app).listen(port, () => {
+            console.log(`Express server is running on port ${port} (HTTPS)`);
+            resolve();
+          });
+        } else {
+          serverInstance = http.createServer(app).listen(port, () => {
+            console.log(`Express server is running on port ${port} (HTTP)`);
+            resolve();
+          });
+        }
       });
     },
     stop: async (): Promise<void> => {
