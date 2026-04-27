@@ -4,7 +4,8 @@ import { POST_IMAGE_MESSAGES } from '@/components/features/postEditor.constants'
 import { validatePostImageFile } from '@/components/features/postEditor.utils';
 import { useAuth } from '@/hooks/useAuth';
 import { useCreatePost } from '@/hooks/usePosts';
-import { createPostSchema, PostEditorFormData } from '@travel-together/shared/schemas/postSchemas';
+import { createPostSchema } from '@travel-together/shared/schemas/postSchemas';
+import { PostEditorFormData } from '@/components/features/PostEditorForm';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
