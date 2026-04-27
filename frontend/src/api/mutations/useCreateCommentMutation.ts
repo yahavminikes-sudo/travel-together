@@ -1,17 +1,13 @@
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
-import { Comment } from '@travel-together/shared/types/comment.types';
+import { Comment, CreateCommentDto } from '@travel-together/shared/types/comment.types';
 import { createComment } from '@/api';
 
-export interface CreateCommentData {
-  content: string;
-}
-
-export const postComment = async ({ postId, data }: { postId: string; data: CreateCommentData }): Promise<Comment> => {
+export const postComment = async ({ postId, data }: { postId: string; data: CreateCommentDto }): Promise<Comment> => {
   return createComment(postId, data);
 };
 
 export const useCreateCommentMutation = <TOnMutateResult = unknown>(
-  options?: UseMutationOptions<Comment, Error, { postId: string; data: CreateCommentData }, TOnMutateResult>
+  options?: UseMutationOptions<Comment, Error, { postId: string; data: CreateCommentDto }, TOnMutateResult>
 ) => {
   const queryClient = useQueryClient();
 

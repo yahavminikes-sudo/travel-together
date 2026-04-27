@@ -3,8 +3,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Alert, Container, Form } from 'react-bootstrap';
 import { ArrowLeft, ImagePlus } from 'lucide-react';
-import { postEditorSchema, PostEditorFormData } from '@travel-together/shared/schemas/postSchemas';
+import * as z from 'zod';
+import { createPostSchema } from '@travel-together/shared/schemas/postSchemas';
 import styles from './PostEditor.module.css';
+
+export const postEditorSchema = createPostSchema.extend({
+  imageUrl: createPostSchema.shape.imageUrl.or(z.literal(''))
+});
+
+export type PostEditorFormData = z.infer<typeof postEditorSchema>;
 
 interface PostEditorFormProps {
   mode: 'create' | 'edit';
@@ -35,15 +42,17 @@ export const PostEditorForm: React.FC<PostEditorFormProps> = ({
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<PostEditorFormData>({
     resolver: zodResolver(postEditorSchema),
     defaultValues: initialValues,
   });
 
   React.useEffect(() => {
-    reset(initialValues);
-  }, [initialValues, reset]);
+    if (!isDirty) {
+      reset(initialValues);
+    }
+  }, [initialValues, reset, isDirty]);
 
   const heading = mode === 'create' ? 'Share Your Adventure' : 'Edit Your Adventure';
   const submitLabel = mode === 'create' ? 'Publish Post' : 'Save Changes';

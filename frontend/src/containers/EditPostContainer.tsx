@@ -8,7 +8,8 @@ import { PageError } from '@/components/ui/PageError';
 import { PageLoader } from '@/components/ui/PageLoader';
 import { useAuth } from '@/hooks/useAuth';
 import { usePost, useUpdatePost } from '@/hooks/usePosts';
-import { editPostSchema, PostEditorFormData } from '@travel-together/shared/schemas/postSchemas';
+import { editPostSchema } from '@travel-together/shared/schemas/postSchemas';
+import { PostEditorFormData } from '@/components/features/PostEditorForm';
 
 export const EditPostContainer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -102,12 +103,12 @@ export const EditPostContainer: React.FC = () => {
     );
   }
 
-  const initialValues: PostEditorFormData = {
+  const initialValues = React.useMemo<PostEditorFormData>(() => ({
     destination: post.destination,
     title: post.title,
     content: post.content,
     imageUrl: post.imageUrl || ''
-  };
+  }), [post.destination, post.title, post.content, post.imageUrl]);
 
   return (
     <PostEditorForm

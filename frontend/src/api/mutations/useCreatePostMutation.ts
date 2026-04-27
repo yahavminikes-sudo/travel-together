@@ -1,19 +1,13 @@
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
 import { createPost as createPostRequest } from '@/api';
+import { CreatePostFormData } from '@travel-together/shared/schemas/postSchemas';
 
-export interface CreatePostData {
-  destination: string;
-  title: string;
-  content: string;
-  imageUrl: string;
-}
-
-export const createPost = async (data: CreatePostData) => {
+export const createPost = async (data: CreatePostFormData) => {
   return createPostRequest(data);
 };
 
 export const useCreatePostMutation = <TOnMutateResult = unknown>(
-  options?: UseMutationOptions<any, Error, CreatePostData, TOnMutateResult>
+  options?: UseMutationOptions<any, Error, CreatePostFormData, TOnMutateResult>
 ) => {
   const queryClient = useQueryClient();
 
